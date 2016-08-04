@@ -44,6 +44,10 @@ namespace AR_Zhuk_Schema.DB
                 FlatInfo fl = new FlatInfo();
                 bool isValidSection = true;
                 var sections = flatsDb.GroupBy(x => x.ID_Section).Select(x => x.ToList()).ToList();
+                if (maxSectionBySize != 0)
+                {
+                    sections.RemoveAt(sections.Count - 1);
+                }
                 foreach (var gg in sections)
                 {
                     fl = new FlatInfo();
