@@ -56,20 +56,22 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             // Подстановка секций под каждый вариант
             for (int h = 0; h < housesSteps.Count; h++)
             {
-                var houseSteps = housesSteps[h];                
+                var houseSteps = housesSteps[h];
 
-                var houseVar = GetHouseVariant(houseSteps);                
+                var houseVar = GetHouseVariant(houseSteps);
 
                 if (houseVar != null)
                 {
                     HouseInfo hi = new HouseInfo();
                     hi.SpotInf = sp;
                     hi.SectionsBySize = houseVar;
+#if !TEST
                     if (resHouses.Count < 5)
                     {
                         resHouses.Add(hi);
                     }
-                }                
+#endif
+                }
             }
 
             Debug.WriteLine("failedSections=" + failedSections.Count);
