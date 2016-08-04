@@ -1527,7 +1527,7 @@ indexColumnLLUBottom];
             totalObject[0] = totalObject[0].Where(x => x.Sections.Count==4).ToList();
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
-         //   int megacounter = 0;
+            int megacounter = 0;
             int counterGood = 0;
             List<string> list11 = new List<string>();
             for (int k = 0; k < totalObject[0].Count; k++)
