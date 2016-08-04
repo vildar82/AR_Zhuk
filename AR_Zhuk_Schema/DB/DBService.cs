@@ -43,8 +43,8 @@ namespace AR_Zhuk_Schema.DB
                 flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();                
                 FlatInfo fl = new FlatInfo();
                 bool isValidSection = true;
-                var groupFlats = flatsDb.GroupBy(x => x.ID_Section).Select(x => x.ToList()).ToList();
-                foreach (var gg in groupFlats)
+                var sections = flatsDb.GroupBy(x => x.ID_Section).Select(x => x.ToList()).ToList();
+                foreach (var gg in sections)
                 {
                     fl = new FlatInfo();
 

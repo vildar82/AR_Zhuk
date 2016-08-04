@@ -51,7 +51,7 @@ namespace AR_Zhuk_Schema.Insolation
             isTop = true;
             curSideFlats = topFlats;
             res = CheckFlats();
-#if TEST
+#if !TEST
             // Проверка инсоляции квартир снизу                
             isTop = false;
             curSideFlats = bottomFlats;
