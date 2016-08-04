@@ -11,11 +11,11 @@
     <AssemblyName>AR_AreaZhuk</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AssemblyVersion>1.0.217.3893</AssemblyVersion>
+    <AssemblyVersion>1.0.217.3903</AssemblyVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
@@ -48,8 +48,9 @@
     <Reference Include="EPPlus">
       <HintPath>Z:\Revit_server\10. Dll's\Dll\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="ProgressControls">
-      <HintPath>C:\Users\ostaninam\AppData\Roaming\Autodesk\Revit\Addins\2015\PIK\Dlls\ProgressControls.dll</HintPath>
+    <Reference Include="ProgressControls, Version=1.2.109.1, Culture=neutral, PublicKeyToken=f34d47135ea7baa5, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\ProgressControls.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

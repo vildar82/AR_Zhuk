@@ -39,7 +39,7 @@ namespace AR_Zhuk_Schema.Insolation
             {
                 sectFlats.Code = GetFlatCode(sectFlats);
 
-#if !TEST
+#if TEST
                 //// !!!! Только для тестирования!!!! - добавление всех секций с пометками квартир прошедших/непрошедших инсоляцию
                 FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
                 insCheck.CheckSection(flats, isRightOrTopLLu: true);                
@@ -62,7 +62,6 @@ namespace AR_Zhuk_Schema.Insolation
                         resFlats.Add(flats);
                     }
                 }
-
 
                 if (!section.IsCorner)
                 {

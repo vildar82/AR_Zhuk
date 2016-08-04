@@ -54,7 +54,7 @@ namespace AR_AreaZhuk
             this.label3 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.dg2 = new AR_AreaZhuk.DataGridViewEx();
+            this.dg2 = new DataGridViewEx();
             this.btnStartScan = new System.Windows.Forms.Button();
             this.lblCountObjects = new System.Windows.Forms.Label();
             this.chkDominant = new System.Windows.Forms.CheckBox();

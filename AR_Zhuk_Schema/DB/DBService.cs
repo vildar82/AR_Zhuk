@@ -11,8 +11,8 @@ namespace AR_Zhuk_Schema.DB
 {
     public class DBService : IDBService
     {
-        private Dictionary<string, List<FlatInfo>> dictSections = new Dictionary<string, List<FlatInfo>>();
-        private ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>> dictDbFlats = 
+        private static Dictionary<string, List<FlatInfo>> dictSections = new Dictionary<string, List<FlatInfo>>();
+        private static ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>> dictDbFlats = 
                     new ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>>();
         
 
@@ -93,18 +93,18 @@ namespace AR_Zhuk_Schema.DB
                     }
                     if (!isContains)
                         continue;
+                    if (fl.Flats.Count <= 4)
+                    {
+                        if (fl.Flats.Count >= 4)
+                        {
+
+                        }
+                    }
                     sectionsBySyze.Add(fl);                    
 
                     if (maxSectionBySize != 0 && sectionsBySyze.Count == maxSectionBySize)
                     {
                         break;
-                    }
-                    if (fl.IdSection.Equals(1669685))
-                    {
-                        if (fl.IdSection.Equals(1669685))
-                        {
-
-                        }
                     }
                 }
                 dictSections.Add(key, sectionsBySyze);
@@ -129,12 +129,12 @@ namespace AR_Zhuk_Schema.DB
             FlatsInSectionsTableAdapter flatsIsSection = new FlatsInSectionsTableAdapter();
             if (maxSectionBySize == 0)
             {
-                flatsDb = flatsIsSection.GetFlatsInTypeSection(selectSectParam.Step, 
+                flatsDb = flatsIsSection.GetFlatsInTypeSection(selectSectParam.Step,
                             selectSectParam.Type, selectSectParam.Levels).ToList();
             }
             else
             {
-                flatsDb = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize, 
+                flatsDb = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize,
                             selectSectParam.Step, selectSectParam.Type, selectSectParam.Levels).ToList();
             }
             return flatsDb;            

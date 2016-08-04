@@ -1523,7 +1523,7 @@ indexColumnLLUBottom];
             profectShema.ReadScheme(PathToFileInsulation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(1000);
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
             //.. totalObject[0] = totalObject[0].Where(x => x.Sections.Count==4).ToList();
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -1653,6 +1653,8 @@ indexColumnLLUBottom];
                         }
 
                         counterGood++;
+                        if (counterGood > 400000)
+                            break;
                         list11.Add(str);
                         for (int i = 0; i < sections.Count; i++)
                         {

@@ -107,7 +107,7 @@ namespace AR_Zhuk_Schema.Insolation
                         break;
                     }
                 }
-#if !TEST
+#if TEST
                 flat.IsInsPassed = flatPassed;
 #else
                 if (!flatPassed)
@@ -116,7 +116,6 @@ namespace AR_Zhuk_Schema.Insolation
                     return false;
                 }               
 #endif
-
                 step += isTop ? flat.SelectedIndexTop : flat.SelectedIndexBottom;
             }
             return true;
