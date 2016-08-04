@@ -65,7 +65,10 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     HouseInfo hi = new HouseInfo();
                     hi.SpotInf = sp;
                     hi.SectionsBySize = houseVar;
-                    resHouses.Add(hi);
+                    if (resHouses.Count < 5)
+                    {
+                        resHouses.Add(hi);
+                    }
                 }                
             }
 

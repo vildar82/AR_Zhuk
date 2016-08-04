@@ -1498,7 +1498,7 @@ indexColumnLLUBottom];
 
         private void btnStartScan_Click(object sender, EventArgs e)
         {
-             
+
             btnStartScan.Enabled = false;
             btnViewPercentsge.Enabled = true;
             Requirment requirment = new Requirment();
@@ -1523,8 +1523,8 @@ indexColumnLLUBottom];
             profectShema.ReadScheme(PathToFileInsulation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject =  profectShema.GetTotalHouses(1000);
-            totalObject[0] = totalObject[0].Where(x => x.Sections.Count==4).ToList();
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(1000);
+            //.. totalObject[0] = totalObject[0].Where(x => x.Sections.Count==4).ToList();
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
             int megacounter = 0;
@@ -1643,76 +1643,80 @@ indexColumnLLUBottom];
                             }
                         }
 
-                        if (isGood)
+                        if (!isGood)
                         {
-                            counterGood++;
-                            list11.Add(str);
-                            for (int i = 0; i < sections.Count; i++)
-                            {
-                                listCodes.Add(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[selectedSectCode[i]]);
-                            }
-                            listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
-                            var houses11 = listCodes.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
-                            GeneralObject go = new GeneralObject();
-                            List<List<HouseInfo>> housesPercentage = new List<List<HouseInfo>>();
-                            for (int i = 0; i < houses11.Count; i++)
-                            {
-
-                                List<HouseInfo> hoyses = new List<HouseInfo>();
-                                int[] indexSelectedId = new int[10];
-
-                                isContinue = true;
-                                int countSections = houses11[i].Count - 1;
-
-                                while (isContinue)
-                                {
-                                    HouseInfo hi1 = new HouseInfo();
-                                    hi1.Sections = new List<FlatInfo>();
-                                    for (int j = 0; j <= countSections; j++)
-                                    {
-                                        Code currentCode = houses11[i][j];
-                                        foreach (var secByPosition in sections)
-                                        {
-                                            if (!(secByPosition[0].SpotOwner.Equals(currentCode.SpotOwner) &
-                                                  secByPosition[0].NumberInSpot.Equals(currentCode.NumberSection)))
-                                                continue;
-                                            var sec =
-                                                secByPosition.Where(
-                                                    x => x.IdSection.Equals(currentCode.IdSections[indexSelectedId[j]])).ToList();
-                                            if (sec.Count == 0) continue;
-                                            hi1.Sections.Add(sec[0]);
-                                            break;
-                                        }
-                                    }
-                                    hoyses.Add(hi1);
-                                    GetHousePercentage(ref hi1, spotInfo);
-                                    //go.Houses.Add(hi1);
-                                    indexSelectedId[countSections]++;
-                                    if (houses11[i][countSections].IdSections.Count <= indexSelectedId[countSections])
-                                    {
-                                        IncerementIdSection(countSections - 1, indexSelectedId, houses11[i]);
-                                    }
-                                    if (houses11[i][0].IdSections.Count == indexSelectedId[0])
-                                    {
-                                        isContinue = false;
-                                        break;
-                                    }
-
-                                }
-                                housesPercentage.Add(hoyses);
-
-                            }
-                            GetAllSectionPercentage(housesPercentage, requirment);
-
-                            // ob.Add(go);
-                            counterGood++;
+                            selectedSectCode[sections.Count - 1]++;
+                            if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
+                                IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1,
+                                    codeSections, ref totalCountFlats);
+                            continue;
                         }
 
-                        selectedSectCode[sections.Count - 1]++;
-                        if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
-                            IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1,
-                                codeSections, ref totalCountFlats);
+                        counterGood++;
+                        list11.Add(str);
+                        for (int i = 0; i < sections.Count; i++)
+                        {
+                            listCodes.Add(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[selectedSectCode[i]]);
+                        }
+                        listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
+                        var houses11 = listCodes.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
+                        GeneralObject go = new GeneralObject();
+                        List<List<HouseInfo>> housesPercentage = new List<List<HouseInfo>>();
+                        for (int i = 0; i < houses11.Count; i++)
+                        {
+
+                            List<HouseInfo> hoyses = new List<HouseInfo>();
+                            int[] indexSelectedId = new int[10];
+
+                            isContinue = true;
+                            int countSections = houses11[i].Count - 1;
+
+                            while (isContinue)
+                            {
+                                HouseInfo hi1 = new HouseInfo();
+                                hi1.Sections = new List<FlatInfo>();
+                                for (int j = 0; j <= countSections; j++)
+                                {
+                                    Code currentCode = houses11[i][j];
+                                    foreach (var secByPosition in sections)
+                                    {
+                                        if (!(secByPosition[0].SpotOwner.Equals(currentCode.SpotOwner) &
+                                              secByPosition[0].NumberInSpot.Equals(currentCode.NumberSection)))
+                                            continue;
+                                        var sec =
+                                            secByPosition.Where(
+                                                x => x.IdSection.Equals(currentCode.IdSections[indexSelectedId[j]])).ToList();
+                                        if (sec.Count == 0) continue;
+                                        hi1.Sections.Add(sec[0]);
+                                        break;
+                                    }
+                                }
+                                hoyses.Add(hi1);
+                                GetHousePercentage(ref hi1, spotInfo);
+                                //go.Houses.Add(hi1);
+                                indexSelectedId[countSections]++;
+                                if (houses11[i][countSections].IdSections.Count <= indexSelectedId[countSections])
+                                {
+                                    IncerementIdSection(countSections - 1, indexSelectedId, houses11[i]);
+                                }
+                                if (houses11[i][0].IdSections.Count == indexSelectedId[0])
+                                {
+                                    isContinue = false;
+                                    break;
+                                }
+
+                            }
+                            housesPercentage.Add(hoyses);
+
+                        }
+                        GetAllSectionPercentage(housesPercentage, requirment);
+
+                        // ob.Add(go);
+                        counterGood++;
                     }
+
+
+
 
 
 
@@ -1940,7 +1944,7 @@ indexColumnLLUBottom];
 
                     GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
                     if (go == null) break;
-                    go.Houses[0].Sections.Reverse();
+                    //go.Houses[0].Sections.Reverse();
                     //for (int i = 0; i < go.Houses[0].Sections.Count; i++)
                     //{
                     //    go.Houses[0].Sections[i].NumberInSpot = go.Houses[0].Sections.Count - i;
@@ -2063,6 +2067,11 @@ indexColumnLLUBottom];
         private void dg_SelectionChanged(object sender, EventArgs e)
         {
 
+
+        }
+
+        private void groupBox2_Enter(object sender, EventArgs e)
+        {
 
         }
     }

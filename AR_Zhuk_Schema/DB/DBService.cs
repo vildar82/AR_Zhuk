@@ -99,6 +99,13 @@ namespace AR_Zhuk_Schema.DB
                     {
                         break;
                     }
+                    if (fl.IdSection.Equals(1669685))
+                    {
+                        if (fl.IdSection.Equals(1669685))
+                        {
+
+                        }
+                    }
                 }
                 dictSections.Add(key, sectionsBySyze);
             }

@@ -54,6 +54,7 @@ namespace AR_AreaZhuk
             this.label3 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dg2 = new AR_AreaZhuk.DataGridViewEx();
             this.btnStartScan = new System.Windows.Forms.Button();
             this.lblCountObjects = new System.Windows.Forms.Label();
             this.chkDominant = new System.Windows.Forms.CheckBox();
@@ -88,9 +89,9 @@ namespace AR_AreaZhuk
             this.btnRemove = new System.Windows.Forms.Button();
             this.btnMenuGroup1 = new System.Windows.Forms.Button();
             this.GetFile = new System.Windows.Forms.Button();
-            this.dg2 = new AR_AreaZhuk.DataGridViewEx();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -109,7 +110,6 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.SuspendLayout();
             this.panel5.SuspendLayout();
             this.pnlMenuGroup1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
             this.SuspendLayout();
             // 
             // dg
@@ -215,6 +215,27 @@ namespace AR_AreaZhuk
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Подробная информация";
+            this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+            // 
+            // dg2
+            // 
+            this.dg2.AllowUserToAddRows = false;
+            this.dg2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dg2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dg2.FilterAndSortEnabled = true;
+            this.dg2.Location = new System.Drawing.Point(6, 19);
+            this.dg2.MultiSelect = false;
+            this.dg2.Name = "dg2";
+            this.dg2.ReadOnly = true;
+            this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dg2.Size = new System.Drawing.Size(598, 756);
+            this.dg2.TabIndex = 1;
+            this.dg2.SortStringChanged += new System.EventHandler(this.dg2_SortStringChanged);
+            this.dg2.FilterStringChanged += new System.EventHandler(this.dg2_FilterStringChanged);
+            this.dg2.SelectionChanged += new System.EventHandler(this.dg2_SelectionChanged);
+            this.dg2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dg2_MouseClick);
             // 
             // btnStartScan
             // 
@@ -645,26 +666,6 @@ namespace AR_AreaZhuk
             this.GetFile.UseVisualStyleBackColor = true;
             this.GetFile.Click += new System.EventHandler(this.GetFile_Click);
             // 
-            // dg2
-            // 
-            this.dg2.AllowUserToAddRows = false;
-            this.dg2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dg2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dg2.FilterAndSortEnabled = true;
-            this.dg2.Location = new System.Drawing.Point(6, 19);
-            this.dg2.MultiSelect = false;
-            this.dg2.Name = "dg2";
-            this.dg2.ReadOnly = true;
-            this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dg2.Size = new System.Drawing.Size(598, 756);
-            this.dg2.TabIndex = 1;
-            this.dg2.SortStringChanged += new System.EventHandler(this.dg2_SortStringChanged);
-            this.dg2.FilterStringChanged += new System.EventHandler(this.dg2_FilterStringChanged);
-            this.dg2.SelectionChanged += new System.EventHandler(this.dg2_SelectionChanged);
-            this.dg2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dg2_MouseClick);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -685,6 +686,7 @@ namespace AR_AreaZhuk
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dg)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dg2)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -705,7 +707,6 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.pnlMenuGroup1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dg2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
