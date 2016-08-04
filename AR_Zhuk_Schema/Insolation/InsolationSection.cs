@@ -186,10 +186,13 @@ namespace AR_Zhuk_Schema.Insolation
             resFlats.NumberInSpot = section.NumberInSpot;
             resFlats.IsCorner = section.IsCorner;
             resFlats.IsVertical = section.IsVertical;
-            resFlats.CountStep = flat.CountStep;
+            resFlats.CountStep = section.CountStep;
             resFlats.IsInvert = isInvert;
-            resFlats.Floors = flat.Floors;
+            resFlats.Floors = section.Floors;
             resFlats.Code = flat.Code;
+            flat.IsCorner = section.IsCorner;
+            flat.IsVertical = section.IsVertical;
+            flat.NumberInSpot = section.NumberInSpot;        
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
             // Временно - подмена индекса освещенностим для боковых квартир!!!???
