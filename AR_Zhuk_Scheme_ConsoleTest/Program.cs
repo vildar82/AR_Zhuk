@@ -18,6 +18,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             TestProjectScheme test = new TestProjectScheme();
             test.TestTotalHouses();
 
+            Console.WriteLine("Press any key...");
             Console.ReadKey();
         }
     }
