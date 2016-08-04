@@ -11,7 +11,7 @@ namespace AR_AreaZhuk
 {
     public class Insolation
     {
-       //dsafdafdsgfds
+       //dsafdafdsgfds667878
         InsolationFrameWork insFramework = new InsolationFrameWork();
         public string Name { get; set; }
         public bool IsRightNizSection { get; set; }
