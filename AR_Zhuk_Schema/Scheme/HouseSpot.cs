@@ -151,6 +151,9 @@ namespace AR_Zhuk_Schema.Scheme
                     section.InsBot = segment.ModulesRight.Skip(skipModules).ToList();
                     section.InsBot.AddRange(nextSegment.ModulesRight.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)
                 }
+
+                section.IsLeftBottomCorner = section.SectionType == SectionType.CornerLeft;
+                section.IsRightBottomCorner = section.SectionType == SectionType.CornerRight;                
             }
             else
             {

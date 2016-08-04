@@ -102,13 +102,7 @@ namespace AR_Zhuk_Schema.DB
                     }
                     if (!isContains)
                         continue;
-                    if (fl.Flats.Count <= 4)
-                    {
-                        if (fl.Flats.Count >= 4)
-                        {
-
-                        }
-                    }
+                    
                     sectionsBySyze.Add(fl);                    
 
                     if (maxSectionBySize != 0 && sectionsBySyze.Count == maxSectionBySize)
