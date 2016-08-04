@@ -33,8 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BeetlyVisualisation">
-      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\BeetlyVisualisation.dll</HintPath>
+    <Reference Include="BeetlyVisualisation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\vilBeetlyTest\BeetlyVisualisation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
