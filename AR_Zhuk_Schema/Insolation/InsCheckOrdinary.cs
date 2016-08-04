@@ -156,7 +156,7 @@ namespace AR_Zhuk_Schema.Insolation
                         }
                     }
                 }
-#if !TEST
+#if TEST
                 flat.IsInsPassed = flatPassed;
                 if (specialFail)
                 {
