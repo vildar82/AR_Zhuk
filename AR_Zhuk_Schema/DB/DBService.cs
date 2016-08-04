@@ -11,8 +11,8 @@ namespace AR_Zhuk_Schema.DB
 {
     public class DBService : IDBService
     {
-        private Dictionary<string, List<FlatInfo>> dictSections = new Dictionary<string, List<FlatInfo>>();
-        private ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>> dictDbFlats = 
+        private static Dictionary<string, List<FlatInfo>> dictSections = new Dictionary<string, List<FlatInfo>>();
+        private static ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>> dictDbFlats = 
                     new ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>>();
         
 
