@@ -37,7 +37,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
                 Console.WriteLine($"Пятно дома = {hs[0].SectionsBySize[0].SpotOwner}; Кол домов = {hs.Count}");
                 foreach (var house in hs)
                 {
-                    testCreateHouse.TestCreateImage(house);
+                    //testCreateHouse.TestCreateImage(house);
                 }
             }
         }

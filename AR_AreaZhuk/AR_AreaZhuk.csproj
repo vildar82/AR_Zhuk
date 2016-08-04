@@ -41,16 +41,16 @@
   <ItemGroup>
     <Reference Include="AdvancedDataGridView, Version=1.0.17202.9, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\ostaninam\AppData\Roaming\Autodesk\Revit\Addins\2015\PIK\Dlls\AdvancedDataGridView.dll</HintPath>
+      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\AdvancedDataGridView.dll</HintPath>
     </Reference>
     <Reference Include="BeetlyVisualisation">
-      <HintPath>C:\Users\ostaninam\AppData\Roaming\Autodesk\Revit\Addins\2015\PIK\Dlls\BeetlyVisualisation.dll</HintPath>
+      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\BeetlyVisualisation.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>Z:\Revit_server\10. Dll's\Dll\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="ProgressControls">
-      <HintPath>C:\Users\ostaninam\AppData\Roaming\Autodesk\Revit\Addins\2015\PIK\Dlls\ProgressControls.dll</HintPath>
+      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\ProgressControls.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -93,7 +93,6 @@
     <Compile Include="Model\Section.cs" />
     <Compile Include="PIK1.cs">
       <DependentUpon>PIK1.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="PIK1.Designer.cs">
       <AutoGen>True</AutoGen>

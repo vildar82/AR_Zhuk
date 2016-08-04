@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BeetlyVisualisation">
+      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\BeetlyVisualisation.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
