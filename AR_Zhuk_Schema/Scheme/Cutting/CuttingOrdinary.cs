@@ -38,7 +38,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         public List<HouseInfo> Cut ()
         {
-            Debug.WriteLine("Нарезка дома - " + houseSpot.SpotName);
+            Debug.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
 
             failedSections = new List<string>();
             passedSections = new Dictionary<string, Section>();
@@ -222,6 +222,11 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     failedSections.Add(key);
                 failedHouseSteps.Add(houseStepsPassed);
             }
+
+            if (resSections != null && resSections.Count!= 0)
+            {
+                Debug.WriteLine("Passed!     Passed!       Passed!     Passed! - " + houseSize);
+            }   
 
             // Определение торцов секций
             DefineSectionsEnds(resSections);
