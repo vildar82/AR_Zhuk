@@ -31,7 +31,7 @@ namespace AR_Zhuk_Schema
         /// <summary>
         /// Чтенее файла схемы инсоляции и определение пятен домов
         /// </summary>
-        /// <param name="insolationFile">Excel файл схемы объекта застройки и инсоляции</param>
+        /// <param name="schemeFile">Excel файл схемы объекта застройки и инсоляции</param>
         /// <exception cref="Exception">Недопустимое имя пятна дома.</exception>
         public void ReadScheme (string schemeFile)
         {

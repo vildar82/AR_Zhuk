@@ -28,7 +28,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             // Чтение файла схемы объекта
             projectSpot.ReadScheme(insolationFile);
             // Получение всех домов
-            var totalHouses = projectSpot.GetTotalHouses(1000);
+            var totalHouses = projectSpot.GetTotalHouses(10000);
 
             Console.WriteLine($"Пятен = {totalHouses.Count}; Домов = {totalHouses.Sum(s => s.Count)} - {string.Join(",", totalHouses.Select(t=>t.Count))}");
 

@@ -70,6 +70,8 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     {
                         resHouses.Add(hi);
                     }
+#else
+                    resHouses.Add(hi);
 #endif
                 }
             }
