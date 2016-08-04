@@ -189,7 +189,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     // Запрос секций из базы
                     SelectSectionParam selSectParam = new SelectSectionParam(section.CountStep, type, levels);
                     section.Sections = dbService.GetSections(section, selSectParam);
-                    if (section.Sections.Count == 0)
+                    if (section.Sections == null || section.Sections.Count == 0)
                     {
                         Debug.WriteLine("fail no in db - key=" + key + "; type=" + type + "; levels=" + levels);
 

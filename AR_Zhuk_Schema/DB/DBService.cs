@@ -39,6 +39,11 @@ namespace AR_Zhuk_Schema.DB
                     dictDbFlats.TryAdd(selecSectParam, flatsDb);
                 }
 
+                if (flatsDb.Count == 0)
+                {
+                    return null;
+                }
+
                 sectionsBySyze = new List<FlatInfo>();                
                 flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();                
                 FlatInfo fl = new FlatInfo();
