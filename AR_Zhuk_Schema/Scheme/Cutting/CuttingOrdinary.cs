@@ -48,7 +48,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             failedHouseSteps = new List<string>();
 
             List<HouseInfo> resHouses = new List<HouseInfo>();
-            
+
             // Все варианты домов по шагам секций
             List<int> stepsSet;
             var housesSteps = GetAllSteps(out stepsSet);
@@ -71,7 +71,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
                     resHouses.Add(hi);
 
-                    if (maxHousesBySpot!=0 && resHouses.Count == maxHousesBySpot)
+                    if (maxHousesBySpot != 0 && resHouses.Count == maxHousesBySpot)
                     {
                         break;
                     }
@@ -83,7 +83,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);
 
             // Отбор минимальной размерности дома
-            var minSizeHouse = resHouses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).First().ToList();            
+            var minSizeHouse = resHouses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).First().ToList();
 
             return minSizeHouse;
         }
@@ -120,7 +120,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         }
 
         private static string GetSectionDataKey (int sectCountStep, int numberSect, int startStepSect)
-        {            
+        {
             string key = "n" + numberSect + "z" + sectCountStep + "s" + startStepSect;
             return key;
         }
@@ -128,15 +128,18 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         private List<Section> GetHouseVariant (int[] houseSteps)
         {
             string houseSize = string.Join(".", houseSteps);
+#if TEST
             Debug.WriteLine("Размерность дома: " + houseSize);
-
+#endif
             if (failedHouseSteps.Any(f => houseSize.StartsWith(f)))
             {
+#if TEST
                 Debug.WriteLine("Is Failed size start with");
+#endif
                 return null;
             }
 
-            List<Section> resSections = new List<Section>();            
+            List<Section> resSections = new List<Section>();
             int curStepInHouse = 1;
             int sectionsInHouse = houseSteps.Length;
 
@@ -149,7 +152,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             for (int numberSect = 1; numberSect <= sectionsInHouse; numberSect++)
             {
                 fail = false;
-                Section section = null;                
+                Section section = null;
 
                 // Размер секции - шагов
                 int sectSize = houseSteps[numberSect - 1];
@@ -161,8 +164,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 key = GetSectionDataKey(sectCountStep, numberSect, curStepInHouse);
                 if (failedSections.Contains(key))
                 {
+#if TEST
                     Debug.WriteLine("failedSection - " + key);
-
+#endif
                     fail = true;
                     addToFailed = false;
                     break;
@@ -170,17 +174,21 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
                 if (!passedSections.TryGetValue(key, out section))
                 {
+#if TEST
                     Debug.WriteLine("new sect key = " + key);
+#endif
 
                     // Отрезка секции из дома
                     section = houseSpot.GetSection(curStepInHouse, sectCountStep);
                     if (section == null)
                     {
+#if TEST
                         Debug.WriteLine("fail нарезки - key=" + key);
+#endif
 
                         fail = true;
                         break;
-                    }                    
+                    }
 
                     // Этажность секции, тип
                     var type = GetSectionType(section.SectionType);
@@ -198,7 +206,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     section.Sections = dbService.GetSections(section, selSectParam);
                     if (section.Sections == null || section.Sections.Count == 0)
                     {
+#if TEST
                         Debug.WriteLine("fail no in db - key=" + key + "; type=" + type + "; levels=" + levels);
+#endif
 
                         fail = true;
                         break;
@@ -208,40 +218,44 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     List<FlatInfo> flatsCheckedIns = insService.GetInsolationSections(section);
                     if (flatsCheckedIns.Count == 0)
                     {
+#if TEST
                         Debug.WriteLine("fail ins - key=" + key);
+#endif
 
                         fail = true;
                         break;
                     }
                     section.Sections = flatsCheckedIns;
-                    passedSections.Add(key, section);                    
+                    passedSections.Add(key, section);
                 }
                 curStepInHouse += sectCountStep;
-                resSections.Add(section);                
+                resSections.Add(section);
             }
 
             if (fail)
             {
                 resSections = null;
-                if (addToFailed)                
+                if (addToFailed)
                     failedSections.Add(key);
                 failedHouseSteps.Add(houseStepsPassed);
             }
 
+#if TEST
             if (resSections != null && resSections.Count!= 0)
             {
                 Debug.WriteLine("Passed!     Passed!       Passed!     Passed! - " + houseSize);
             }   
+#endif
 
             // Определение торцов секций
             DefineSectionsEnds(resSections);
 
             return resSections;
-        }       
+        }
 
         private int GetSectionFloors (int numberSect, int sectionsInHouse, bool isCorner)
         {
-            int floors = houseSpot.HouseOptions.CountFloorsMain;            
+            int floors = houseSpot.HouseOptions.CountFloorsMain;
             if (!isCorner)
             {
                 bool isDominant = false;
@@ -253,7 +267,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 {
                     isDominant = houseSpot.HouseOptions.DominantPositions.Last();
                 }
-                else if (numberSect == sectionsInHouse -1)
+                else if (numberSect == sectionsInHouse - 1)
                 {
                     isDominant = houseSpot.HouseOptions.DominantPositions[3];
                 }
@@ -265,17 +279,17 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return floors;
         }
 
-        public static string GetSectionLevels(int countFloors)
+        public static string GetSectionLevels (int countFloors)
         {
             string floors = "10-18";
             if (countFloors > 18 & countFloors <= 25)
-                floors = "19-25";            
+                floors = "19-25";
             if (countFloors < 9)
                 floors = "9";
             return floors;
-        }        
+        }
 
-        public static string GetSectionType(SectionType sectionType)
+        public static string GetSectionType (SectionType sectionType)
         {
             switch (sectionType)
             {
@@ -288,14 +302,14 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 case SectionType.Tower:
                     return SectionTowerName;
             }
-            return null;            
+            return null;
         }
 
         private List<int[]> GetAllSteps (out List<int> stepsSet)
-        {            
+        {
             int houseSteps = houseSpot.CountSteps;
             int sectMinStep = SectionSteps[0];
-            int maxSectionsInHouse = houseSteps / sectMinStep;            
+            int maxSectionsInHouse = houseSteps / sectMinStep;
             int[] selectedSectionsStep = new int[maxSectionsInHouse];
 
             List<int[]> houses = new List<int[]>();
@@ -373,23 +387,23 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             {
                 var section = sections[i];
                 Section sectionPrev = null;
-                if (i!=0)
-                    sectionPrev = sections.ElementAt(i-1);
+                if (i != 0)
+                    sectionPrev = sections.ElementAt(i - 1);
                 Section sectionNext = null;
-                if (i!= sections.Count-1)
+                if (i != sections.Count - 1)
                     sectionNext = sections.ElementAt(i + 1);
-                                
+
                 section.JointStart = GetJoint(section, sectionPrev);
                 section.JointEnd = GetJoint(section, sectionNext);
             }
         }
 
-        private Joint GetJoint(Section section, Section sectionJoint)
+        private Joint GetJoint (Section section, Section sectionJoint)
         {
             if (sectionJoint == null)
                 return Joint.End;
-            
-            if (section.Floors> sectionJoint.Floors)
+
+            if (section.Floors > sectionJoint.Floors)
             {
                 return Joint.End;
             }
@@ -401,6 +415,6 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             {
                 return Joint.Seam;
             }
-        }        
+        }
     }
 }

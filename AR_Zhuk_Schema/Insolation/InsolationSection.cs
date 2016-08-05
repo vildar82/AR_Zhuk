@@ -59,24 +59,28 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     // Добавление прошедших инсоляцию секций
                     if (insCheck.CheckSection(flats, isRightOrTopLLu: true))
-                    {                        
+                    {
                         resFlats.Add(flats);
                     }
-                }
-
-                if (!section.IsCorner)
-                {
-                    // Проверка однотипной секции
-                    flats = NewFlats(section, sectFlats, isInvert: true);
-                    if (!IsIdenticalSection(flats, resFlats))
+                    else
                     {
-                        // Проверка инсоляции инвертированной секции                        
-                        if (insCheck.CheckSection(flats, isRightOrTopLLu: false))
-                        {                            
-                            resFlats.Add(flats);
+                        // не прошла инсоляция стандартной секции
+                        // Проверка инвертированной секции для рядовых
+                        if (!section.IsCorner)
+                        {
+                            // Проверка однотипной секции
+                            flats = NewFlats(section, sectFlats, isInvert: true);
+                            if (!IsIdenticalSection(flats, resFlats))
+                            {
+                                // Проверка инсоляции инвертированной секции                        
+                                if (insCheck.CheckSection(flats, isRightOrTopLLu: false))
+                                {
+                                    resFlats.Add(flats);
+                                }
+                            }
                         }
                     }
-                }               
+                }
 #endif
             }
             return resFlats;
