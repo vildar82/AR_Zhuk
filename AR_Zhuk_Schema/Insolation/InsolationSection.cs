@@ -18,9 +18,7 @@ namespace AR_Zhuk_Schema.Insolation
                 new RoomInsolation ("Четырехкомнатная", 4, new List<string>() { "2C", "C+2B" })
             };
 
-        private readonly SpotInfo spOrig;
-
-        private int countIdentiCalSections;
+        private readonly SpotInfo spOrig;        
 
         public InsolationSection(SpotInfo sp)
         {
@@ -88,13 +86,6 @@ namespace AR_Zhuk_Schema.Insolation
         {
             var res = resulsSections.Any(s => (s.IsInvert == curSection.IsInvert) &&
                                 IsEqualSections(s.Flats, curSection.Flats));
-#if !TEST
-            if (res)
-            {
-                countIdentiCalSections++;
-                Debug.WriteLine("countIdentiCalSections=" + countIdentiCalSections);
-            }
-#endif
             return res;
         }
 
