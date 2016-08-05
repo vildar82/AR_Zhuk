@@ -29,7 +29,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         private SpotInfo sp;
         int maxHousesBySpot;
 
-        public CuttingOrdinary (HouseSpot houseSpot, IDBService dbService, IInsolation insService,
+        public CuttingOrdinary(HouseSpot houseSpot, IDBService dbService, IInsolation insService,
                         SpotInfo sp, int maxHousesBySpot)
         {
             this.houseSpot = houseSpot;
@@ -39,7 +39,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             this.maxHousesBySpot = maxHousesBySpot;
         }
 
-        public List<HouseInfo> Cut ()
+        public List<HouseInfo> Cut()
         {
             Debug.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
 
@@ -82,13 +82,14 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             Debug.WriteLine("passedSections=" + passedSections.Count);
             Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);
 
-            // Отбор минимальной размерности дома            
-            var minSizeHouse = resHouses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).FirstOrDefault()?.ToList();            
+            // Отбор минимальной размерности дома   
+           if(resHouses.Count!=0)
+               resHouses = resHouses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).FirstOrDefault().ToList();
 
-            return minSizeHouse;
+           return resHouses;
         }
 
-        private void InitLoadDBSections (List<int> stepsSet)
+        private void InitLoadDBSections(List<int> stepsSet)
         {
             // Загрузка типов секций для этого дома
             // размерности секций
@@ -119,13 +120,13 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             dbService.PrepareLoadSections(selectSects);
         }
 
-        private static string GetSectionDataKey (int sectCountStep, int numberSect, int startStepSect)
+        private static string GetSectionDataKey(int sectCountStep, int numberSect, int startStepSect)
         {
             string key = "n" + numberSect + "z" + sectCountStep + "s" + startStepSect;
             return key;
         }
 
-        private List<Section> GetHouseVariant (int[] houseSteps)
+        private List<Section> GetHouseVariant(int[] houseSteps)
         {
             string houseSize = string.Join(".", houseSteps);
 #if TEST
@@ -253,7 +254,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return resSections;
         }
 
-        private int GetSectionFloors (int numberSect, int sectionsInHouse, bool isCorner)
+        private int GetSectionFloors(int numberSect, int sectionsInHouse, bool isCorner)
         {
             int floors = houseSpot.HouseOptions.CountFloorsMain;
             if (!isCorner)
@@ -279,7 +280,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return floors;
         }
 
-        public static string GetSectionLevels (int countFloors)
+        public static string GetSectionLevels(int countFloors)
         {
             string floors = "10-18";
             if (countFloors > 18 & countFloors <= 25)
@@ -289,7 +290,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return floors;
         }
 
-        public static string GetSectionType (SectionType sectionType)
+        public static string GetSectionType(SectionType sectionType)
         {
             switch (sectionType)
             {
@@ -305,7 +306,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return null;
         }
 
-        private List<int[]> GetAllSteps (out List<int> stepsSet)
+        private List<int[]> GetAllSteps(out List<int> stepsSet)
         {
             int houseSteps = houseSpot.CountSteps;
             int sectMinStep = SectionSteps[0];
@@ -358,7 +359,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return houses;
         }
 
-        public bool SetIndexesSize (ref int[] indexes, int index, List<int> masSizes)
+        public bool SetIndexesSize(ref int[] indexes, int index, List<int> masSizes)
         {
             bool res = true;
             if (index == 0)
@@ -379,7 +380,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         /// Определение торцов в секциях
         /// </summary>
         /// <param name="sections"></param>
-        private void DefineSectionsEnds (List<Section> sections)
+        private void DefineSectionsEnds(List<Section> sections)
         {
             if (sections == null) return;
 
@@ -398,7 +399,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             }
         }
 
-        private Joint GetJoint (Section section, Section sectionJoint)
+        private Joint GetJoint(Section section, Section sectionJoint)
         {
             if (sectionJoint == null)
                 return Joint.End;
