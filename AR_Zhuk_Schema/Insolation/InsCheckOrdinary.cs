@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AR_Zhuk_DataModel;
+using AR_Zhuk_Schema.Insolation;
 
 namespace AR_Zhuk_Schema.Insolation
 {
@@ -20,17 +21,15 @@ namespace AR_Zhuk_Schema.Insolation
         readonly string insSideTopStandart;
         readonly string insSideBotStandart;
 
-        List<int> flatLightIndexCurSide;
-        List<int> flatLightIndexOtherSide;
-        List<int> flatLightIndexSideCurSide;
-        List<int> flatLightIndexSideOtherSide;
+        Lighting lightingCurSide;
+        Lighting lightingOtherSide;
+        
         string[] insCurSide;
         string[] insOtherSide;
         string insSideTop;
         string insSideBot;
         bool isFirstFlatInSide;
-        bool isLastFlatInSide;
-        Side flatEndSide;
+        bool isLastFlatInSide;        
 
         public InsCheckOrdinary (IInsolation insService, Section section) 
             : base(insService, section)
@@ -102,8 +101,8 @@ namespace AR_Zhuk_Schema.Insolation
                 flat = curSideFlats[i];
                 curFlatIndex = i;
                 bool flatPassed = false;
-                string lightingCurSide = null;
-                string lightingOtherSide = null;
+                string lightingCurSideString = null;
+                string lightingOtherSideString = null;
                 isFirstFlatInSide = IsEndFirstFlatInSide();
                 isLastFlatInSide = IsEndLastFlatInSide();
 
@@ -116,25 +115,22 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     if (isTop)
                     {
-                        lightingCurSide = flat.LightingTop;
-                        lightingOtherSide = flat.LightingNiz;
+                        lightingCurSideString = flat.LightingTop;
+                        lightingOtherSideString = flat.LightingNiz;
                     }
                     else
                     {
-                        lightingCurSide = flat.LightingNiz;
+                        lightingCurSideString = flat.LightingNiz;
                     }
 
-                    flatLightIndexCurSide = LightingStringParser.GetLightings(lightingCurSide,
-                                out flatLightIndexSideCurSide, isTop, out flatEndSide);
-                    flatLightIndexOtherSide = null;
-                    flatLightIndexSideOtherSide = null;
+                    lightingCurSide = LightingStringParser.GetLightings(lightingCurSideString, isTop);
                     // Для верхних крайних верхних квартир нужно проверить низ
+                    lightingOtherSide = null;
                     if (isTop)
                     {
                         if (lightingOtherSide != null && (isFirstFlatInSide || isLastFlatInSide))
                         {
-                            flatLightIndexOtherSide = LightingStringParser.GetLightings(lightingOtherSide,
-                                out flatLightIndexSideOtherSide, false, out flatEndSide);
+                            lightingOtherSide = LightingStringParser.GetLightings(lightingOtherSideString, false);
                         }
                     }
 
@@ -178,11 +174,12 @@ namespace AR_Zhuk_Schema.Insolation
 
             // Проверка окон с этой строны
             isCurSide = true;
-            CheckLighting(ref requires, flatLightIndexCurSide, insCurSide, step);           
+            CheckLighting(ref requires, lightingCurSide.Indexes, insCurSide, step);           
 
             // Проверка окон с другой стороны
             isCurSide = false;
-            CheckLighting(ref requires, flatLightIndexOtherSide, insOtherSide, step);
+            if (lightingOtherSide!= null)
+                CheckLighting(ref requires, lightingOtherSide.Indexes, insOtherSide, step);
 
             // проверка боковин            
             CheckLightingSide(ref requires);
@@ -199,7 +196,7 @@ namespace AR_Zhuk_Schema.Insolation
         private void CheckLightingSide (ref List<InsRequired> requires)
         {
             // Если это не боковая квартра по типу (не заданы боковые индексы инсоляции), то у такой квартиры не нужно проверять боковую инсоляцию
-            bool flatHasSide = flatEndSide != Side.None; //flatLightIndexSideCurSide.Count != 0 || flatLightIndexSideOtherSide.Count != 0;
+            bool flatHasSide = lightingCurSide.Side != Side.None; //flatLightIndexSideCurSide.Count != 0 || flatLightIndexSideOtherSide.Count != 0;
             if (!flatHasSide)
             {
                 return;
@@ -207,14 +204,15 @@ namespace AR_Zhuk_Schema.Insolation
 
             // Квартира боковая по типу (заданы боковые индексы инсоляции)
 
-            // Если это не крайняя квартира на стороне, то такую секцию нельзя пропускать дальше
-            var endFlat = flatEndSide; //GetEndFlatSide();
-            if (endFlat == Side.None)
+            // Если это не крайняя квартира на стороне, то такую секцию нельзя пропускать дальше            
+            if (!isFirstFlatInSide && !isLastFlatInSide)
             {
                 specialFail = true;
                 return;
             }
             bool isStoppor = IsStoppor();
+
+            var endFlat = lightingCurSide.Side;
             var endSideSection = GetSectionEndSide();
             if (endFlat != endSideSection && isStoppor)
             {
@@ -240,16 +238,17 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     // Праввая верхняя ячейка инсоляции
                     insSideValue = insSideTop;
-                    flatLightingSide = flatLightIndexSideCurSide[0];
+                    flatLightingSide = lightingCurSide.SideIndexes[0];
                     // для верхних квартир проверить нижнюю ячейку инсоляции
                     insSideOtherValue = insSideBot;
-                    flatLightingSideOther = flatLightIndexSideOtherSide[0];
+                    if (lightingOtherSide!= null)
+                        flatLightingSideOther = lightingOtherSide.SideIndexes[0];
                 }
                 else
                 {
                     // Праввая нижняя ячейка инсоляции
                     insSideValue = insSideBot;
-                    flatLightingSide = flatLightIndexSideCurSide[0];
+                    flatLightingSide = lightingCurSide.SideIndexes[0];
                 }
             }
             else if (endFlat == Side.Left)
@@ -259,16 +258,17 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     // Левая верхняя ячейка инсоляции
                     insSideValue = insSideTop;
-                    flatLightingSide = flatLightIndexSideCurSide[0];
+                    flatLightingSide = lightingCurSide.SideIndexes[0];
                     // для верхних квартир проверить нижнюю ячейку инсоляции
                     insSideOtherValue = insSideBot;
-                    flatLightingSideOther = flatLightIndexSideOtherSide[0];
+                    if (lightingOtherSide != null)
+                        flatLightingSideOther = lightingOtherSide.SideIndexes[0];
                 }
                 else
                 {
                     // Левая нижняя ячейка инсоляции
                     insSideValue = insSideBot;
-                    flatLightingSide = flatLightIndexSideCurSide[0];
+                    flatLightingSide = lightingCurSide.SideIndexes[0];
                 }
             }
 
@@ -306,6 +306,8 @@ namespace AR_Zhuk_Schema.Insolation
             // Если боковое окно единственное в помещени, то такую квартиру нельзя ставить в глухой торец (без окна с торца на улицу)
             // Если сторона квартиры не соответствует стороне торца, такую секцию нельзя пропускать дальше 
             // Только если индекс боковины не половинчатый - если не половинчатый, то боковое окно - будет заткнуто торцом и в комнате не останется окон
+            var flatLightIndexSideCurSide = lightingCurSide.SideIndexes;
+            var flatLightIndexSideOtherSide = lightingOtherSide == null ? null : lightingOtherSide.SideIndexes;
             var res = (flatLightIndexSideCurSide!=null && flatLightIndexSideCurSide.Count != 0 && flatLightIndexSideCurSide[0] == 1);
             if (res) return res;
             res = (flatLightIndexSideOtherSide!=null && flatLightIndexSideOtherSide.Count != 0 && flatLightIndexSideOtherSide[0] == 1);

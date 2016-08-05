@@ -8,10 +8,9 @@ namespace AR_Zhuk_DataModel
 {
     public  class Section
     {
-
-
         // Добавил        
-        //
+        //        
+
         /// <summary>
         /// Это первая секция в доме
         /// </summary>

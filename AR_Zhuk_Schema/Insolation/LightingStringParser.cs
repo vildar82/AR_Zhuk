@@ -13,21 +13,20 @@ namespace AR_Zhuk_Schema.Insolation
         static bool prevIsSide; // предыдущий индекс - это боковушка
         static Dictionary<string, Lighting> dictLightings = new Dictionary<string, Lighting>();
 
-        public static List<int> GetLightings (string lightingString, out List<int> sideLightings, bool isTopSide, out Side endSide)
-        {
-            Lighting light;
-            List<int> lightings;
+        public static Lighting GetLightings (string lightingString, bool isTopSide)
+        {            
+            if (string.IsNullOrEmpty(lightingString))
+            {
+                return null;
+            }
 
+            Lighting light;
             if (!dictLightings.TryGetValue(lightingString, out light))
             {
-                endSide = Side.None;
-                lightings = new List<int>();
-                sideLightings = new List<int>();
-
-                if (string.IsNullOrEmpty(lightingString))
-                {
-                    return null;
-                }
+                light = new Lighting();                
+                light.Indexes = new List<int>();
+                light.SideIndexes = new List<int>();
+                light.IsTopSide = isTopSide;              
 
                 isRange = false;
                 isLeaf = false;
@@ -39,14 +38,14 @@ namespace AR_Zhuk_Schema.Insolation
                     if (char.IsDigit(item))
                     {
                         prevIsSide = false;
-                        AddLightingValue((int)char.GetNumericValue(item), lightings);
+                        AddLightingValue((int)char.GetNumericValue(item), light.Indexes);
                         continue;
                     }
 
                     if (item == 'B')
                     {
                         // Боковая освещенность
-                        AddSideLightingValue(lightingString, sideLightings, ref i);
+                        AddSideLightingValue(lightingString, light.SideIndexes, ref i);
                         prevIsSide = true;
                         continue;
                     }
@@ -66,60 +65,37 @@ namespace AR_Zhuk_Schema.Insolation
                         // изменение знака предыдущего индекса
                         if (!prevIsSide)
                         {
-                            var lastLight = lightings.Last();
-                            lightings[lightings.Count - 1] = lastLight * -1;
+                            var lastLight = light.Indexes.Last();
+                            light.Indexes[light.Indexes.Count - 1] = lastLight * -1;
                         }
                         else
                         {
-                            var lastLight = sideLightings.Last();
-                            sideLightings[sideLightings.Count - 1] = lastLight * -1;
+                            var lastLight = light.SideIndexes.Last();
+                            light.SideIndexes[light.SideIndexes.Count - 1] = lastLight * -1;
                         }
                         continue;
                     }
                 }
 
                 // Определение стороны по боковой инсоляции
-                if (sideLightings.Count > 0)
+                if (light.SideIndexes.Count > 0)
                 {
                     // освещенность заканчивается боковой инсоляцией
                     if (prevIsSide)
                     {
-                        if (isTopSide)
-                        {
-                            // Верх - левая сторона
-                            endSide = Side.Left;
-                        }
-                        else
-                        {
-                            // Низ - правая строна
-                            endSide = Side.Right;
-                        }
+                        // Верх - левая сторона: Низ - правая строна
+                        light.Side = isTopSide ? Side.Left : Side.Right;                        
                     }
                     else
                     {
                         // Освещенность заканчивается обычными рядовым шагом, значит начиналась с боковой
-                        if (isTopSide)
-                        {
-                            // Верх - правая сторона
-                            endSide = Side.Right;
-                        }
-                        else
-                        {
-                            // Низ - левая строна
-                            endSide = Side.Left;
-                        }
+                        // Верх - правая сторона : Низ - левая строна
+                        light.Side = isTopSide ? Side.Right : Side.Left;                        
                     }
-                }
-                light = new Lighting(lightings, lightings, endSide, isTopSide);
+                }                
                 dictLightings.Add(lightingString, light);
-            }
-            else
-            {
-                lightings = light.Indexes;
-                sideLightings = light.SideIndexes;
-                endSide = light.Side;
-            }
-            return lightings;
+            }            
+            return light;
         }        
 
         private static void AddLightingValue (int value, List<int> lightings)
@@ -170,21 +146,13 @@ namespace AR_Zhuk_Schema.Insolation
                 }
             }
             return resSideIndex;
-        }
-
-        private class Lighting
-        {
-            public readonly List<int> Indexes;
-            public readonly List<int> SideIndexes;
-            public readonly Side Side;
-            public readonly bool IsTopSide;
-
-            public Lighting(List<int> indexes, List<int> sideIndexes, Side side, bool isTopSide)
-            {
-                Indexes = indexes;
-                SideIndexes = sideIndexes;
-                Side = side;
-            }
-        }
+        }        
+    }
+    public class Lighting
+    {
+        public List<int> Indexes { get; set; }
+        public List<int> SideIndexes { get; set; }
+        public Side Side { get; set; }
+        public bool IsTopSide { get; set; }
     }
 }

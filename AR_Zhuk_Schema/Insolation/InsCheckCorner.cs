@@ -59,11 +59,8 @@ namespace AR_Zhuk_Schema.Insolation
                 }
 
                 string lightingFlat = isTop ? flat.LightingTop : flat.LightingNiz;
-
-                List<int> sideLighting;
-                Side flatEndSide;
-                var lightingFlatIndexes = LightingStringParser.GetLightings(lightingFlat, 
-                                out sideLighting, isTop, out flatEndSide);
+                                
+                var lightingFlatIndexes = LightingStringParser.GetLightings(lightingFlat,isTop);
 
                 var ruleInsFlat = insService.FindRule(flat);
                 if (ruleInsFlat == null)
@@ -77,24 +74,22 @@ namespace AR_Zhuk_Schema.Insolation
                     // подходящие окна в квартиирах будут вычитаться из требований
                     var requires = rule.Requirements.ToList();
 
-                    CheckLighting(ref requires, lightingFlatIndexes, ins, step);
+                    CheckLighting(ref requires, lightingFlatIndexes.Indexes, ins, step);
 
                     // Для верхних квартир проверить низ
                     if (isTop)
                     {
                         if (IsEndFirstFlatInSide())
                         {
-                            // проверка низа для первой верхней квартиры
-                            Side end;
-                            var flatLightIndexBot = LightingStringParser.GetLightings(flat.LightingNiz, out sideLighting, true, out end);
-                            CheckLighting(ref requires, flatLightIndexBot, insBot.Reverse().ToArray(), 0);
+                            // проверка низа для первой верхней квартиры                            
+                            var flatLightIndexBot = LightingStringParser.GetLightings(flat.LightingNiz, true);
+                            CheckLighting(ref requires, flatLightIndexBot.Indexes, insBot.Reverse().ToArray(), 0);
                         }
                         // Для последней - проверка низа
                         else if (IsEndLastFlatInSide())
-                        {
-                            Side end;
-                            var flatLightIndexBot = LightingStringParser.GetLightings(flat.LightingNiz, out sideLighting, false, out end);
-                            CheckLighting(ref requires, flatLightIndexBot, insBot, 0);
+                        {                            
+                            var flatLightIndexBot = LightingStringParser.GetLightings(flat.LightingNiz, false);
+                            CheckLighting(ref requires, flatLightIndexBot.Indexes, insBot, 0);
                             // начальный отступ шагов для проверки нижних квартир
                             indexBot = flat.SelectedIndexBottom;
                         }
