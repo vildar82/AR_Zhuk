@@ -62,7 +62,8 @@ namespace AR_Zhuk_Schema.Insolation
 
                 List<int> sideLighting;
                 Side flatEndSide;
-                var lightingFlatIndexes = LightingStringParser.GetLightings(lightingFlat, out sideLighting, isTop, out flatEndSide);
+                var lightingFlatIndexes = LightingStringParser.GetLightings(lightingFlat, 
+                                out sideLighting, isTop, out flatEndSide);
 
                 var ruleInsFlat = insService.FindRule(flat);
                 if (ruleInsFlat == null)
@@ -104,12 +105,13 @@ namespace AR_Zhuk_Schema.Insolation
                     flatPassed = RequirementsIsEmpty(requires);
                     if (flatPassed)
                     {
+                        // Если хотябы одно требование инсоляции удовлетворено, то квартира прошла инсоляцию
                         break;
                     }
                 }
-#if TEST
+
                 flat.IsInsPassed = flatPassed;
-#else
+#if !TEST
                 if (!flatPassed)
                 {
                     // квартира не прошла инсоляцию - вся секция не проходит

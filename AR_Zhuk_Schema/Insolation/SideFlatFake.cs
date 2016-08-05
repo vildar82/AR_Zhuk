@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AR_Zhuk_DataModel;
 
 namespace AR_Zhuk_Schema.Insolation
 {
@@ -31,7 +32,7 @@ namespace AR_Zhuk_Schema.Insolation
             new SideFlatFake ("PIK1_4KL2_A0", "B|1,2", "2,3|B"),
             new SideFlatFake ("PIK1_4KL2_Z0", "1,2|B", "B|1,2"), 
             new SideFlatFake ("PIK1_4NL2_A0", "1,2|B", "B|1,2|3"), 
-            new SideFlatFake ("PIK1_4NL2_Z0", "B|1,2", "1|2,3|B")
+            new SideFlatFake ("PIK1_4NL2_Z0", "B|1,2", "1|2,3|B")            
         };
 
         /// <summary>
@@ -39,18 +40,23 @@ namespace AR_Zhuk_Schema.Insolation
         /// </summary>
         public string Name { get; private set; }
         public string LightingTop { get; private set; }
-        public string LightingBot { get; private set; }        
+        public string LightingBot { get; private set; }            
 
         public SideFlatFake (string name, string ligthingBot, string ligthingTop)
         {
             Name = name;
             LightingTop = ligthingTop;
-            LightingBot = ligthingBot;
+            LightingBot = ligthingBot;            
+            
         }
 
-        public static SideFlatFake GetSideFlat (string flatName)
-        {
-            var res = SideFlats. Find(f => f.Name == flatName);
+        public static SideFlatFake GetSideFlat (RoomInfo room)
+        {            
+            var res = SideFlats. Find(f => f.Name == room.Type);    
+            if (room.Type.Contains("2KL2"))
+            {
+                room.SelectedIndexBottom = 3;
+            }
             return res;
         }                
     }

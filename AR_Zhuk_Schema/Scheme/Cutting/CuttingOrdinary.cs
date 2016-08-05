@@ -26,14 +26,17 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         private HouseSpot houseSpot;
         private IDBService dbService;
         private IInsolation insService;
-        private SpotInfo sp;        
+        private SpotInfo sp;
+        int maxHousesBySpot;
 
-        public CuttingOrdinary (HouseSpot houseSpot, IDBService dbService, IInsolation insService, SpotInfo sp)
+        public CuttingOrdinary (HouseSpot houseSpot, IDBService dbService, IInsolation insService,
+                        SpotInfo sp, int maxHousesBySpot)
         {
             this.houseSpot = houseSpot;
             this.dbService = dbService;
             this.insService = insService;
             this.sp = sp;
+            this.maxHousesBySpot = maxHousesBySpot;
         }
 
         public List<HouseInfo> Cut ()
@@ -65,14 +68,13 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     HouseInfo hi = new HouseInfo();
                     hi.SpotInf = sp;
                     hi.SectionsBySize = houseVar;
-#if !TEST
-                    if (resHouses.Count < 5)
-                    {
-                        resHouses.Add(hi);
-                    }
-#else
+
                     resHouses.Add(hi);
-#endif
+
+                    if (maxHousesBySpot!=0 && resHouses.Count == maxHousesBySpot)
+                    {
+                        break;
+                    }
                 }
             }
 

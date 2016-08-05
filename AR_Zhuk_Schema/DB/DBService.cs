@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace AR_Zhuk_Schema.DB
                 List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow> flatsDb;                
                 if (!dictDbFlats.TryGetValue(selecSectParam, out flatsDb))
                 {
+                    Debug.Assert(false, "Загрузка из базы!!!!");
                     flatsDb = LoadFromDbSection(selecSectParam);
                     dictDbFlats.TryAdd(selecSectParam, flatsDb);
                 }
@@ -48,11 +50,7 @@ namespace AR_Zhuk_Schema.DB
                 flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();                
                 FlatInfo fl = new FlatInfo();
                 bool isValidSection = true;
-                var sections = flatsDb.GroupBy(x => x.ID_Section).Select(x => x.ToList()).ToList();
-                if (maxSectionBySize != 0)
-                {
-                    sections.RemoveAt(sections.Count - 1);
-                }
+                var sections = flatsDb.GroupBy(x => x.ID_Section).Select(x => x.ToList()).ToList();                
                 foreach (var gg in sections)
                 {
                     fl = new FlatInfo();
@@ -121,7 +119,11 @@ namespace AR_Zhuk_Schema.DB
             var notInDictSS = selectSects.Where(s => !dictDbFlats.ContainsKey(s)).ToList();
             if (notInDictSS.Count > 0)
             {
-                // Паралельная загрузка секций                    
+                // Паралельная загрузка секций   
+                //foreach (var item in notInDictSS)
+                //{
+                //    dictDbFlats.TryAdd(item, LoadFromDbSection(item));
+                //}                 
                 Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
@@ -139,6 +141,17 @@ namespace AR_Zhuk_Schema.DB
             {
                 flatsDb = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize,
                             selectSectParam.Step, selectSectParam.Type, selectSectParam.Levels).ToList();
+                // отсекаем последние квартиры секции (она может быть неполной)
+                if (flatsDb.Count == maxSectionBySize)
+                {
+                    var lastDbFlat = flatsDb.Last();
+                    var idSectionLast = lastDbFlat.ID_Section;
+                    do
+                    {
+                        flatsDb.Remove(lastDbFlat);
+                        lastDbFlat = flatsDb.Last();
+                    } while (lastDbFlat.ID_Section== idSectionLast);
+                }
             }
             return flatsDb;            
         }

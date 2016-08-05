@@ -5004,7 +5004,8 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
 FROM            C_Flats_PIK1 INNER JOIN
                          F_nn_FlatsInSection ON C_Flats_PIK1.ID_Flat = F_nn_FlatsInSection.ID_Flat INNER JOIN
                          C_Sections ON F_nn_FlatsInSection.ID_Section = C_Sections.ID_Section
-WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @Type) AND (C_Sections.Levels = @Levels)";
+WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @Type) AND (C_Sections.Levels = @Levels)
+ORDER BY F_nn_FlatsInSection.ID_FlatInSection";
             this._commandCollection[3].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[3].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@max", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[3].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@CountModules", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "CountModules", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));

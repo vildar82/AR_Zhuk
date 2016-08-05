@@ -7,7 +7,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 {
     public static class CuttingFactory
     {
-        public static ICutting Create (HouseSpot houseSpot, SpotInfo sp, int maxSectionbySize)
+        public static ICutting Create (HouseSpot houseSpot, SpotInfo sp, int maxSectionbySize, int maxHousesBySpot)
         {
             ICutting cutting;
             IInsolation insService = new InsolationSection(sp);
@@ -19,7 +19,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             }
             else
             {
-                cutting = new CuttingOrdinary(houseSpot, dbService, insService, sp);
+                cutting = new CuttingOrdinary(houseSpot, dbService, insService, sp, maxHousesBySpot);
             }
             return cutting;
         }
