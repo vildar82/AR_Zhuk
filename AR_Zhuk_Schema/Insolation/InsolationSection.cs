@@ -40,19 +40,6 @@ namespace AR_Zhuk_Schema.Insolation
             {
                 sectFlats.Code = GetFlatCode(sectFlats);
 
-#if TEST
-                //// !!!! Только для тестирования!!!! - добавление всех секций с пометками квартир прошедших/непрошедших инсоляцию
-                FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
-                insCheck.CheckSection(flats, isRightOrTopLLu: true);                
-                resFlats.Add(flats);
-
-                if (!section.IsCorner)
-                {
-                    flats = NewFlats(section, sectFlats, isInvert: true);
-                    insCheck.CheckSection(flats, isRightOrTopLLu: false);                    
-                    resFlats.Add(flats);
-                }
-#else
                 // Проверка однотипной секции
                 FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
                 if (!IsIdenticalSection(flats, resFlats))
@@ -81,7 +68,6 @@ namespace AR_Zhuk_Schema.Insolation
                         }
                     }
                 }
-#endif
             }
             return resFlats;
         }
@@ -144,9 +130,11 @@ namespace AR_Zhuk_Schema.Insolation
             return rule;
         }
 
-        public List<RoomInfo> GetSideFlatsInSection (List<RoomInfo> sectionFlats, bool isTop)
+        public List<RoomInfo> GetSideFlatsInSection (List<RoomInfo> sectionFlats, bool isTop, SectionType sectionType)
         {
             List<RoomInfo> topFlats = new List<RoomInfo>();
+                        
+            bool isCornerRight = sectionType == SectionType.CornerRight;
 
             if (isTop)
             {
@@ -178,7 +166,7 @@ namespace AR_Zhuk_Schema.Insolation
                     topFlats.Add(sectionFlats[i]);
                 }
             }
-
+            
             return topFlats;
         }
 

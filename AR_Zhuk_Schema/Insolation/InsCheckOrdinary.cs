@@ -94,13 +94,13 @@ namespace AR_Zhuk_Schema.Insolation
 
         private bool CheckCellIns (int startStep = 0)
         {            
-            int step = startStep;            
+            int step = startStep;
 
             for (int i = 0; i < curSideFlats.Count; i++)
             {
                 specialFail = false;
                 flat = curSideFlats[i];
-                curFlatIndex = i;                
+                curFlatIndex = i;
                 bool flatPassed = false;
                 string lightingCurSide = null;
                 string lightingOtherSide = null;
@@ -124,7 +124,7 @@ namespace AR_Zhuk_Schema.Insolation
                         lightingCurSide = flat.LightingNiz;
                     }
 
-                    flatLightIndexCurSide = LightingStringParser.GetLightings(lightingCurSide, 
+                    flatLightIndexCurSide = LightingStringParser.GetLightings(lightingCurSide,
                                 out flatLightIndexSideCurSide, isTop, out flatEndSide);
                     flatLightIndexOtherSide = null;
                     flatLightIndexSideOtherSide = null;
@@ -133,7 +133,7 @@ namespace AR_Zhuk_Schema.Insolation
                     {
                         if (lightingOtherSide != null && (isFirstFlatInSide || isLastFlatInSide))
                         {
-                            flatLightIndexOtherSide = LightingStringParser.GetLightings(lightingOtherSide, 
+                            flatLightIndexOtherSide = LightingStringParser.GetLightings(lightingOtherSide,
                                 out flatLightIndexSideOtherSide, false, out flatEndSide);
                         }
                     }
@@ -159,15 +159,10 @@ namespace AR_Zhuk_Schema.Insolation
 
                 if (!flatPassed || specialFail)
                 {
-#if !TEST
                     // квартира не прошла инсоляцию - вся секция не проходит                    
                     return false;
-#endif
                 }
-                else
-                {
-                    flat.IsInsPassed = true;                   
-                }
+                flat.IsInsPassed = true;
 
                 // Сдвиг шага
                 step += isTop ? flat.SelectedIndexTop : flat.SelectedIndexBottom;

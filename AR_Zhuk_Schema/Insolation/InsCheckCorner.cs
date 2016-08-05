@@ -14,13 +14,13 @@ namespace AR_Zhuk_Schema.Insolation
     {
         int indexBot =0;
         string[] insTop;
-        string[] insBot;
+        string[] insBot;        
 
         public InsCheckCorner (IInsolation insService, Section section)
             : base(insService, section)
         {
             insTop = section.InsTop.Select(s => s.InsValue).ToArray();
-            insBot = section.InsBot.Select(s => s.InsValue).ToArray();
+            insBot = section.InsBot.Select(s => s.InsValue).ToArray();            
         }
 
         protected override bool CheckFlats ()
@@ -109,15 +109,14 @@ namespace AR_Zhuk_Schema.Insolation
                         break;
                     }
                 }
-
-                flat.IsInsPassed = flatPassed;
-#if !TEST
+                
                 if (!flatPassed)
                 {
-                    // квартира не прошла инсоляцию - вся секция не проходит
+                    // квартира не прошла инсоляцию - вся секция не проходит                    
                     return false;
-                }               
-#endif
+                }                
+                flat.IsInsPassed = true;                    
+
                 step += isTop ? flat.SelectedIndexTop : flat.SelectedIndexBottom;
             }
             return true;

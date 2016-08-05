@@ -44,27 +44,25 @@ namespace AR_Zhuk_Schema.Insolation
             this.isRightOrTopLLu = isRightOrTopLLu;
             checkSection = sect;
 
-            topFlats = insService.GetSideFlatsInSection(sect.Flats, isTop: true);
-            bottomFlats = insService.GetSideFlatsInSection(sect.Flats, isTop: false);
+            topFlats = insService.GetSideFlatsInSection(sect.Flats, true, section.SectionType);
+            bottomFlats = insService.GetSideFlatsInSection(sect.Flats, false, section.SectionType);
 
             // Временно!!! подмена индекса угловой квартиры 2KL2
-            var cornerFlat = bottomFlats.First();
-            if (cornerFlat.ShortType == "2KL2")
+            if (section.SectionType == SectionType.CornerLeft || section.SectionType == SectionType.CornerRight)
             {
-                cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
-                cornerFlat.SelectedIndexBottom = 4;
+                var cornerFlat = section.SectionType == SectionType.CornerLeft ? bottomFlats.First() : bottomFlats.Last();
+                if (cornerFlat.ShortType == "2KL2")
+                {
+                    cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
+                    cornerFlat.SelectedIndexBottom = 4;
+                }
             }
 
             // Проверка инсоляции квартир сверху
             isTop = true;
             curSideFlats = topFlats;
             res = CheckFlats();
-#if TEST
-            // Проверка инсоляции квартир снизу                
-            isTop = false;
-            curSideFlats = bottomFlats;
-            res = CheckFlats();
-#else
+
             if (res) // прошла инсоляция верхних квартир
             {
                 // Проверка инсоляции квартир снизу                
@@ -72,7 +70,6 @@ namespace AR_Zhuk_Schema.Insolation
                 curSideFlats = bottomFlats;
                 res = CheckFlats();
             }
-#endif
             return res;
         }
 
