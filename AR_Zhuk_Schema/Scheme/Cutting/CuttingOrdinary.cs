@@ -82,7 +82,10 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             Debug.WriteLine("passedSections=" + passedSections.Count);
             Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);
 
-            return resHouses;
+            // Отбор минимальной размерности дома
+            var minSizeHouse = resHouses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).First().ToList();            
+
+            return minSizeHouse;
         }
 
         private void InitLoadDBSections (List<int> stepsSet)
