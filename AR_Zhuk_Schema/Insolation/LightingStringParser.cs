@@ -11,98 +11,113 @@ namespace AR_Zhuk_Schema.Insolation
         static bool isRange;
         static bool isLeaf; // окно в большой комнате с несколькими окнами
         static bool prevIsSide; // предыдущий индекс - это боковушка
+        static Dictionary<string, Lighting> dictLightings = new Dictionary<string, Lighting>();
 
         public static List<int> GetLightings (string lightingString, out List<int> sideLightings, bool isTopSide, out Side endSide)
         {
-            endSide = Side.None;
-            List<int> lightings = new List<int>();
-            sideLightings = new List<int>();
+            Lighting light;
+            List<int> lightings;
 
-            if (string.IsNullOrEmpty(lightingString))
+            if (!dictLightings.TryGetValue(lightingString, out light))
             {
-                return null;
-            }
+                endSide = Side.None;
+                lightings = new List<int>();
+                sideLightings = new List<int>();
 
-            isRange = false;
-            isLeaf = false;
-            prevIsSide = false;
-
-            for (int i = 0; i < lightingString.Length; i++)
-            {
-                char item = lightingString[i];
-                if (char.IsDigit(item))
+                if (string.IsNullOrEmpty(lightingString))
                 {
-                    prevIsSide = false;                        
-                    AddLightingValue((int)char.GetNumericValue(item), lightings);
-                    continue;                  
-                }
-
-                if (item == 'B')
-                {
-                    // Боковая освещенность
-                    AddSideLightingValue(lightingString, sideLightings, ref i);
-                    prevIsSide = true;
-                    continue;
+                    return null;
                 }
 
                 isRange = false;
                 isLeaf = false;
+                prevIsSide = false;
 
-                if (item == '-')
+                for (int i = 0; i < lightingString.Length; i++)
                 {
-                    isRange = true;
-                    continue;
-                }                
-
-                if (item == '|')
-                {
-                    isLeaf = true;
-                    // изменение знака предыдущего индекса
-                    if (!prevIsSide)
+                    char item = lightingString[i];
+                    if (char.IsDigit(item))
                     {
-                        var lastLight = lightings.Last();
-                        lightings[lightings.Count - 1] = lastLight * -1;
+                        prevIsSide = false;
+                        AddLightingValue((int)char.GetNumericValue(item), lightings);
+                        continue;
+                    }
+
+                    if (item == 'B')
+                    {
+                        // Боковая освещенность
+                        AddSideLightingValue(lightingString, sideLightings, ref i);
+                        prevIsSide = true;
+                        continue;
+                    }
+
+                    isRange = false;
+                    isLeaf = false;
+
+                    if (item == '-')
+                    {
+                        isRange = true;
+                        continue;
+                    }
+
+                    if (item == '|')
+                    {
+                        isLeaf = true;
+                        // изменение знака предыдущего индекса
+                        if (!prevIsSide)
+                        {
+                            var lastLight = lightings.Last();
+                            lightings[lightings.Count - 1] = lastLight * -1;
+                        }
+                        else
+                        {
+                            var lastLight = sideLightings.Last();
+                            sideLightings[sideLightings.Count - 1] = lastLight * -1;
+                        }
+                        continue;
+                    }
+                }
+
+                // Определение стороны по боковой инсоляции
+                if (sideLightings.Count > 0)
+                {
+                    // освещенность заканчивается боковой инсоляцией
+                    if (prevIsSide)
+                    {
+                        if (isTopSide)
+                        {
+                            // Верх - левая сторона
+                            endSide = Side.Left;
+                        }
+                        else
+                        {
+                            // Низ - правая строна
+                            endSide = Side.Right;
+                        }
                     }
                     else
                     {
-                        var lastLight = sideLightings.Last();
-                        sideLightings[sideLightings.Count - 1] = lastLight * -1;
+                        // Освещенность заканчивается обычными рядовым шагом, значит начиналась с боковой
+                        if (isTopSide)
+                        {
+                            // Верх - правая сторона
+                            endSide = Side.Right;
+                        }
+                        else
+                        {
+                            // Низ - левая строна
+                            endSide = Side.Left;
+                        }
                     }
-                    continue;
-                }                                      
+                }
+                light = new Lighting(lightings, lightings, endSide, isTopSide);
+                dictLightings.Add(lightingString, light);
             }
-
-            // Определение стороны по боковой инсоляции
-            if (sideLightings.Count > 0)
+            else
             {
-                // освещенность заканчивается боковой инсоляцией
-                if (prevIsSide)
-                {
-                    if (isTopSide)
-                    {
-                        // Верх - левая сторона
-                        endSide = Side.Left;
-                    }
-                    else
-                    {
-                        // Низ - правая строна
-                        endSide = Side.Right;
-                    }
-                }
-                else
-                {
-                    // Освещенность заканчивается обычными рядовым шагом, значит начиналась с боковой
-                    if (isTopSide)
-                    {
-                        // Верх - правая сторона
-                        endSide = Side.Right;
-                    }
-                    else
-                    {
-                        // Низ - левая строна
-                        endSide = Side.Left;
-                    }
-                }
+                lightings = light.Indexes;
+                sideLightings = light.SideIndexes;
+                endSide = light.Side;
             }
             return lightings;
         }        
@@ -155,6 +170,21 @@ namespace AR_Zhuk_Schema.Insolation
                 }
             }
             return resSideIndex;
+        }
+
+        private class Lighting
+        {
+            public readonly List<int> Indexes;
+            public readonly List<int> SideIndexes;
+            public readonly Side Side;
+            public readonly bool IsTopSide;
+
+            public Lighting(List<int> indexes, List<int> sideIndexes, Side side, bool isTopSide)
+            {
+                Indexes = indexes;
+                SideIndexes = sideIndexes;
+                Side = side;
+            }
         }
     }
 }

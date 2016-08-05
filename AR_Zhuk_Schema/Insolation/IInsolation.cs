@@ -19,6 +19,6 @@ namespace AR_Zhuk_Schema.Insolation
         /// <returns>Секции прошедшие инсоляцию</returns>
         List<FlatInfo> GetInsolationSections (Section section);
         RoomInsolation FindRule (RoomInfo flat);
-        List<RoomInfo> GetSideFlatsInSection (List<RoomInfo> sectionFlats, bool isTop);
+        List<RoomInfo> GetSideFlatsInSection (List<RoomInfo> sectionFlats, bool isTop, SectionType sectionType);
     }
 }

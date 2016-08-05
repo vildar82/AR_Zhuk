@@ -64,7 +64,7 @@ namespace AR_Zhuk_Schema
             {
                 ICutting cutting = CuttingFactory.Create(item, sp, maxSectionBySize, maxHousesBySpot);
                 var houses = cutting.Cut();
-                if (houses.Count != 0)
+                if (houses != null && houses.Count != 0)
                 {
                     totalHouses.Add(houses);
                 }

@@ -123,14 +123,30 @@ namespace AR_Zhuk_Schema.Scheme
                     section.IsVertical = segment.IsVertical;
                     section.Direction = segment.IsVertical ? segment.Direction.Row : segment.Direction.Col;
 
-                    // Верхняя инслоляция
-                    section.InsTop = segment.GetModules(segment.ModulesLeft, startStepInSeg, segment.CountSteps);
-                    section.InsTop.Add(nextSegment.ModulesLeft.First());
-                    // Нижняя инсоляция
-                    section.InsBot = segment.GetModules(segment.ModulesRight, startStepInSeg, segment.CountSteps);
-                    int modulesInNextSeg = 1 + (WidthOrdinary - 1); // 1 шаг загиба + 3 боковые ячейки
-                    section.InsBot.AddRange(nextSegment.ModulesRight.Take(modulesInNextSeg));
-                    section.InsBot.Reverse();                    
+                    // Инсоляция левой секции
+                    if (section.SectionType == SectionType.CornerLeft)
+                    {
+                        // Верхняя инслоляция
+                        section.InsTop = segment.GetModules(segment.ModulesRight, startStepInSeg, segment.CountSteps);
+                        section.InsTop.Add(nextSegment.ModulesRight.First());
+                        // Нижняя инсоляция
+                        section.InsBot = segment.GetModules(segment.ModulesLeft, startStepInSeg, segment.CountSteps);
+                        int modulesInNextSeg = 1 + (WidthOrdinary - 1); // 1 шаг загиба + 3 боковые ячейки
+                        section.InsBot.AddRange(nextSegment.ModulesLeft.Take(modulesInNextSeg));
+                        section.InsBot.Reverse();
+                    }
+                    //Инсоляция правой секции
+                    else
+                    {
+                        // Верхняя инслоляция
+                        section.InsTop = segment.GetModules(segment.ModulesLeft, startStepInSeg, segment.CountSteps);
+                        section.InsTop.Add(nextSegment.ModulesLeft.First());
+                        section.InsTop.Reverse();
+                        // Нижняя инсоляция
+                        section.InsBot = segment.GetModules(segment.ModulesRight, startStepInSeg, segment.CountSteps);
+                        int modulesInNextSeg = 1 + (WidthOrdinary - 1); // 1 шаг загиба + 3 боковые ячейки
+                        section.InsBot.AddRange(nextSegment.ModulesRight.Take(modulesInNextSeg));                        
+                    }
                 }
                 else
                 {
@@ -142,14 +158,30 @@ namespace AR_Zhuk_Schema.Scheme
                     section.IsVertical = nextSegment.IsVertical;
                     section.Direction = nextSegment.IsVertical ? nextSegment.Direction.Row : nextSegment.Direction.Col;
 
-                    // Верхняя инсоляция
-                    section.InsTop = new List<Module> { segment.ModulesLeft.Last() };
-                    section.InsTop.AddRange(nextSegment.ModulesLeft.Take(section.CountStep - (WidthOrdinary+1)));
-                    section.InsTop.Reverse();
-                    // Нижняя инсоляция
-                    int skipModules = segment.ModulesRight.Count - (WidthOrdinary + 1); // кол модулей до последних 5
-                    section.InsBot = segment.ModulesRight.Skip(skipModules).ToList();
-                    section.InsBot.AddRange(nextSegment.ModulesRight.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)
+                    // Инсоляция левой секции
+                    if (section.SectionType == SectionType.CornerLeft)
+                    {
+                        // Верхняя инсоляция
+                        section.InsTop = new List<Module> { segment.ModulesLeft.Last() };
+                        section.InsTop.AddRange(nextSegment.ModulesLeft.Take(section.CountStep - (WidthOrdinary + 1)));
+                        section.InsTop.Reverse();
+                        // Нижняя инсоляция
+                        int skipModules = segment.ModulesRight.Count - (WidthOrdinary + 1); // кол модулей до последних 5
+                        section.InsBot = segment.ModulesRight.Skip(skipModules).ToList();
+                        section.InsBot.AddRange(nextSegment.ModulesRight.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)
+                    }
+                    //Инсоляция правой секции
+                    else
+                    {
+                        // Верхняя инсоляция
+                        section.InsTop = new List<Module> { segment.ModulesRight.Last() };
+                        section.InsTop.AddRange(nextSegment.ModulesRight.Take(section.CountStep - (WidthOrdinary + 1)));                        
+                        // Нижняя инсоляция
+                        int skipModules = segment.ModulesLeft.Count - (WidthOrdinary + 1); // кол модулей до последних 5
+                        section.InsBot = segment.ModulesLeft.Skip(skipModules).ToList();
+                        section.InsBot.AddRange(nextSegment.ModulesRight.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)                        
+                        section.InsBot.Reverse();
+                    }
                 }
 
                 section.IsLeftBottomCorner = section.SectionType == SectionType.CornerLeft;
