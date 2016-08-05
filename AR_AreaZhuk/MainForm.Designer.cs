@@ -3,14 +3,14 @@ using Zuby.ADGV;
 namespace AR_AreaZhuk
 {
 
-    //public class DataGridViewEx : AdvancedDataGridView
-    //{
-    //    public DataGridViewEx()
-    //        : base()
-    //    {
-    //        SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
-    //    }
-    //}
+    public class DataGridViewEx : AdvancedDataGridView
+    {
+        public DataGridViewEx()
+            : base()
+        {
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+        }
+    }
    
     partial class MainForm
     {
@@ -54,7 +54,7 @@ namespace AR_AreaZhuk
             this.label3 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.dg2 = new AdvancedDataGridView();
+            this.dg2 = new DataGridViewEx();
             this.btnStartScan = new System.Windows.Forms.Button();
             this.lblCountObjects = new System.Windows.Forms.Label();
             this.chkDominant = new System.Windows.Forms.CheckBox();
@@ -721,7 +721,7 @@ namespace AR_AreaZhuk
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnStartScan;
         private Label lblCountObjects;
-        private AdvancedDataGridView dg2;
+        private DataGridViewEx dg2;
         private CheckBox chkDominant;
         private GroupBox groupBox3;
         private GroupBox groupBox4;

@@ -884,6 +884,7 @@ indexColumnLLUBottom];
                 string guid = Guid.NewGuid().ToString();
                 spGo.GUID = guid;
                 spGo.TotalFlats = allCountFlats;
+
                 spinfos.Add(spGo);
                 int countS = house1.Sections.Count + house2.Sections.Count;
                 int[] ss = new int[countS];
@@ -1445,7 +1446,7 @@ indexColumnLLUBottom];
             po.MaxDegreeOfParallelism = 15;
             Parallel.For(0, houses[0].Count, po, GetGeneralObjects);
             //  GetGeneralObjects();
-            FormManager.ViewDataProcentage(dg2, spinfos);
+            FormManager.ViewDataProcentage(dg2,ob);
             lblCountObjects.Text = ob.Count.ToString();
         }
 
@@ -1498,7 +1499,7 @@ indexColumnLLUBottom];
 
         private void btnStartScan_Click(object sender, EventArgs e)
         {
-
+            isEvent = false;
             btnStartScan.Enabled = false;
             btnViewPercentsge.Enabled = true;
             Requirment requirment = new Requirment();
@@ -1524,6 +1525,7 @@ indexColumnLLUBottom];
             Thread th = new Thread(ViewProgress);
             th.Start();
             List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
+            
             //.. totalObject[0] = totalObject[0].Where(x => x.Sections.Count==4).ToList();
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -1534,185 +1536,227 @@ indexColumnLLUBottom];
             {
                 for (int l = 0; l < totalObject[1].Count; l++)
                 {
+                    //for (int m = 0; m < totalObject[2].Count; m++)
+                    //{
 
-                    if (IsRemainingDominants)
-                    {
-                        int offsetDom = DominantOffSet;
-
-                        int remaining =
-                            Math.Abs(totalObject[0][k].SectionsBySize[totalObject[0][k].SectionsBySize.Count - 1].CountStep -
-                                     totalObject[1][l].SectionsBySize[totalObject[1][l].SectionsBySize.Count - 1].CountStep);
-                        if (remaining > offsetDom)
-                            continue;
-                    }
-                    //Сбор секций из двух домов в один список
-                    List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
-                    foreach (var s in totalObject[0][k].SectionsBySize)
-                    {
-                        sections.Add(s.Sections);
-                    }
-                    foreach (var s in totalObject[1][l].SectionsBySize)
-                    {
-                        sections.Add(s.Sections);
-                    }
-                    List<CodeSection> codeSections = new List<CodeSection>();
-                    int counter = 0;
-                    //Группировка и сортировка секций
-                    foreach (var ss in sections.OrderBy(x => x.Count))
-                    {
-                        List<Code> codes = new List<Code>();
-                        CodeSection codeSection = new CodeSection();
-                        codeSection.CountFloors = ss[0].Floors;
-
-                        //Группировка по коду
-                        foreach (var s in ss.OrderByDescending(x => x.CountFlats))
+                        if (IsRemainingDominants)
                         {
-                            if (codes.Any(x => x.CodeStr.Equals(s.Code)))
-                                codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
-                            else
-                            {
-                                codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1) * (s.CountFlats - 1), s.NumberInSpot, s.SpotOwner));
-                            }
+                            int offsetDom = DominantOffSet;
+
+                            int remaining =
+                                Math.Abs(
+                                    totalObject[0][k].SectionsBySize[totalObject[0][k].SectionsBySize.Count - 1]
+                                        .CountStep -
+                                    totalObject[1][l].SectionsBySize[totalObject[1][l].SectionsBySize.Count - 1]
+                                        .CountStep);
+                            if (remaining > offsetDom)
+                                continue;
                         }
-                        //Группировка  по кол-ву квартир в секции
-                        foreach (var c in codes.OrderBy(x => x.CountFlats).OrderByDescending(x => x.CodeStr).ToList())
+                        //Сбор секций из двух домов в один список
+                        List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
+                        foreach (var s in totalObject[0][k].SectionsBySize)
                         {
-                            FlatsInSection flatsInSection = new FlatsInSection();
-                            flatsInSection.Count = c.CountFlats;
-                            flatsInSection.SectionsByCode.Add(c);
-                            if (codeSection.SectionsByCountFlats.Any(x => x.Count.Equals(c.CountFlats)))
-                                codeSection.SectionsByCountFlats.First(x => x.Count.Equals(c.CountFlats)).SectionsByCode.Add(c);
-                            else codeSection.SectionsByCountFlats.Add(flatsInSection);
+                            sections.Add(s.Sections);
                         }
-                        //Сортировка по кол-ву квартир
-                        codeSection.SectionsByCountFlats =
-                            codeSection.SectionsByCountFlats.OrderByDescending(x => x.Count).ToList();
-                        codeSections.Add(codeSection);
-                        counter++;
-                    }
-                    int[] selectedSectSize = new int[40];
-                    int[] selectedSectCode = new int[40];
-                    isContinue2 = true;
-                    //Обход сформированных секций с уникальными кодами на объект
-
-                    double totalCountFlats = 0;
-                    for (int i = 0; i < sections.Count; i++)
-                    {
-                        totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
-                    }
-
-                    while (isContinue2)
-                    {
-                        //Общее число квартир на объект
-                        List<Code> listCodes = new List<Code>();
-                        megacounter++;
-                        string codeHouse = "";
-                        if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0])
+                        foreach (var s in totalObject[1][l].SectionsBySize)
                         {
-                            isContinue2 = false;
-                            break;
+                            sections.Add(s.Sections);
                         }
-                        bool isGood = true;
-                        string str = "";
-                        string strCount = "";
-                        double currentTotal = 0;
-                        for (int q = 0; q < spotInfo.requirments.Count; q++)
+                        //foreach (var s in totalObject[2][m].SectionsBySize)
+                        //{
+                        //    sections.Add(s.Sections);
+                        //}
+
+                        List<CodeSection> codeSections = new List<CodeSection>();
+                        int counter = 0;
+                        //Группировка и сортировка секций
+                        foreach (var ss in sections.OrderBy(x => x.Count))
                         {
-                            var rr = spotInfo.requirments[q];
-                            int countFlats = 0;
-                            for (int i = 0; i < codeSections.Count; i++)
+                            List<Code> codes = new List<Code>();
+                            CodeSection codeSection = new CodeSection();
+                            codeSection.CountFloors = ss[0].Floors;
+
+                            //Группировка по коду
+                            foreach (var s in ss.OrderByDescending(x => x.CountFlats))
                             {
-                                countFlats +=
-                                    Convert.ToInt16(
-                                        codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
-                                            selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1);
+                                if (codes.Any(x => x.CodeStr.Equals(s.Code)))
+                                    codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
+                                else
+                                {
+                                    codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1)*(s.CountFlats - 1),
+                                        s.NumberInSpot, s.SpotOwner));
+                                }
                             }
-                            currentTotal += countFlats;
-                            strCount += countFlats.ToString() + "; ";
-                            double percentage = countFlats * 100 / totalCountFlats;
-                            str += (Math.Round(percentage, 0)).ToString() + ";";
-                            double countReq = Math.Round(totalCountFlats * rr.Percentage / 100, 0);
-                            if (rr.Percentage - rr.OffSet <= percentage & rr.Percentage + rr.OffSet >= percentage)
+                            //Группировка  по кол-ву квартир в секции
+                            foreach (
+                                var c in codes.OrderBy(x => x.CountFlats).OrderByDescending(x => x.CodeStr).ToList())
                             {
-                                isGood = true;
+                                FlatsInSection flatsInSection = new FlatsInSection();
+                                flatsInSection.Count = c.CountFlats;
+                                flatsInSection.SectionsByCode.Add(c);
+                                if (codeSection.SectionsByCountFlats.Any(x => x.Count.Equals(c.CountFlats)))
+                                    codeSection.SectionsByCountFlats.First(x => x.Count.Equals(c.CountFlats))
+                                        .SectionsByCode.Add(c);
+                                else codeSection.SectionsByCountFlats.Add(flatsInSection);
                             }
-                            else
+                            //Сортировка по кол-ву квартир
+                            codeSection.SectionsByCountFlats =
+                                codeSection.SectionsByCountFlats.OrderByDescending(x => x.Count).ToList();
+                            codeSections.Add(codeSection);
+                            counter++;
+                        }
+                        int[] selectedSectSize = new int[40];
+                        int[] selectedSectCode = new int[40];
+                        isContinue2 = true;
+                        //Обход сформированных секций с уникальными кодами на объект
+
+                        double totalCountFlats = 0;
+                        //Общее кол-во квартир в объекте
+                        for (int i = 0; i < sections.Count; i++)
+                        {
+                            totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
+                        }
+
+                        while (isContinue2)
+                        {
+
+                            List<Code> listCodes = new List<Code>();
+                            megacounter++; //общее кол-во обходов(для информации)
+                            string codeHouse = "";
+                            if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0])
                             {
-                                isGood = false;
+                                isContinue2 = false;
                                 break;
                             }
-                        }
-
-                        if (isGood)
-                        {
-                            counterGood++;
-                            list11.Add(str);
-                            for (int i = 0; i < sections.Count; i++)
+                            bool isValidPercentage = true;
+                            string str = "";
+                            string strCount = "";
+                            double currentTotal = 0;
+                            for (int q = 0; q < spotInfo.requirments.Count; q++)
                             {
-                                listCodes.Add(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[selectedSectCode[i]]);
-                            }
-                            listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
-                            var houses11 = listCodes.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
-                            GeneralObject go = new GeneralObject();
-                            List<List<HouseInfo>> housesPercentage = new List<List<HouseInfo>>();
-                            for (int i = 0; i < houses11.Count; i++)
-                            {
-
-                                List<HouseInfo> hoyses = new List<HouseInfo>();
-                                int[] indexSelectedId = new int[10];
-
-                                isContinue = true;
-                                int countSections = houses11[i].Count - 1;
-
-                                while (isContinue)
+                                var rr = spotInfo.requirments[q];
+                                int countFlats = 0;
+                                //Необходимое кол-во кварнтир типа в объекте, удовлетворяющее задание
+                                double countReq = Math.Round(totalCountFlats*rr.Percentage/100, 0);
+                              //  bool isOverFlow = false;
+                                for (int i = 0; i < codeSections.Count; i++)
                                 {
-                                    HouseInfo hi1 = new HouseInfo();
-                                    hi1.Sections = new List<FlatInfo>();
-                                    for (int j = 0; j <= countSections; j++)
+                                    countFlats +=
+                                        Convert.ToInt16(
+                                            codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
+                                                selectedSectCode[i]].CodeStr[q].ToString())*
+                                        (codeSections[i].CountFloors - 1);
+                                    //if (countFlats > countReq)
+                                    //{
+                                    //    isOverFlow = true;
+                                    //    break;
+                                    //}
+                                }
+                                //if (isOverFlow)
+                                //{
+                                //    if (isOverFlow)
+                                //    {
+                                        
+                                //    }
+                                //}
+                                //Кол-во квартир определенного типа в объекте
+                                currentTotal += countFlats;
+                                strCount += countFlats.ToString() + "; ";
+
+                                //Процентаж определенного типа квартир в объекте
+                                double percentage = countFlats*100/totalCountFlats;
+                                str += (Math.Round(percentage, 0)).ToString() + ";";
+
+
+                                if (rr.Percentage - rr.OffSet <= percentage & rr.Percentage + rr.OffSet >= percentage)
+                                    isValidPercentage = true;
+                                else
+                                {
+                                    isValidPercentage = false;
+                                    break;
+                                }
+                            }
+
+                            if (isValidPercentage)
+                            {
+                                //if (counterGood > 400000)
+                                //    break;
+                                counterGood++;
+                                list11.Add(str);
+                                for (int i = 0; i < sections.Count; i++)
+                                {
+                                    listCodes.Add(
+                                        codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
+                                            selectedSectCode[i]]);
+                                }
+                                listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
+                                var houses11 = listCodes.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
+                                GeneralObject go = new GeneralObject();
+                                List<List<HouseInfo>> housesPercentage = new List<List<HouseInfo>>();
+                                for (int i = 0; i < houses11.Count; i++)
+                                {
+
+                                    List<HouseInfo> hoyses = new List<HouseInfo>();
+                                    int[] indexSelectedId = new int[10];
+
+                                    isContinue = true;
+                                    int countSections = houses11[i].Count - 1;
+
+                                    while (isContinue)
                                     {
-                                        Code currentCode = houses11[i][j];
-                                        foreach (var secByPosition in sections)
+                                        HouseInfo hi1 = new HouseInfo();
+                                        hi1.Sections = new List<FlatInfo>();
+                                        for (int j = 0; j <= countSections; j++)
                                         {
-                                            if (!(secByPosition[0].SpotOwner.Equals(currentCode.SpotOwner) &
-                                                  secByPosition[0].NumberInSpot.Equals(currentCode.NumberSection)))
-                                                continue;
-                                            var sec =
-                                                secByPosition.Where(
-                                                    x => x.IdSection.Equals(currentCode.IdSections[indexSelectedId[j]])).ToList();
-                                            if (sec.Count == 0) continue;
-                                            hi1.Sections.Add(sec[0]);
+                                            Code currentCode = houses11[i][j];
+                                            foreach (var secByPosition in sections)
+                                            {
+                                                if (!(secByPosition[0].SpotOwner.Equals(currentCode.SpotOwner) &
+                                                      secByPosition[0].NumberInSpot.Equals(currentCode.NumberSection)))
+                                                    continue;
+                                                var sec =
+                                                    secByPosition.Where(
+                                                        x =>
+                                                            x.IdSection.Equals(
+                                                                currentCode.IdSections[indexSelectedId[j]])).ToList();
+                                                if (sec.Count == 0) continue;
+                                                hi1.Sections.Add(sec[0]);
+                                                break;
+                                            }
+                                        }
+                                        hoyses.Add(hi1);
+                                        GetHousePercentage(ref hi1, spotInfo);
+                                        //go.Houses.Add(hi1);
+                                        indexSelectedId[countSections]++;
+                                        if (houses11[i][countSections].IdSections.Count <=
+                                            indexSelectedId[countSections])
+                                        {
+                                            IncerementIdSection(countSections - 1, indexSelectedId, houses11[i]);
+                                        }
+                                        if (houses11[i][0].IdSections.Count == indexSelectedId[0])
+                                        {
+                                            isContinue = false;
                                             break;
                                         }
+
                                     }
-                                    hoyses.Add(hi1);
-                                    GetHousePercentage(ref hi1, spotInfo);
-                                    //go.Houses.Add(hi1);
-                                    indexSelectedId[countSections]++;
-                                    if (houses11[i][countSections].IdSections.Count <= indexSelectedId[countSections])
-                                    {
-                                        IncerementIdSection(countSections - 1, indexSelectedId, houses11[i]);
-                                    }
-                                    if (houses11[i][0].IdSections.Count == indexSelectedId[0])
-                                    {
-                                        isContinue = false;
-                                        break;
-                                    }
+                                    housesPercentage.Add(hoyses);
 
                                 }
-                                housesPercentage.Add(hoyses);
+                                GetAllSectionPercentage(housesPercentage, requirment);
 
+                                // ob.Add(go);
+                                counterGood++;
                             }
-                            GetAllSectionPercentage(housesPercentage, requirment);
 
-                            // ob.Add(go);
-                            counterGood++;
+                            selectedSectCode[sections.Count - 1]++;
+                            if (selectedSectCode[sections.Count - 1] >=
+                                codeSections[codeSections.Count - 1].SectionsByCountFlats[
+                                    selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
+                                IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1,
+                                    codeSections, ref totalCountFlats);
                         }
-
-                        selectedSectCode[sections.Count - 1]++;
-                        if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
-                            IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1,
-                                codeSections, ref totalCountFlats);
-                    }
+                   // }
 
 
 
@@ -1733,9 +1777,10 @@ indexColumnLLUBottom];
 
             //GetAllSectionPercentage(totalObject, requirment);
             ////   MessageBox.Show((sw.ElapsedMilliseconds / 1000.0).ToString());
-            FormManager.ViewDataProcentage(dg2, spinfos);
+            FormManager.ViewDataProcentage(dg2,ob);
             th.Abort();
             lblCountObjects.Text = ob.Count.ToString();
+            isEvent = true;
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
         }
@@ -1934,12 +1979,12 @@ indexColumnLLUBottom];
                 return;
             try
             {
-                List<string> guids = (from DataGridViewRow row in dg2.SelectedRows select dg2[dg2.Columns.Count - 1, row.Index].Value.ToString()).ToList();
-                foreach (var g in guids)
-                {
-
-                    GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
-                    if (go == null) break;
+               // List<string> guids = (from DataGridViewRow row in dg2.SelectedRows select dg2[dg2.Columns.Count - 1, row.Index].Value.ToString()).ToList();
+               // foreach (var g in guids)
+               // {
+                GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
+                //    GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
+                    if (go == null) return;
                     //go.Houses[0].Sections.Reverse();
                     //for (int i = 0; i < go.Houses[0].Sections.Count; i++)
                     //{
@@ -1953,9 +1998,9 @@ indexColumnLLUBottom];
                     BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
                     var im = imgComb.generateGeneralObject();
                     pb.Image = im;
-                    break;
+                  //  break;
 
-                }
+             //   }
             }
             catch { }
 

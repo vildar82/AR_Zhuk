@@ -4972,11 +4972,12 @@ FROM            C_Flats_PIK1 INNER JOIN
             this._commandCollection[1] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[1].Connection = this.Connection;
             this._commandCollection[1].CommandText = @"SELECT        C_Sections.ID_Section, C_Sections.CountModules, C_Sections.Type AS TypeSection, C_Sections.Levels, C_Flats_PIK1.Type AS TypeFlat, C_Flats_PIK1.ID_Flat, 
-                         F_nn_FlatsInSection.SelectedIndexBottom, F_nn_FlatsInSection.SelectedIndexTop
+                         F_nn_FlatsInSection.SelectedIndexBottom, F_nn_FlatsInSection.SelectedIndexTop, F_nn_FlatsInSection.ID_FlatInSection
 FROM            C_Flats_PIK1 INNER JOIN
                          F_nn_FlatsInSection ON C_Flats_PIK1.ID_Flat = F_nn_FlatsInSection.ID_Flat INNER JOIN
                          C_Sections ON F_nn_FlatsInSection.ID_Section = C_Sections.ID_Section
-WHERE        (C_Sections.ID_Section = @IDSECTION)";
+WHERE        (C_Sections.ID_Section = @IDSECTION)
+ORDER BY F_nn_FlatsInSection.ID_FlatInSection";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IDSECTION", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "ID_Section", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[2] = new global::System.Data.SqlClient.SqlCommand();
