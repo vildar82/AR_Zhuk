@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,8 @@ namespace AR_Zhuk_Schema.Insolation
             };
 
         private readonly SpotInfo spOrig;
+
+        private int countIdentiCalSections;
 
         public InsolationSection(SpotInfo sp)
         {
@@ -85,20 +88,34 @@ namespace AR_Zhuk_Schema.Insolation
         {
             var res = resulsSections.Any(s => (s.IsInvert == curSection.IsInvert) &&
                                 IsEqualSections(s.Flats, curSection.Flats));
+#if !TEST
+            if (res)
+            {
+                countIdentiCalSections++;
+                Debug.WriteLine("countIdentiCalSections=" + countIdentiCalSections);
+            }
+#endif
             return res;
         }
 
         public bool IsEqualSections (List<RoomInfo> section1, List<RoomInfo> section2)
         {
             if (section1.Count != section2.Count) return false;
-            foreach (var flat1 in section1)
+            // Если одной из квартир нет во второй секции, то это разные секции
+            if (section1.Any(s1 => !section2.Any(s2 => s1.ShortType == s2.ShortType)))
             {
-                int countInSection1 = section1.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-                int countInSection2 = section2.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-                if (countInSection1 != countInSection2)
-                    return false;
+                return false;
             }
+            // все квартиры из первой секции есть во второй
             return true;
+            //foreach (var flat1 in section1)
+            //{
+            //    int countInSection1 = section1.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
+            //    int countInSection2 = section2.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
+            //    if (countInSection1 != countInSection2)
+            //        return false;
+            //}
+            //return true;
         }
 
         private string GetFlatCode(FlatInfo flats)
@@ -189,16 +206,13 @@ namespace AR_Zhuk_Schema.Insolation
             resFlats.CountStep = section.CountStep;
             resFlats.IsInvert = isInvert;
             resFlats.Floors = section.Floors;
-            resFlats.Code = flat.Code;
-            flat.IsCorner = section.IsCorner;
-            flat.IsVertical = section.IsVertical;
-            flat.NumberInSpot = section.NumberInSpot;        
+            resFlats.Code = flat.Code;                                    
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
             // Временно - подмена индекса освещенностим для боковых квартир!!!???
             foreach (var itemFlat in resFlats.Flats)
             {
-                var sideFlat = SideFlatFake.GetSideFlat(itemFlat.Type);
+                var sideFlat = SideFlatFake.GetSideFlat(itemFlat);
                 if (sideFlat != null)
                 {
                     itemFlat.LightingTop = sideFlat.LightingTop;

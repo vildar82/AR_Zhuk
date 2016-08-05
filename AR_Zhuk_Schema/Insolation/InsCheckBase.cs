@@ -47,6 +47,14 @@ namespace AR_Zhuk_Schema.Insolation
             topFlats = insService.GetSideFlatsInSection(sect.Flats, isTop: true);
             bottomFlats = insService.GetSideFlatsInSection(sect.Flats, isTop: false);
 
+            // Временно!!! подмена индекса угловой квартиры 2KL2
+            var cornerFlat = bottomFlats.First();
+            if (cornerFlat.ShortType == "2KL2")
+            {
+                cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
+                cornerFlat.SelectedIndexBottom = 4;
+            }
+
             // Проверка инсоляции квартир сверху
             isTop = true;
             curSideFlats = topFlats;

@@ -156,20 +156,19 @@ namespace AR_Zhuk_Schema.Insolation
                         }
                     }
                 }
-#if TEST
-                flat.IsInsPassed = flatPassed;
-                if (specialFail)
-                {
-                    flat.IsInsPassed = false;
-                }
-                //Trace.WriteLine(checkSection.IdSection + "_flat=" + flat.Type + ", flatPassed=" + flatPassed + ", specialFail=" + specialFail + ", isTop=" + isTop);
-#else
+
                 if (!flatPassed || specialFail)
                 {
+#if !TEST
                     // квартира не прошла инсоляцию - вся секция не проходит                    
                     return false;
-                }                
 #endif
+                }
+                else
+                {
+                    flat.IsInsPassed = true;                   
+                }
+
                 // Сдвиг шага
                 step += isTop ? flat.SelectedIndexTop : flat.SelectedIndexBottom;
             }
