@@ -38,26 +38,26 @@ namespace AR_AreaZhuk
                 mark += "1";
             Thread.Sleep(100);
             bool isContinue = true;
-            while (isContinue)
-            {
-                try
-                {
+            //while (isContinue)
+            //{
+                //try
+                //{
                     using (FileStream fs = new FileStream(@"E:\Экспорты\" + mark + ".xml", FileMode.Create, FileAccess.Write))
                     {
-                        try
-                        {
+                        //try
+                        //{
                             XmlSerializer ser = new XmlSerializer(go.GetType());
                             ser.Serialize(fs, go);
-                            isContinue = false;
-                        }
-                        catch
-                        {
-                        }
+                           // isContinue = false;
+                        //}
+                        //catch
+                        //{
+                        //}
 
                     }
-                }
-                catch { }
-            }
+                //}
+                //catch { }
+            //}
            
                
             //}

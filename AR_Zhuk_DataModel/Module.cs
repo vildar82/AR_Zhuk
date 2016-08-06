@@ -11,9 +11,10 @@ namespace AR_Zhuk_DataModel
     /// </summary>
     public class Module : IEquatable<Module>
     {   
-        public string InsValue { get; private set; }
-        public double Length { get; private set; }
+        public string InsValue { get;  set; }
+        public double Length { get;  set; }
 
+        public Module() { }
         private Module (string insValue, double length)
         {            
             InsValue = insValue;
@@ -31,7 +32,7 @@ namespace AR_Zhuk_DataModel
             if (other == null) return false;
             if (ReferenceEquals(this, other)) return true;
             var res = InsValue == other.InsValue &&
-                      Length == other.Length;
+                      Length.Equals(other.Length);
             return res;
         }
     }
