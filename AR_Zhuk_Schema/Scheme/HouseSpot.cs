@@ -14,6 +14,8 @@ namespace AR_Zhuk_Schema.Scheme
     /// </summary>
     public class HouseSpot
     {
+        ProjectScheme project;
+
         /// <summary>
         /// Ширина обычной секции в шагах
         /// </summary>
@@ -22,8 +24,7 @@ namespace AR_Zhuk_Schema.Scheme
         /// Минимальный шаг угловой секции
         /// </summary>
         public const int CornerSectionMinStep = 8;        
-
-        private RTree<Segment> tree = new RTree<Segment>();
+        
         private readonly Cell cellStart;
         private readonly ISchemeParser parser;
 
@@ -38,6 +39,7 @@ namespace AR_Zhuk_Schema.Scheme
 
         public HouseSpot (string spotName, Cell cellStart, ISchemeParser parser)
         {
+            this.project = parser.Project;
             SpotName = spotName;
             this.cellStart = cellStart;
             this.parser = parser;
@@ -69,7 +71,12 @@ namespace AR_Zhuk_Schema.Scheme
             }
             return res;
         }
-                
+
+        /// <summary>
+        /// Отрезка секции из сегмента
+        /// </summary>
+        /// <param name="startStepInHouse">Стартовый шаг секции</param>
+        /// <param name="sectionCountStep">Длина секции</param>        
         public Section GetSection (int startStepInHouse, int sectionCountStep)
         {
             Section section = null; 
@@ -147,6 +154,36 @@ namespace AR_Zhuk_Schema.Scheme
                         int modulesInNextSeg = 1 + (WidthOrdinary - 1); // 1 шаг загиба + 3 боковые ячейки
                         section.InsBot.AddRange(nextSegment.ModulesRight.Take(modulesInNextSeg));                        
                     }
+
+                    // Стартовая ячейка секции картинки
+                    if (section.Direction>0)
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);                            
+                            section.ImageStart = startCell.Offset(segment.DirectionLeftToRight);
+                            section.ImageAngle = 270;
+                        }
+                        else
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                            section.ImageAngle = 90;
+                        }
+                    }
+                    else
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                            section.ImageAngle = 90;
+                        }
+                        else
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);                            
+                            section.ImageStart = startCell.Offset(segment.DirectionLeftToRight.Negative);
+                            section.ImageAngle = 270;
+                        }
+                    }
                 }
                 else
                 {
@@ -182,6 +219,38 @@ namespace AR_Zhuk_Schema.Scheme
                         section.InsBot.AddRange(nextSegment.ModulesRight.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)                        
                         section.InsBot.Reverse();
                     }
+
+                    // Стартовая ячейка секции картинки
+                    if (section.Direction > 0)
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                            section.ImageAngle = 0;
+                        }
+                        else
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                            section.ImageAngle = 180;
+                        }
+                    }
+                    else
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                            var lenTail = section.CountStep - (WidthOrdinary + 1);
+                            section.ImageStart = startCell.Offset(nextSegment.Direction * lenTail);
+                            section.ImageAngle = 180;
+                        }
+                        else
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                            var lenTail = section.CountStep - (WidthOrdinary + 1);
+                            section.ImageStart = startCell.Offset(nextSegment.Direction * lenTail);
+                            section.ImageAngle = 0;
+                        }
+                    }
                 }
 
                 section.IsLeftBottomCorner = section.SectionType == SectionType.CornerLeft;
@@ -204,20 +273,36 @@ namespace AR_Zhuk_Schema.Scheme
                     section.InsTop = insLeft;
                     section.InsTop.Reverse();
                     section.InsBot = insRight;
+                    
+                    // стартовая ячейка картинки
+                    if (segment.IsVertical)                                           
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);                    
+                    else                    
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);                                        
                 }
                 else
                 {                    
                     section.InsTop = insRight;
                     section.InsBot = insLeft;
                     section.InsBot.Reverse();
+
+                    // стартовая ячейка картинки
+                    if (segment.IsVertical)
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg + sectionCountStep, true);
+                    else
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg + sectionCountStep, false);                    
                 }
+                section.ImageAngle = section.IsVertical ? 90 : 0;
             }
 
             // Боковая инсоляция в торце
-            if (segment.StartType == SegmentEnd.End && startStepInHouse==1 ||
-                segment.EndType == SegmentEnd.End && section.CountStep == endStepInSeg)
-            {                
-                section.InsSide = segment.ModulesSide;
+            if (segment.StartType == SegmentEnd.End && startStepInHouse==1)
+            { 
+                section.InsSideStart = segment.ModulesSideStart;
+            }
+            else if (segment.EndType == SegmentEnd.End && section.CountStep == endStepInSeg)
+            {
+                section.InsSideEnd = segment.ModulesSideEnd;
             }            
 
             return section;
@@ -226,27 +311,8 @@ namespace AR_Zhuk_Schema.Scheme
         protected void AddSegment (Segment segment)
         {
             Segments.Add(segment);
-            // добавление прямоугольника сегмента в дерево, для проверки попадания любой ячейки в этот дом
-            Rectangle r = GetRectangle(segment);
-            tree.Add(r, segment);
-
             CountSteps += segment.CountSteps;
-        }
-
-        /// <summary>
-        /// Проверка входит ли ячейка в этот дом
-        /// </summary>      
-        public bool HasCell (Cell cell)
-        {
-            bool res = false;
-            // 1 ячейка отступа от границы дома - т.к. она не может использоваться другим домом
-            Rectangle r = new Rectangle(cell.Col - 1, cell.Row - 1, cell.Col + 1, cell.Row + 1, 0, 0);
-            var segments = tree.Intersects(r);
-            if (segments != null && segments.Count > 0)
-            {
-                res = true;
-            }
-            return res;
+            project.AddSegment(segment);
         }        
 
         /// <summary>
@@ -355,55 +421,6 @@ namespace AR_Zhuk_Schema.Scheme
             }
             AddSegment(newSegment);
             DefineOtherSegments();
-        }
-
-        private Rectangle GetRectangle (Segment segment)
-        {
-            Cell startRightMin;
-            Cell endLeftMax;
-
-            // Стартовый 
-            if (segment.StartType == SegmentEnd.Normal || segment.StartType == SegmentEnd.End)
-            {
-                startRightMin = segment.CellStartRight;
-            }
-            else
-            {
-                // угловой торец у сегмента
-                if (segment.IsVertical)
-                {
-                    startRightMin = segment.CellStartRight;
-                    startRightMin.Row = segment.StartLevel;
-                }
-                else
-                {
-                    startRightMin = segment.CellStartRight;
-                    startRightMin.Col = segment.StartLevel;
-                }
-            }
-
-            // Конечный торец
-            if (segment.EndType == SegmentEnd.Normal || segment.EndType == SegmentEnd.End)
-            {
-                endLeftMax = segment.CellEndLeft;
-            }
-            else
-            {
-                // угловой торец у сегмента
-                if (segment.IsVertical)
-                {
-                    endLeftMax = segment.CellEndLeft;
-                    endLeftMax.Row = segment.EndLevel;
-                }
-                else
-                {
-                    endLeftMax = segment.CellEndLeft;
-                    endLeftMax.Col = segment.EndLevel;
-                }
-            }
-
-            Rectangle r = new Rectangle(startRightMin.Col, startRightMin.Row, endLeftMax.Col, endLeftMax.Row, 0, 0);
-            return r;
-        }
+        }        
     }
 }

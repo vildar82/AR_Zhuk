@@ -5,6 +5,7 @@ namespace AR_Zhuk_Schema.Scheme
 {
     public interface ISchemeParser
     {
+        ProjectScheme Project { get; }
         /// <summary>
         /// Пятна домов
         /// </summary>

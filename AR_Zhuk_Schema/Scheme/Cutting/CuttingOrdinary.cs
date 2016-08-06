@@ -89,44 +89,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
            return resHouses;
         }
 
-        private void InitLoadDBSections(List<int> stepsSet)
-        {
-            // Загрузка типов секций для этого дома
-            // размерности секций
-            var sectSteps = stepsSet.Select(s => SectionSteps[s]).ToList();
-            List<string> types = new List<string> { SectionOrdinaryName };
-            if (houseSpot.Segments.Count > 1)
-            {
-                types.Add(SectionCornerLeftName);
-                types.Add(SectionCornerRightName);
-            }
-            List<string> levels = new List<string>();
-            levels.Add(GetSectionLevels(houseSpot.HouseOptions.CountFloorsMain));
-            levels.Add(GetSectionLevels(houseSpot.HouseOptions.CountFloorsDominant));
-
-            List<SelectSectionParam> selectSects = new List<SelectSectionParam>();
-
-            foreach (var typeSect in types)
-            {
-                foreach (var levelSect in levels)
-                {
-                    foreach (var step in sectSteps)
-                    {
-                        SelectSectionParam selSectParam = new SelectSectionParam(step, typeSect, levelSect);
-                        selectSects.Add(selSectParam);
-                    }
-                }
-            }
-            dbService.PrepareLoadSections(selectSects);
-        }
-
-        private static string GetSectionDataKey(int sectCountStep, int numberSect, int startStepSect)
-        {
-            string key = "n" + numberSect + "z" + sectCountStep + "s" + startStepSect;
-            return key;
-        }
-
-        private List<Section> GetHouseVariant(int[] houseSteps)
+        private List<Section> GetHouseVariant (int[] houseSteps)
         {
             string houseSize = string.Join(".", houseSteps);
 #if TEST
@@ -178,8 +141,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 #if TEST
                     Debug.WriteLine("new sect key = " + key);
 #endif
-
+                    //
                     // Отрезка секции из дома
+                    //
                     section = houseSpot.GetSection(curStepInHouse, sectCountStep);
                     if (section == null)
                     {
@@ -202,7 +166,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     section.IsStartSectionInHouse = numberSect == 1;
                     section.IsEndSectionInHouse = numberSect == sectionsInHouse;
 
+                    //
                     // Запрос секций из базы
+                    //
                     SelectSectionParam selSectParam = new SelectSectionParam(section.CountStep, type, levels);
                     section.Sections = dbService.GetSections(section, selSectParam);
                     if (section.Sections == null || section.Sections.Count == 0)
@@ -215,7 +181,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         break;
                     }
 
+                    //
                     // Проверка инсоляции секции
+                    //
                     List<FlatInfo> flatsCheckedIns = insService.GetInsolationSections(section);
                     if (flatsCheckedIns.Count == 0)
                     {
@@ -242,10 +210,10 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             }
 
 #if TEST
-            if (resSections != null && resSections.Count!= 0)
+            if (resSections != null && resSections.Count != 0)
             {
                 Debug.WriteLine("Passed!     Passed!       Passed!     Passed! - " + houseSize);
-            }   
+            }
 #endif
 
             // Определение торцов секций
@@ -253,6 +221,43 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
             return resSections;
         }
+
+        private void InitLoadDBSections(List<int> stepsSet)
+        {
+            // Загрузка типов секций для этого дома
+            // размерности секций
+            var sectSteps = stepsSet.Select(s => SectionSteps[s]).ToList();
+            List<string> types = new List<string> { SectionOrdinaryName };
+            if (houseSpot.Segments.Count > 1)
+            {
+                types.Add(SectionCornerLeftName);
+                types.Add(SectionCornerRightName);
+            }
+            List<string> levels = new List<string>();
+            levels.Add(GetSectionLevels(houseSpot.HouseOptions.CountFloorsMain));
+            levels.Add(GetSectionLevels(houseSpot.HouseOptions.CountFloorsDominant));
+
+            List<SelectSectionParam> selectSects = new List<SelectSectionParam>();
+
+            foreach (var typeSect in types)
+            {
+                foreach (var levelSect in levels)
+                {
+                    foreach (var step in sectSteps)
+                    {
+                        SelectSectionParam selSectParam = new SelectSectionParam(step, typeSect, levelSect);
+                        selectSects.Add(selSectParam);
+                    }
+                }
+            }
+            dbService.PrepareLoadSections(selectSects);
+        }
+
+        private static string GetSectionDataKey(int sectCountStep, int numberSect, int startStepSect)
+        {
+            string key = "n" + numberSect + "z" + sectCountStep + "s" + startStepSect;
+            return key;
+        }        
 
         private int GetSectionFloors(int numberSect, int sectionsInHouse, bool isCorner)
         {

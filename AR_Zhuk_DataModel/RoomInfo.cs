@@ -13,6 +13,16 @@ namespace AR_Zhuk_DataModel
         /// Только для тестов!! Прошлали инсоляция
         /// </summary>
         public bool IsInsPassed { get; set; }
+        /// <summary>
+        /// Вид торца квартиры. Касается только квартир расположенных у торца секции.
+        /// End - торец
+        /// Seam - деф.шов.
+        /// None - обычный шов.
+        /// Торец - когда соседней секции нет или она ниже этажностью.
+        /// Деф.шов - когда соседняя секция выше.
+        /// Нет - когда соседняя секция той-же высоты.
+        /// </summary>
+        public Joint Joint { get; set; }
         public string ShortType { get; set; }
         public string SubZone { get; set; }
         public string Type { get; set; }

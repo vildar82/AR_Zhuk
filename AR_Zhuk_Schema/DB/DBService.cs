@@ -48,13 +48,14 @@ namespace AR_Zhuk_Schema.DB
 
                 sectionsBySyze = new List<FlatInfo>();                
                 flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();                
-                FlatInfo fl = new FlatInfo();
+                FlatInfo fl;
                 bool isValidSection = true;
                 var sections = flatsDb.GroupBy(x => x.ID_Section).Select(x => x.ToList()).ToList();                
                 foreach (var gg in sections)
                 {
                     fl = new FlatInfo();
 
+                    fl.Section = section;
                     fl.Floors = section.Floors;
                     fl.CountStep = section.CountStep;
                     fl.Flats = new List<RoomInfo>();

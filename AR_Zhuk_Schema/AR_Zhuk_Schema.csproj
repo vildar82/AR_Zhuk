@@ -74,7 +74,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Scheme\Cell.cs" />
     <Compile Include="Scheme\Cutting\CuttingFactory.cs" />
     <Compile Include="Scheme\Cutting\CuttingOrdinary.cs" />
     <Compile Include="Scheme\Cutting\ICutting.cs" />
