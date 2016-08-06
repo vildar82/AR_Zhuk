@@ -60,6 +60,9 @@ namespace AR_Zhuk_Schema.DB
                     fl.CountStep = section.CountStep;
                     fl.Flats = new List<RoomInfo>();
                     fl.IsCorner = section.IsCorner;
+                    fl.IsVertical = section.IsVertical;
+                    fl.NumberInSpot = section.NumberInSpot;
+                    fl.SpotOwner = section.SpotOwner;                    
                     isValidSection = true;
                     bool isContains = false;
                     for (int i = 0; i < gg.Count; i++)
