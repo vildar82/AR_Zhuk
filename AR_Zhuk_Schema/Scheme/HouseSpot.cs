@@ -14,6 +14,8 @@ namespace AR_Zhuk_Schema.Scheme
     /// </summary>
     public class HouseSpot
     {
+        ProjectScheme project;
+
         /// <summary>
         /// Ширина обычной секции в шагах
         /// </summary>
@@ -22,8 +24,7 @@ namespace AR_Zhuk_Schema.Scheme
         /// Минимальный шаг угловой секции
         /// </summary>
         public const int CornerSectionMinStep = 8;        
-
-        private RTree<Segment> tree = new RTree<Segment>();
+        
         private readonly Cell cellStart;
         private readonly ISchemeParser parser;
 
@@ -38,6 +39,7 @@ namespace AR_Zhuk_Schema.Scheme
 
         public HouseSpot (string spotName, Cell cellStart, ISchemeParser parser)
         {
+            this.project = parser.Project;
             SpotName = spotName;
             this.cellStart = cellStart;
             this.parser = parser;
@@ -69,7 +71,7 @@ namespace AR_Zhuk_Schema.Scheme
             }
             return res;
         }
-                
+
         /// <summary>
         /// Отрезка секции из сегмента
         /// </summary>
@@ -306,27 +308,8 @@ namespace AR_Zhuk_Schema.Scheme
         protected void AddSegment (Segment segment)
         {
             Segments.Add(segment);
-            // добавление прямоугольника сегмента в дерево, для проверки попадания любой ячейки в этот дом
-            Rectangle r = GetRectangle(segment);
-            tree.Add(r, segment);
-
             CountSteps += segment.CountSteps;
-        }
-
-        /// <summary>
-        /// Проверка входит ли ячейка в этот дом
-        /// </summary>      
-        public bool HasCell (Cell cell)
-        {
-            bool res = false;
-            // 1 ячейка отступа от границы дома - т.к. она не может использоваться другим домом
-            Rectangle r = new Rectangle(cell.Col - 1, cell.Row - 1, cell.Col + 1, cell.Row + 1, 0, 0);
-            var segments = tree.Intersects(r);
-            if (segments != null && segments.Count > 0)
-            {
-                res = true;
-            }
-            return res;
+            project.AddSegment(segment);
         }        
 
         /// <summary>
@@ -435,55 +418,6 @@ namespace AR_Zhuk_Schema.Scheme
             }
             AddSegment(newSegment);
             DefineOtherSegments();
-        }
-
-        private Rectangle GetRectangle (Segment segment)
-        {
-            Cell startRightMin;
-            Cell endLeftMax;
-
-            // Стартовый 
-            if (segment.StartType == SegmentEnd.Normal || segment.StartType == SegmentEnd.End)
-            {
-                startRightMin = segment.CellStartRight;
-            }
-            else
-            {
-                // угловой торец у сегмента
-                if (segment.IsVertical)
-                {
-                    startRightMin = segment.CellStartRight;
-                    startRightMin.Row = segment.StartLevel;
-                }
-                else
-                {
-                    startRightMin = segment.CellStartRight;
-                    startRightMin.Col = segment.StartLevel;
-                }
-            }
-
-            // Конечный торец
-            if (segment.EndType == SegmentEnd.Normal || segment.EndType == SegmentEnd.End)
-            {
-                endLeftMax = segment.CellEndLeft;
-            }
-            else
-            {
-                // угловой торец у сегмента
-                if (segment.IsVertical)
-                {
-                    endLeftMax = segment.CellEndLeft;
-                    endLeftMax.Row = segment.EndLevel;
-                }
-                else
-                {
-                    endLeftMax = segment.CellEndLeft;
-                    endLeftMax.Col = segment.EndLevel;
-                }
-            }
-
-            Rectangle r = new Rectangle(startRightMin.Col, startRightMin.Row, endLeftMax.Col, endLeftMax.Row, 0, 0);
-            return r;
-        }
+        }        
     }
 }

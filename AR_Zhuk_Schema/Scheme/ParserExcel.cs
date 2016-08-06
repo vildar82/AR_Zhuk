@@ -25,8 +25,11 @@ namespace AR_Zhuk_Schema.Scheme
         Module module;
         string spotName;
 
-        public ParserExcel ()
-        {            
+        public ProjectScheme Project { get; private set; }
+
+        public ParserExcel (ProjectScheme project)
+        {
+            Project = project;
         }
 
         public void Parse (string schemeFile)
@@ -72,9 +75,9 @@ namespace AR_Zhuk_Schema.Scheme
         }
         
         private void checkCell (Cell cell)
-        {            
-            // Если это ячейка пятна дома
-            if (IsInsCell(cell) && !HouseSpots.Any(h => h.HasCell(cell)))
+        {
+            // Если это ячейка пятна дома             
+            if (IsInsCell(cell) && !Project.HasCell(cell))
             {
                 // Создание пятна дома
                 var houseSpot = new HouseSpot(spotName, cell, this);
@@ -136,7 +139,8 @@ namespace AR_Zhuk_Schema.Scheme
         {
             if (cell.Row <= 0 || cell.Col <= 0) return false;
             var cellValue = worksheet.Cells[cell.Row, cell.Col].Text;
-            return IsInsCell(cellValue);
+            var res = IsInsCell(cellValue);
+            return res;
         }
 
         /// <summary>

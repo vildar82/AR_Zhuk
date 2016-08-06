@@ -10,7 +10,6 @@ namespace AR_Zhuk_DataModel
     {
         public string GUID { get; set; }
         public List<HouseInfo> Houses = new List<HouseInfo>();
-        public SpotInfo SpotInf { get; set; }
-
+        public SpotInfo SpotInf { get; set; }        
     }
 }

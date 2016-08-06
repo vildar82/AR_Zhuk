@@ -8,13 +8,19 @@ namespace AR_Zhuk_DataModel
 {
 
     public class SpotInfo
-    {
+    {        
         public double SpotArea = 2280.96 - 1.152;
         public string GUID { get; set; }
         public int TotalFlats { get; set; }
         public int TotalSections { get; set; }
         public string TypicalSections { get; set; }
         public double RealArea { get; set; }
+        /// <summary>
+        /// Размер объекта застройки
+        /// Правая нижняя ячейка Excel.
+        /// Стартовая ячейка 1,1.
+        /// </summary>
+        public Cell Size { get; set; }
         public List<Requirment> requirments = new List<Requirment>();
 
         public SpotInfo CopySpotInfo(SpotInfo sp)

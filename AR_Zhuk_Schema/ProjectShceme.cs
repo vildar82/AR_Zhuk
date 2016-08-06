@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AR_Zhuk_DataModel;
 using AR_Zhuk_Schema.Scheme;
 using AR_Zhuk_Schema.Scheme.Cutting;
+using AR_Zhuk_Schema.Scheme.SpatialIndex;
 
 namespace AR_Zhuk_Schema
 {
@@ -16,6 +17,7 @@ namespace AR_Zhuk_Schema
     {
         private List<HouseOptions> houseOptions;
         private SpotInfo sp;
+        private RTree<Segment> tree = new RTree<Segment>();
 
         /// <summary>
         /// Схема пятен домов в объекте застройки
@@ -36,9 +38,9 @@ namespace AR_Zhuk_Schema
         public void ReadScheme (string schemeFile)
         {
             // Чтение матрицы ячеек первого листа в Excel файле
-            ISchemeParser parserExcel = new ParserExcel();
+            ISchemeParser parserExcel = new ParserExcel(this);
             parserExcel.Parse(schemeFile);
-            HouseSpots = parserExcel.HouseSpots;
+            HouseSpots = parserExcel.HouseSpots;            
 
             foreach (var houseSpot in HouseSpots)
             {
@@ -48,9 +50,13 @@ namespace AR_Zhuk_Schema
                     string allowedHouseNames = string.Join(",", houseOptions.Select(h => h.HouseName));
                     throw new Exception("Имя пятна дома определенное в файле инсоляции - '" + houseSpot.SpotName + "' не соответствует одному из допустимых значений: " + allowedHouseNames);
                 }
-                houseSpot.HouseOptions = houseOpt;
+                houseSpot.HouseOptions = houseOpt;                
             }
-        }
+
+            // Размер застройки
+            var bounds = tree.getBounds();
+            sp.Size = new Cell(Convert.ToInt32(bounds.max[1])+1, Convert.ToInt32(bounds.max[0])+1);           
+        }        
 
         /// <summary>
         /// Получение всех вариантов домов для всех пятен домов
@@ -70,6 +76,75 @@ namespace AR_Zhuk_Schema
                 }
             }
             return totalHouses;
+        }
+
+        internal void AddSegment (Segment segment)
+        {
+            // добавление прямоугольника сегмента в дерево, для проверки попадания любой ячейки в этот дом
+            Rectangle r = GetRectangle(segment);            
+            tree.Add(r, segment);
+        }
+
+        internal bool HasCell (Cell cell)
+        {
+            bool res = false;
+            // 1 ячейка отступа от границы дома - т.к. она не может использоваться другим домом
+            Rectangle r = new Rectangle(cell.Col - 1, cell.Row - 1, cell.Col + 1, cell.Row + 1, 0, 0);
+            var segments = tree.Intersects(r);
+            if (segments != null && segments.Count > 0)
+            {
+                res = true;
+            }
+            return res;
+        }
+
+        private Rectangle GetRectangle (Segment segment)
+        {
+            Cell startRightMin;
+            Cell endLeftMax;
+
+            // Стартовый 
+            if (segment.StartType == SegmentEnd.Normal || segment.StartType == SegmentEnd.End)
+            {
+                startRightMin = segment.CellStartRight;
+            }
+            else
+            {
+                // угловой торец у сегмента
+                if (segment.IsVertical)
+                {
+                    startRightMin = segment.CellStartRight;
+                    startRightMin.Row = segment.StartLevel;
+                }
+                else
+                {
+                    startRightMin = segment.CellStartRight;
+                    startRightMin.Col = segment.StartLevel;
+                }
+            }
+
+            // Конечный торец
+            if (segment.EndType == SegmentEnd.Normal || segment.EndType == SegmentEnd.End)
+            {
+                endLeftMax = segment.CellEndLeft;
+            }
+            else
+            {
+                // угловой торец у сегмента
+                if (segment.IsVertical)
+                {
+                    endLeftMax = segment.CellEndLeft;
+                    endLeftMax.Row = segment.EndLevel;
+                }
+                else
+                {
+                    endLeftMax = segment.CellEndLeft;
+                    endLeftMax.Col = segment.EndLevel;
+                }
+            }
+
+            Rectangle r = new Rectangle(startRightMin.Col, startRightMin.Row, endLeftMax.Col, endLeftMax.Row, 0, 0);
+            return r;
         }
     }
 }
