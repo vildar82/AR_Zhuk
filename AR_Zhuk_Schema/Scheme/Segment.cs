@@ -111,8 +111,8 @@ namespace AR_Zhuk_Schema.Scheme
         /// <param name="isLeft">Левая сторона сегмента или правая</param>
         public Cell GetSectionStartCell (Cell from, int step, bool isLeft)
         {
-            if ((StartType == SegmentEnd.CornerLeft && isLeft) ||
-                StartType == SegmentEnd.CornerRight && !isLeft)
+            if ((StartType == SegmentEnd.CornerLeft && !isLeft) ||
+                StartType == SegmentEnd.CornerRight && isLeft)
             {
                 step += HouseSpot.WidthOrdinary - 1;
             }
