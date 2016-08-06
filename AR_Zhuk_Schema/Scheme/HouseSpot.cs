@@ -70,6 +70,11 @@ namespace AR_Zhuk_Schema.Scheme
             return res;
         }
                 
+        /// <summary>
+        /// Отрезка секции из сегмента
+        /// </summary>
+        /// <param name="startStepInHouse">Стартовый шаг секции</param>
+        /// <param name="sectionCountStep">Длина секции</param>        
         public Section GetSection (int startStepInHouse, int sectionCountStep)
         {
             Section section = null; 
@@ -147,6 +152,36 @@ namespace AR_Zhuk_Schema.Scheme
                         int modulesInNextSeg = 1 + (WidthOrdinary - 1); // 1 шаг загиба + 3 боковые ячейки
                         section.InsBot.AddRange(nextSegment.ModulesRight.Take(modulesInNextSeg));                        
                     }
+
+                    // Стартовая ячейка секции картинки
+                    if (section.Direction>0)
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);                            
+                            section.ImageStart = startCell.Offset(segment.DirectionLeftToRight);
+                            section.ImageAngle = 270;
+                        }
+                        else
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                            section.ImageAngle = 90;
+                        }
+                    }
+                    else
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                            section.ImageAngle = 90;
+                        }
+                        else
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);                            
+                            section.ImageStart = startCell.Offset(segment.DirectionLeftToRight.Negative);
+                            section.ImageAngle = 270;
+                        }
+                    }
                 }
                 else
                 {
@@ -182,6 +217,38 @@ namespace AR_Zhuk_Schema.Scheme
                         section.InsBot.AddRange(nextSegment.ModulesRight.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)                        
                         section.InsBot.Reverse();
                     }
+
+                    // Стартовая ячейка секции картинки
+                    if (section.Direction > 0)
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                            section.ImageAngle = 0;
+                        }
+                        else
+                        {
+                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                            section.ImageAngle = 180;
+                        }
+                    }
+                    else
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                            var lenTail = section.CountStep - (WidthOrdinary + 1);
+                            section.ImageStart = startCell.Offset(nextSegment.Direction * lenTail);
+                            section.ImageAngle = 180;
+                        }
+                        else
+                        {
+                            var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                            var lenTail = section.CountStep - (WidthOrdinary + 1);
+                            section.ImageStart = startCell.Offset(nextSegment.Direction * lenTail);
+                            section.ImageAngle = 0;
+                        }
+                    }
                 }
 
                 section.IsLeftBottomCorner = section.SectionType == SectionType.CornerLeft;
@@ -204,13 +271,26 @@ namespace AR_Zhuk_Schema.Scheme
                     section.InsTop = insLeft;
                     section.InsTop.Reverse();
                     section.InsBot = insRight;
+                    
+                    // стартовая ячейка картинки
+                    if (segment.IsVertical)                                           
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);                    
+                    else                    
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);                                        
                 }
                 else
                 {                    
                     section.InsTop = insRight;
                     section.InsBot = insLeft;
                     section.InsBot.Reverse();
+
+                    // стартовая ячейка картинки
+                    if (segment.IsVertical)
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg + sectionCountStep, true);
+                    else
+                        section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg + sectionCountStep, false);                    
                 }
+                section.ImageAngle = section.IsVertical ? 90 : 0;
             }
 
             // Боковая инсоляция в торце

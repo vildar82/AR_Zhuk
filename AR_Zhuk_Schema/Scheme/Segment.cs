@@ -23,6 +23,10 @@ namespace AR_Zhuk_Schema.Scheme
         public readonly Cell CellEndLeft;
         public readonly Cell CellEndRight;
         public readonly Cell Direction;
+        /// <summary>
+        /// Перпендикулярное направление от Левой к Правой стороне
+        /// </summary>
+        public readonly Cell DirectionLeftToRight;
         public readonly List<Module> ModulesLeft;
         public readonly List<Module> ModulesRight;
         /// <summary>
@@ -53,6 +57,7 @@ namespace AR_Zhuk_Schema.Scheme
             CellStartLeft = cellStartLeft;
             CellStartRight = cellStartRight;
             Direction = direction;
+            DirectionLeftToRight = direction.ToRight();
             this.parser = parser;            
             
             ModulesLeft = parser.GetSteps(cellStartLeft, direction, out CellEndLeft);
@@ -72,9 +77,8 @@ namespace AR_Zhuk_Schema.Scheme
 
             // Если старт секции угловой - отнимаем три лишних шага            
             if (StartType == SegmentEnd.CornerLeft || StartType == SegmentEnd.CornerRight)
-            {
-                int countStepMinus = HouseSpot.WidthOrdinary - 1;
-                CountSteps -= countStepMinus;                
+            {                
+                CountSteps -= (HouseSpot.WidthOrdinary - 1);                
             }
 
             // боковая инсоляция
@@ -89,11 +93,27 @@ namespace AR_Zhuk_Schema.Scheme
                 sourceModules.Count > CountSteps)
             {
                 // три лишних модуля в начале
-                startStep += HouseSpot.WidthOrdinary - 1;
-                //endStep += HouseSpot.WidthOrdinary - 1;
+                startStep += HouseSpot.WidthOrdinary - 1;                
             }
             resModules = sourceModules.Skip(startStep - 1).Take(countSteps).ToList();
             return resModules;
+        }
+
+        /// <summary>
+        /// Опреление стартовой ячейки секции - левая верхняя
+        /// </summary>
+        /// <param name="from">стартовый шаг секции</param>  
+        /// <param name="step">Отступ шагов в основном направлении от заданной ячейки</param>
+        /// <param name="isLeft">Левая сторона сегмента или правая</param>
+        public Cell GetSectionStartCell (Cell from, int step, bool isLeft)
+        {
+            if ((StartType == SegmentEnd.CornerLeft && isLeft) ||
+                StartType == SegmentEnd.CornerRight && !isLeft)
+            {
+                step += HouseSpot.WidthOrdinary - 1;
+            }
+            var resCell = from.Offset(Direction * (step-1));
+            return resCell;
         }
 
         ///// <summary>
@@ -231,7 +251,9 @@ namespace AR_Zhuk_Schema.Scheme
                 endType = GetCornerEnd(cellEndLeft, cellEndRight, isStartEnd);
             }
             return endType;           
-        }      
+        }
+
+        
 
         /// <summary>
         /// Определение - на одном ли шаге сегмента находятся ячейки
@@ -269,7 +291,7 @@ namespace AR_Zhuk_Schema.Scheme
         private List<Module> GetSideModules ()
         {
             List<Module> res = null;
-            var dir = Direction.ToRight();
+            var dir = DirectionLeftToRight;// Direction.ToRight();
             if (StartType == SegmentEnd.End)
             {                
                 Cell lastCell;

@@ -168,28 +168,12 @@ namespace AR_Zhuk_Schema.Insolation
             }
             
             return topFlats;
-        }
-
-        private Section CreateSection (Section section,bool isInvert)
-        {
-            Section resSection = section.Copy();
-            resSection.Sections = new List<FlatInfo>();            
-            resSection.IsInvert = isInvert;
-            return resSection;
-        }
+        }        
 
         private FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert)
         {
-            FlatInfo resFlats = new FlatInfo();
-            resFlats.IdSection = flat.IdSection;
-            resFlats.SpotOwner = section.SpotOwner;
-            resFlats.NumberInSpot = section.NumberInSpot;
-            resFlats.IsCorner = section.IsCorner;
-            resFlats.IsVertical = section.IsVertical;
-            resFlats.CountStep = section.CountStep;
-            resFlats.IsInvert = isInvert;
-            resFlats.Floors = section.Floors;
-            resFlats.Code = flat.Code;                                    
+            FlatInfo resFlats = flat.Copy();            
+            resFlats.IsInvert = isInvert;                                         
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
             // Временно - подмена индекса освещенностим для боковых квартир!!!???

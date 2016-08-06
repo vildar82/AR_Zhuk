@@ -6,11 +6,18 @@ using System.Threading.Tasks;
 
 namespace AR_Zhuk_DataModel
 {
-    public  class Section
-    {
-        // Добавил        
-        //        
-
+    public class Section
+    {   
+        /// <summary>
+        /// Стартовая ячейка секции - левый верхний угол
+        /// Для построения картинки
+        /// </summary>
+        public Cell ImageStart { get; set; }
+        /// <summary>
+        /// Угол поворота секции - по часовой стрелке.
+        /// 0 - в стандартном положении секции.
+        /// </summary>
+        public int ImageAngle { get; set; }
         /// <summary>
         /// Это первая секция в доме
         /// </summary>
@@ -50,17 +57,9 @@ namespace AR_Zhuk_DataModel
         /// <summary>
         /// Инсоляция с торца секции - если нет то null
         /// </summary>
-        public List<Module> InsSide { get; set; }
-
-        public Section Copy()
-        {
-            var copySection = (Section)MemberwiseClone();
-            return copySection;
-        }
+        public List<Module> InsSide { get; set; }        
         public int IdSection { get; set; }
-
-        public int CountStep { get; set; }
-        public bool IsInvert { get; set; }
+        public int CountStep { get; set; }        
         public bool IsVertical { get; set; }
         public bool IsCorner { get; set; }
         public string SpotOwner { get; set; }
@@ -72,9 +71,14 @@ namespace AR_Zhuk_DataModel
         public bool IsRightBottomCorner { get; set; }
         public double AxisArea { get; set; }
         public double TotalArea { get; set; }
-
         public List<FlatInfo> Sections = new List<FlatInfo>();
         public int TotalIndex = 0;
         public double RealIndex = 0;
+
+        public Section Copy ()
+        {
+            var copySection = (Section)MemberwiseClone();
+            return copySection;
+        }
     }
 }

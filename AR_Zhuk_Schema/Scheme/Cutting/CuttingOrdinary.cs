@@ -141,8 +141,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 #if TEST
                     Debug.WriteLine("new sect key = " + key);
 #endif
-
+                    //
                     // Отрезка секции из дома
+                    //
                     section = houseSpot.GetSection(curStepInHouse, sectCountStep);
                     if (section == null)
                     {
@@ -165,7 +166,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     section.IsStartSectionInHouse = numberSect == 1;
                     section.IsEndSectionInHouse = numberSect == sectionsInHouse;
 
+                    //
                     // Запрос секций из базы
+                    //
                     SelectSectionParam selSectParam = new SelectSectionParam(section.CountStep, type, levels);
                     section.Sections = dbService.GetSections(section, selSectParam);
                     if (section.Sections == null || section.Sections.Count == 0)
@@ -178,7 +181,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         break;
                     }
 
+                    //
                     // Проверка инсоляции секции
+                    //
                     List<FlatInfo> flatsCheckedIns = insService.GetInsolationSections(section);
                     if (flatsCheckedIns.Count == 0)
                     {
