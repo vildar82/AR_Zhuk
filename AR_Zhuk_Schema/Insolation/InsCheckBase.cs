@@ -344,7 +344,64 @@ namespace AR_Zhuk_Schema.Insolation
         {
             if (section.IsCorner)
             {
-
+                if (section.InsSideStart != null)
+                {
+                    if (section.Direction > 0)
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {                            
+                            insSideRightBotStandart = section.InsSideStart[0].InsValue;
+                            insSideRightTopStandart = section.InsSideStart[1].InsValue;
+                        }
+                        else
+                        {
+                            insSideLeftTopStandart = section.InsSideStart[0].InsValue;
+                            insSideLeftBotStandart = section.InsSideStart[1].InsValue;
+                        }                        
+                    }
+                    else
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            insSideRightTopStandart = section.InsSideStart[0].InsValue;
+                            insSideRightBotStandart = section.InsSideStart[1].InsValue;                            
+                        }
+                        else
+                        {
+                            insSideLeftTopStandart = section.InsSideStart[0].InsValue;
+                            insSideLeftBotStandart = section.InsSideStart[1].InsValue;
+                        }
+                    }
+                }
+                if (section.InsSideEnd != null)
+                {
+                    if (section.Direction > 0)
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            insSideRightTopStandart = section.InsSideStart[0].InsValue;
+                            insSideRightBotStandart = section.InsSideStart[1].InsValue;                            
+                        }
+                        else
+                        {
+                            insSideLeftTopStandart = section.InsSideStart[0].InsValue;
+                            insSideLeftBotStandart = section.InsSideStart[1].InsValue;
+                        }
+                    }
+                    else
+                    {
+                        if (section.SectionType == SectionType.CornerLeft)
+                        {
+                            insSideRightTopStandart = section.InsSideStart[0].InsValue;
+                            insSideRightBotStandart = section.InsSideStart[1].InsValue;
+                        }
+                        else
+                        {
+                            insSideLeftBotStandart = section.InsSideStart[0].InsValue;
+                            insSideLeftTopStandart = section.InsSideStart[1].InsValue;                            
+                        }
+                    }
+                }
             }
             else
             {
