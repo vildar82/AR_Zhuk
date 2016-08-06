@@ -55,9 +55,13 @@ namespace AR_Zhuk_DataModel
         /// </summary>
         public List<Module> InsBot { get; set; }
         /// <summary>
-        /// Инсоляция с торца секции - если нет то null
+        /// боковая инсоляция стартового торца секции
         /// </summary>
-        public List<Module> InsSide { get; set; }        
+        public List<Module> InsSideStart { get; set; }
+        /// <summary>
+        /// боковая инсоляция в конце секции
+        /// </summary>
+        public List<Module> InsSideEnd { get; set; }
         public int IdSection { get; set; }
         public int CountStep { get; set; }        
         public bool IsVertical { get; set; }

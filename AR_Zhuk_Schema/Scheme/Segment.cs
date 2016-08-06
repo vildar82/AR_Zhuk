@@ -30,9 +30,13 @@ namespace AR_Zhuk_Schema.Scheme
         public readonly List<Module> ModulesLeft;
         public readonly List<Module> ModulesRight;
         /// <summary>
-        /// Боковая инсоляция торца дома - слева-напрво (от главного направление)
+        /// Боковая инсоляция стартового торца дома - слева-напрво (от главного направления)
         /// </summary>
-        public readonly List<Module> ModulesSide;
+        public readonly List<Module> ModulesSideStart;
+        /// <summary>
+        /// Боковая инсоляция в конце дома - слева-напрво (от главного направления)
+        /// </summary>
+        public readonly List<Module> ModulesSideEnd;
         public readonly SegmentEnd StartType;
         public readonly SegmentEnd EndType;
         public readonly bool IsVertical;
@@ -82,9 +86,9 @@ namespace AR_Zhuk_Schema.Scheme
             }
 
             // боковая инсоляция
-            ModulesSide = GetSideModules();
+            ModulesSideStart = DefineSideModules(StartType);
+            ModulesSideEnd = DefineSideModules(EndType);
         }
-
         
         public List<Module> GetModules (List<Module> sourceModules, int startStep, int countSteps)
         {
@@ -288,27 +292,25 @@ namespace AR_Zhuk_Schema.Scheme
             return resEndCornerType;
         }
 
-        private List<Module> GetSideModules ()
+        private List<Module> DefineSideModules (SegmentEnd end)
         {
             List<Module> res = null;
             var dir = DirectionLeftToRight;// Direction.ToRight();
-            if (StartType == SegmentEnd.End)
+            if (end == SegmentEnd.End)
             {                
                 Cell lastCell;
-                res = parser.GetSteps(CellStartLeft, dir, out lastCell);
+                res = parser.GetSteps(CellStartLeft, dir, out lastCell);                
             }
-            else if (EndType == SegmentEnd.End)
+            else if (end == SegmentEnd.End)
             {                
                 Cell lastCell;
                 res = parser.GetSteps(CellEndLeft, dir, out lastCell);
             }
-            
             if (res != null && res.Count == 4)
             {
                 res.RemoveAt(0);
                 res.RemoveAt(res.Count - 1);
-            }           
-
+            }
             return res;
         }
 

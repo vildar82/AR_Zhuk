@@ -296,10 +296,13 @@ namespace AR_Zhuk_Schema.Scheme
             }
 
             // Боковая инсоляция в торце
-            if (segment.StartType == SegmentEnd.End && startStepInHouse==1 ||
-                segment.EndType == SegmentEnd.End && section.CountStep == endStepInSeg)
-            {                
-                section.InsSide = segment.ModulesSide;
+            if (segment.StartType == SegmentEnd.End && startStepInHouse==1)
+            { 
+                section.InsSideStart = segment.ModulesSideStart;
+            }
+            else if (segment.EndType == SegmentEnd.End && section.CountStep == endStepInSeg)
+            {
+                section.InsSideEnd = segment.ModulesSideEnd;
             }            
 
             return section;

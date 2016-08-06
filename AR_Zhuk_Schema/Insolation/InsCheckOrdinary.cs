@@ -17,17 +17,19 @@ namespace AR_Zhuk_Schema.Insolation
         readonly string[] insTopStandart;
         readonly string[] insBotStandart;
         readonly string[] insTopInvert;
-        readonly string[] insBotInvert;
-        readonly string insSideTopStandart;
-        readonly string insSideBotStandart;
+        readonly string[] insBotInvert;        
 
         Lighting lightingCurSide;
         Lighting lightingOtherSide;
         
         string[] insCurSide;
         string[] insOtherSide;
-        string insSideTop;
-        string insSideBot;
+
+        string insSideCurTopLeft;
+        string insSideCurBotLeft;
+        string insSideCurTopRight;
+        string insSideCurBotRight;
+
         bool isFirstFlatInSide;
         bool isLastFlatInSide;        
 
@@ -37,12 +39,7 @@ namespace AR_Zhuk_Schema.Insolation
             insTopStandart = section.InsTop.Select(m => m.InsValue).ToArray();
             insBotStandart = section.InsBot.Select(m => m.InsValue).ToArray();            
             insTopInvert = insBotStandart;
-            insBotInvert = insTopStandart;
-            if (section.InsSide!= null)
-            {
-                insSideTopStandart = section.Direction > 0 ? section.InsSide[0].InsValue: section.InsSide[1].InsValue;
-                insSideBotStandart = section.Direction > 0 ? section.InsSide[1].InsValue : section.InsSide[0].InsValue;
-            }
+            insBotInvert = insTopStandart;            
         }
 
         protected override bool CheckFlats ()
@@ -59,9 +56,7 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     insCurSide = insBotStandart;
                     insOtherSide = insTopStandart;
-                }
-                insSideTop = insSideTopStandart;
-                insSideBot = insSideBotStandart;
+                }                
             }
             else
             {
@@ -74,9 +69,7 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     insCurSide = insBotInvert;
                     insOtherSide = insTopInvert;
-                }
-                insSideTop = insSideBotStandart;
-                insSideBot = insSideTopStandart; 
+                }                 
             }
 
             if (isTop)
@@ -182,137 +175,14 @@ namespace AR_Zhuk_Schema.Insolation
                 CheckLighting(ref requires, lightingOtherSide.Indexes, insOtherSide, step);
 
             // проверка боковин            
-            CheckLightingSide(ref requires);
+            CheckLightingSide(ref requires, lightingCurSide, lightingOtherSide, isFirstFlatInSide, isLastFlatInSide);
 
             // Если все требуемые окно были вычтены, то сумма остатка будет <= 0
             // Округление вниз - от окон внутри одного помещения
             var isPassed = RequirementsIsEmpty(requires);                    
             return isPassed;            
         }   
-
-        /// <summary>
-        /// Проверка инсоляции боковин
-        /// </summary>        
-        private void CheckLightingSide (ref List<InsRequired> requires)
-        {
-            // Если это не боковая квартра по типу (не заданы боковые индексы инсоляции), то у такой квартиры не нужно проверять боковую инсоляцию
-            bool flatHasSide = lightingCurSide.Side != Side.None; //flatLightIndexSideCurSide.Count != 0 || flatLightIndexSideOtherSide.Count != 0;
-            if (!flatHasSide)
-            {
-                return;
-            }
-
-            // Квартира боковая по типу (заданы боковые индексы инсоляции)
-
-            // Если это не крайняя квартира на стороне, то такую секцию нельзя пропускать дальше            
-            if (!isFirstFlatInSide && !isLastFlatInSide)
-            {
-                specialFail = true;
-                return;
-            }
-            bool isStoppor = IsStoppor();
-
-            var endFlat = lightingCurSide.Side;
-            var endSideSection = GetSectionEndSide();
-            if (endFlat != endSideSection && isStoppor)
-            {
-                specialFail = true;
-                return;
-            }
-
-            // Если требования инсоляции уже удовлетворены, то не нужно проверять дальше
-            if (RequirementsIsEmpty(requires))
-            {
-                return;
-            }
-
-            int flatLightingSide = 0;
-            int flatLightingSideOther = 0;
-            string insSideValue = null;
-            string insSideOtherValue = null;
-
-            if (endFlat == Side.Right)
-            {
-                // Правый торец
-                if (isTop)
-                {
-                    // Праввая верхняя ячейка инсоляции
-                    insSideValue = insSideTop;
-                    flatLightingSide = lightingCurSide.SideIndexes[0];
-                    // для верхних квартир проверить нижнюю ячейку инсоляции
-                    insSideOtherValue = insSideBot;
-                    if (lightingOtherSide!= null)
-                        flatLightingSideOther = lightingOtherSide.SideIndexes[0];
-                }
-                else
-                {
-                    // Праввая нижняя ячейка инсоляции
-                    insSideValue = insSideBot;
-                    flatLightingSide = lightingCurSide.SideIndexes[0];
-                }
-            }
-            else if (endFlat == Side.Left)
-            {
-                // Левый торец
-                if (isTop)
-                {
-                    // Левая верхняя ячейка инсоляции
-                    insSideValue = insSideTop;
-                    flatLightingSide = lightingCurSide.SideIndexes[0];
-                    // для верхних квартир проверить нижнюю ячейку инсоляции
-                    insSideOtherValue = insSideBot;
-                    if (lightingOtherSide != null)
-                        flatLightingSideOther = lightingOtherSide.SideIndexes[0];
-                }
-                else
-                {
-                    // Левая нижняя ячейка инсоляции
-                    insSideValue = insSideBot;
-                    flatLightingSide = lightingCurSide.SideIndexes[0];
-                }
-            }
-
-            double lightWeight;
-            int indexLighting = GetLightingValue(flatLightingSide, out lightWeight);
-            CalcRequire(ref requires, lightWeight, insSideValue);
-
-            indexLighting = GetLightingValue(flatLightingSideOther, out lightWeight);
-            CalcRequire(ref requires, lightWeight, insSideOtherValue);
-        }
-
-        private Side GetSectionEndSide ()
-        {
-            Side res = Side.None;
-            // Определение стороны торца секции
-            if (section.IsStartSectionInHouse)
-            {
-                if (isRightOrTopLLu)                
-                    res = section.Direction > 0 ? Side.Left : Side.Right;                                    
-                else                
-                    res = section.Direction > 0 ? Side.Right : Side.Left;                                    
-            }
-            else if (section.IsEndSectionInHouse)
-            {
-                if (isRightOrTopLLu)
-                    res = section.Direction > 0 ? Side.Right : Side.Left;
-                else
-                    res = section.Direction > 0 ? Side.Left : Side.Right;
-            }
-            return res;
-        }
-
-        private bool IsStoppor ()
-        {
-            // Если боковое окно единственное в помещени, то такую квартиру нельзя ставить в глухой торец (без окна с торца на улицу)
-            // Если сторона квартиры не соответствует стороне торца, такую секцию нельзя пропускать дальше 
-            // Только если индекс боковины не половинчатый - если не половинчатый, то боковое окно - будет заткнуто торцом и в комнате не останется окон
-            var flatLightIndexSideCurSide = lightingCurSide.SideIndexes;
-            var flatLightIndexSideOtherSide = lightingOtherSide == null ? null : lightingOtherSide.SideIndexes;
-            var res = (flatLightIndexSideCurSide!=null && flatLightIndexSideCurSide.Count != 0 && flatLightIndexSideCurSide[0] == 1);
-            if (res) return res;
-            res = (flatLightIndexSideOtherSide!=null && flatLightIndexSideOtherSide.Count != 0 && flatLightIndexSideOtherSide[0] == 1);
-            return res;
-        }
+        
 
         ///// <summary>
         ///// Определение с какого торца секции расположена квартира
