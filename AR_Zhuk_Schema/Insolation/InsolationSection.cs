@@ -39,7 +39,6 @@ namespace AR_Zhuk_Schema.Insolation
             foreach (var sectFlats in section.Sections)
             {
                 sectFlats.Code = GetFlatCode(sectFlats);
-
 #if TEST
                 // Проверка однотипной секции
                 FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
@@ -59,9 +58,7 @@ namespace AR_Zhuk_Schema.Insolation
                         resFlats.Add(flats);
                     }
                 }
-
 #else
-
                 // Проверка однотипной секции
                 FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
                 if (!IsIdenticalSection(flats, resFlats))
@@ -196,7 +193,8 @@ namespace AR_Zhuk_Schema.Insolation
         private FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert)
         {
             FlatInfo resFlats = flat.Copy();
-            resFlats.NumberInSpot = section.NumberInSpot;         
+            resFlats.NumberInSpot = section.NumberInSpot;
+            resFlats.SpotOwner = section.SpotOwner;      
             resFlats.IsInvert = isInvert;            
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();

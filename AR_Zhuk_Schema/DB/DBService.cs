@@ -133,8 +133,8 @@ namespace AR_Zhuk_Schema.DB
                 //    catch (Exception ex)
                 //    {
                 //        string err = ex.Message;
-                //    }                    
-                //}                 
+                //    }
+                //}
                 Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
@@ -152,9 +152,10 @@ namespace AR_Zhuk_Schema.DB
             {
                 flatsDb = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize,
                             selectSectParam.Step, selectSectParam.Type, selectSectParam.Levels).ToList();
-                // отсекаем последние квартиры секции (она может быть неполной)
+                // отсекаем последние квартиры секции (она может быть неполной)                
                 if (flatsDb.Count == maxSectionBySize)
                 {
+                    flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();
                     var lastDbFlat = flatsDb.Last();
                     var idSectionLast = lastDbFlat.ID_Section;
                     do
