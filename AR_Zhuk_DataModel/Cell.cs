@@ -53,6 +53,9 @@ namespace AR_Zhuk_DataModel
             Col = col;            
         }
 
+
+
+
         public Cell Offset (Cell offset)
         {
             var result = new Cell(Row + offset.Row, Col + offset.Col);

@@ -1693,7 +1693,7 @@ indexColumnLLUBottom];
                         //    continue;
                         if (isValidPercentage)
                         {
-                            //if (counterGood > 400000)
+                            //if (counterGood > 5000)
                             //    break;
                             counterGood++;
 
@@ -1841,7 +1841,10 @@ indexColumnLLUBottom];
                 return;
             selectedSectCode[index] = 0;
             selectedSectSize[index]++;
-
+            //for (int i = index; i < sections.Count; i++)
+            //{
+            //    selectedSectCode[i] = 0;
+            //}
 
             if (selectedSectSize[index] >= sections[index].SectionsByCountFlats.Count)
             {
@@ -1874,24 +1877,28 @@ indexColumnLLUBottom];
             }
 
             selectedSize[index + 1] = 0;
+            //for (int i = index+1; i < sections.Count; i++)
+            //{
+            //    selectedSectCode[i] = 0;
+            //}
             if (!isSize)
             {
                 selectedSectCode[index]++;
+                //for (int i = index; i < sections.Count; i++)
+                //{
+                //    selectedSectCode[i] = 0;
+                //}
                 if (sections[index].SectionsByCountFlats[selectedSize[index]].SectionsByCode.Count - 1 <=
                     selectedSectCode[index])
                 {
                     selectedSize[index]++;
-                    //for (int i = index; i < selectedSectCode.Length; i++)
+                    //for (int i = index; i < sections.Count; i++)
                     //{
                     //    selectedSectCode[i] = 0;
                     //}
+
                     selectedSectCode[index] = 0;
 
-                    //if (sections[index-1].SectionsByCountFlats[selectedSize[index-1]].SectionsByCode.Count - 1 <=
-                    //    selectedSectCode[index-1])
-                    //{
-                    //    IncrementSectionSize(selectedSectCode, selectedSize, index - 2, sections, false);
-                    //}
 
                     if (selectedSize[index] >= sections[index].SectionsByCountFlats.Count)
                     {
@@ -1904,7 +1911,7 @@ indexColumnLLUBottom];
             {
                 selectedSize[index + 1] = 0;
                 selectedSize[index]++;
-                //for (int i = index; i < selectedSectCode.Length; i++)
+                //for (int i = index; i < sections.Count; i++)
                 //{
                 //    selectedSectCode[i] = 0;
                 //}
@@ -1915,10 +1922,12 @@ indexColumnLLUBottom];
                     if (index != 0)
                     {
                         selectedSize[index - 1]++;
-                        for (int i = index - 1; i < selectedSectCode.Length; i++)
+
+                        for (int i = index - 1; i < sections.Count; i++)
                         {
                             selectedSectCode[i] = 0;
                         }
+
                         if (selectedSize[index - 1] >= sections[index - 1].SectionsByCountFlats.Count)
                         {
                             IncrementSectionSize(selectedSectCode, selectedSize, index - 1, sections, true);
@@ -2016,8 +2025,8 @@ indexColumnLLUBottom];
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
             var im = imgComb.generateGeneralObject();
             pb.Image = im;
-            //Serializer ser = new Serializer();
-            //ser.SerializeList(go, Guid.NewGuid().ToString());
+            Serializer ser = new Serializer();
+            ser.SerializeList(go, Guid.NewGuid().ToString());
             //  break;
 
             //   }

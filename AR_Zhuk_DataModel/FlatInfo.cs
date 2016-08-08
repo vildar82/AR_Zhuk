@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace AR_Zhuk_DataModel
 {
     public class FlatInfo
-    {        
+
+    {    
+        [XmlIgnore]
         public Section Section { get; set; }
         public int IdSection { get; set; }
         public int CountStep { get; set; }
