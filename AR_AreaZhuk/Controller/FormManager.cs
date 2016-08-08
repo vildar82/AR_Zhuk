@@ -75,7 +75,7 @@ namespace AR_AreaZhuk
           }
           return spotInfo;
       }
-      public static void ViewDataProcentage(DataGridView dg2,List<GeneralObject> ob)
+      public static void ViewDataProcentage(DataGridView dg2,List<GeneralObject> ob,SpotInfo sp)
       {
         //  if (spinfos.Count == 0) return;
           DataSet dataSet = new DataSet();
@@ -86,8 +86,8 @@ namespace AR_AreaZhuk
           dt.Columns.Add("Общее кол-во секций (шт.)", typeof(Int16));
           dt.Columns.Add("Кол-во одинаковых секций (шт.)", typeof(string));
           dt.Columns.Add("Кол-во квартир (шт.)", typeof(Int16));
-          
-          foreach (var rew in ob.First(x=>x!=null).SpotInf.requirments)
+
+          foreach (var rew in sp.requirments)
           {
               dt.Columns.Add(string.Format("{0} {1}-{2}м2 (%)",rew.SubZone,rew.MinArea,rew.MaxArea), typeof(Double));
           }
