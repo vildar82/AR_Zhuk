@@ -150,7 +150,6 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 #if TEST
                         Debug.WriteLine("fail нарезки - key=" + key);
 #endif
-
                         fail = true;
                         break;
                     }
@@ -176,7 +175,6 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 #if TEST
                         Debug.WriteLine("fail no in db - key=" + key + "; type=" + type + "; levels=" + levels);
 #endif
-
                         fail = true;
                         break;
                     }
@@ -190,7 +188,6 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 #if TEST
                         Debug.WriteLine("fail ins - key=" + key);
 #endif
-
                         fail = true;
                         break;
                     }
@@ -399,8 +396,53 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 if (i != sections.Count - 1)
                     sectionNext = sections.ElementAt(i + 1);
 
-                section.JointStart = GetJoint(section, sectionPrev);
-                section.JointEnd = GetJoint(section, sectionNext);
+                var jointStart = GetJoint(section, sectionPrev);
+                var jointEnd = GetJoint(section, sectionNext);
+
+                if (section.IsCorner)
+                {
+                    // Угловая левая
+                    if (section.SectionType == SectionType.CornerLeft)
+                    {
+                        if (section.IsCornerStartTail)
+                        {
+                            section.JointRight = jointStart;
+                            section.JointLeft = jointEnd;
+                        }
+                        else
+                        {                            
+                            section.JointRight = jointEnd;
+                            section.JointLeft = jointStart;
+                        }
+                    }
+                    // Угловая правая
+                    else
+                    {
+                        if (section.IsCornerStartTail)
+                        {
+                            section.JointLeft = jointStart;
+                            section.JointRight = jointEnd;                            
+                        }
+                        else
+                        {
+                            section.JointRight = jointStart;
+                            section.JointLeft = jointEnd;
+                        }
+                    }
+                }
+                else
+                {
+                    if (section.Direction>0)
+                    {
+                        section.JointLeft = jointStart;
+                        section.JointRight = jointEnd;
+                    }
+                    else
+                    {
+                        section.JointRight = jointStart;
+                        section.JointLeft = jointEnd;
+                    }
+                }
             }
         }
 

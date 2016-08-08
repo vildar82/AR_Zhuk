@@ -37,13 +37,14 @@ namespace AR_Zhuk_DataModel
         /// </summary>
         public SectionType SectionType { get; set; }
         /// <summary>
-        /// Стартовый торец секции - Обычный, Торец или Деф.шов.
+        /// Вид левого торца секции - Обычный, Торец или Деф.шов.
+        /// Левый - от стандартного положения секции (ЛЛУ горизонтально сверху).
         /// </summary>
-        public Joint JointStart { get; set; }
+        public Joint JointLeft { get; set; }
         /// <summary>
-        /// Конечный торец секции - Обычный, Торец или Деф.шов.
+        /// Правый торец секции - Обычный, Торец или Деф.шов.
         /// </summary>
-        public Joint JointEnd { get; set; }
+        public Joint JointRight { get; set; }
         /// <summary>
         /// Инсоляция сверху - справа-налево
         /// Для боковой секции - от хвостового угла до 1 ячейки над ллу.
@@ -66,6 +67,10 @@ namespace AR_Zhuk_DataModel
         public int CountStep { get; set; }        
         public bool IsVertical { get; set; }
         public bool IsCorner { get; set; }
+        /// <summary>
+        /// Угловая секция начинается с хвоста (длинной части угловой секциии)
+        /// </summary>
+        public bool IsCornerStartTail { get; set; }
         public string SpotOwner { get; set; }
         public int NumberInSpot { get; set; }
         public int CountModules { get; set; }
