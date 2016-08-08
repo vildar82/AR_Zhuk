@@ -54,6 +54,7 @@ namespace AR_AreaZhuk
             this.label3 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dg2 = new Zuby.ADGV.AdvancedDataGridView();
             this.btnStartScan = new System.Windows.Forms.Button();
             this.lblCountObjects = new System.Windows.Forms.Label();
             this.chkDominant = new System.Windows.Forms.CheckBox();
@@ -90,9 +91,9 @@ namespace AR_AreaZhuk
             this.GetFile = new System.Windows.Forms.Button();
             this.UpdateDbFlats = new System.Windows.Forms.Button();
             this.chkUpdateSections = new System.Windows.Forms.CheckBox();
-            this.dg2 = new Zuby.ADGV.AdvancedDataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -111,7 +112,6 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.SuspendLayout();
             this.panel5.SuspendLayout();
             this.pnlMenuGroup1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
             this.SuspendLayout();
             // 
             // dg
@@ -187,7 +187,7 @@ namespace AR_AreaZhuk
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(879, 784);
+            this.label3.Location = new System.Drawing.Point(897, 785);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(69, 13);
             this.label3.TabIndex = 4;
@@ -197,7 +197,7 @@ namespace AR_AreaZhuk
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSave.Location = new System.Drawing.Point(684, 806);
+            this.btnSave.Location = new System.Drawing.Point(684, 807);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 9;
@@ -214,18 +214,33 @@ namespace AR_AreaZhuk
             this.groupBox2.Controls.Add(this.dg2);
             this.groupBox2.Location = new System.Drawing.Point(416, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(612, 781);
+            this.groupBox2.Size = new System.Drawing.Size(630, 782);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Подробная информация";
             this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+            // 
+            // dg2
+            // 
+            this.dg2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dg2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dg2.FilterAndSortEnabled = true;
+            this.dg2.Location = new System.Drawing.Point(6, 19);
+            this.dg2.MultiSelect = false;
+            this.dg2.Name = "dg2";
+            this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dg2.Size = new System.Drawing.Size(618, 757);
+            this.dg2.TabIndex = 0;
+            this.dg2.SelectionChanged += new System.EventHandler(this.dg2_SelectionChanged);
             // 
             // btnStartScan
             // 
             this.btnStartScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnStartScan.Enabled = false;
             this.btnStartScan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStartScan.Location = new System.Drawing.Point(422, 787);
+            this.btnStartScan.Location = new System.Drawing.Point(422, 788);
             this.btnStartScan.Name = "btnStartScan";
             this.btnStartScan.Size = new System.Drawing.Size(75, 23);
             this.btnStartScan.TabIndex = 12;
@@ -238,7 +253,7 @@ namespace AR_AreaZhuk
             this.lblCountObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCountObjects.AutoSize = true;
             this.lblCountObjects.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblCountObjects.Location = new System.Drawing.Point(954, 784);
+            this.lblCountObjects.Location = new System.Drawing.Point(972, 785);
             this.lblCountObjects.Name = "lblCountObjects";
             this.lblCountObjects.Size = new System.Drawing.Size(16, 16);
             this.lblCountObjects.TabIndex = 14;
@@ -494,7 +509,7 @@ namespace AR_AreaZhuk
             this.pnlMenu.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlMenu.Location = new System.Drawing.Point(0, 0);
             this.pnlMenu.Name = "pnlMenu";
-            this.pnlMenu.Size = new System.Drawing.Size(416, 855);
+            this.pnlMenu.Size = new System.Drawing.Size(416, 856);
             this.pnlMenu.TabIndex = 20;
             // 
             // pnlMenuGroup3
@@ -641,7 +656,7 @@ namespace AR_AreaZhuk
             // 
             this.GetFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.GetFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.GetFile.Location = new System.Drawing.Point(529, 787);
+            this.GetFile.Location = new System.Drawing.Point(529, 788);
             this.GetFile.Name = "GetFile";
             this.GetFile.Size = new System.Drawing.Size(106, 23);
             this.GetFile.TabIndex = 22;
@@ -651,9 +666,9 @@ namespace AR_AreaZhuk
             // 
             // UpdateDbFlats
             // 
-            this.UpdateDbFlats.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.UpdateDbFlats.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.UpdateDbFlats.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.UpdateDbFlats.Location = new System.Drawing.Point(809, 806);
+            this.UpdateDbFlats.Location = new System.Drawing.Point(907, 807);
             this.UpdateDbFlats.Name = "UpdateDbFlats";
             this.UpdateDbFlats.Size = new System.Drawing.Size(139, 23);
             this.UpdateDbFlats.TabIndex = 23;
@@ -663,32 +678,21 @@ namespace AR_AreaZhuk
             // 
             // chkUpdateSections
             // 
+            this.chkUpdateSections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkUpdateSections.AutoSize = true;
-            this.chkUpdateSections.Location = new System.Drawing.Point(809, 835);
+            this.chkUpdateSections.Location = new System.Drawing.Point(907, 835);
             this.chkUpdateSections.Name = "chkUpdateSections";
             this.chkUpdateSections.Size = new System.Drawing.Size(141, 17);
             this.chkUpdateSections.TabIndex = 24;
             this.chkUpdateSections.Text = "Обновить банк секций";
             this.chkUpdateSections.UseVisualStyleBackColor = true;
             // 
-            // dg2
-            // 
-            this.dg2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dg2.FilterAndSortEnabled = true;
-            this.dg2.Location = new System.Drawing.Point(6, 19);
-            this.dg2.MultiSelect = false;
-            this.dg2.Name = "dg2";
-            this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dg2.Size = new System.Drawing.Size(600, 756);
-            this.dg2.TabIndex = 0;
-            this.dg2.SelectionChanged += new System.EventHandler(this.dg2_SelectionChanged);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1032, 855);
+            this.ClientSize = new System.Drawing.Size(1050, 856);
             this.Controls.Add(this.chkUpdateSections);
             this.Controls.Add(this.UpdateDbFlats);
             this.Controls.Add(this.GetFile);
@@ -705,6 +709,7 @@ namespace AR_AreaZhuk
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dg)).EndInit();
             this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dg2)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -725,7 +730,6 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.pnlMenuGroup1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dg2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

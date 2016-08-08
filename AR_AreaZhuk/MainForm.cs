@@ -1443,7 +1443,7 @@ indexColumnLLUBottom];
             po.MaxDegreeOfParallelism = 15;
             Parallel.For(0, houses[0].Count, po, GetGeneralObjects);
             //  GetGeneralObjects();
-            FormManager.ViewDataProcentage(dg2, ob);
+            FormManager.ViewDataProcentage(dg2, ob,spotInfo);
             lblCountObjects.Text = ob.Count.ToString();
         }
 
@@ -1620,7 +1620,6 @@ indexColumnLLUBottom];
                         List<Code> listCodes = new List<Code>();
 
                         megacounter++; //общее кол-во обходов(для информации)
-
                         string codeHouse = "";
                         if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0])
                         {
@@ -1641,8 +1640,12 @@ indexColumnLLUBottom];
                             isOverFlow = false;
                             for (int i = 0; i < codeSections.Count; i++)
                             {
-                                //if (codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode.Count <= selectedSectCode[i])
+                                //if (codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode.Count <=
+                                //    selectedSectCode[i])
+                                //{
+                                //    selectedSectCode[i - 1]++;
                                 //    selectedSectCode[i] = 0;
+                                //}
                                 countFlats +=
                                Convert.ToInt16(
                                    codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
@@ -1786,7 +1789,7 @@ indexColumnLLUBottom];
 
             //GetAllSectionPercentage(totalObject, requirment);
             ////   MessageBox.Show((sw.ElapsedMilliseconds / 1000.0).ToString());
-            FormManager.ViewDataProcentage(dg2, ob);
+            FormManager.ViewDataProcentage(dg2, ob,spotInfo);
             th.Abort();
             lblCountObjects.Text = ob.Count.ToString();
             isEvent = true;
@@ -1878,7 +1881,17 @@ indexColumnLLUBottom];
                     selectedSectCode[index])
                 {
                     selectedSize[index]++;
+                    //for (int i = index; i < selectedSectCode.Length; i++)
+                    //{
+                    //    selectedSectCode[i] = 0;
+                    //}
                     selectedSectCode[index] = 0;
+
+                    //if (sections[index-1].SectionsByCountFlats[selectedSize[index-1]].SectionsByCode.Count - 1 <=
+                    //    selectedSectCode[index-1])
+                    //{
+                    //    IncrementSectionSize(selectedSectCode, selectedSize, index - 2, sections, false);
+                    //}
 
                     if (selectedSize[index] >= sections[index].SectionsByCountFlats.Count)
                     {
@@ -1895,12 +1908,17 @@ indexColumnLLUBottom];
                 //{
                 //    selectedSectCode[i] = 0;
                 //}
+               
                 if (selectedSize[index] >= sections[index].SectionsByCountFlats.Count)
                 {
                     selectedSize[index] = 0;
                     if (index != 0)
                     {
                         selectedSize[index - 1]++;
+                        for (int i = index - 1; i < selectedSectCode.Length; i++)
+                        {
+                            selectedSectCode[i] = 0;
+                        }
                         if (selectedSize[index - 1] >= sections[index - 1].SectionsByCountFlats.Count)
                         {
                             IncrementSectionSize(selectedSectCode, selectedSize, index - 1, sections, true);
