@@ -40,6 +40,28 @@ namespace AR_Zhuk_Schema.Insolation
             {
                 sectFlats.Code = GetFlatCode(sectFlats);
 
+#if TEST
+                // Проверка однотипной секции
+                FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
+                if (!IsIdenticalSection(flats, resFlats))
+                {
+                    insCheck.CheckSection(flats, isRightOrTopLLu: true);
+                    resFlats.Add(flats);
+                }
+                if (!section.IsCorner)
+                {
+                    // Проверка однотипной секции
+                    flats = NewFlats(section, sectFlats, isInvert: true);
+                    if (!IsIdenticalSection(flats, resFlats))
+                    {
+                        // Проверка инсоляции инвертированной секции                        
+                        insCheck.CheckSection(flats, isRightOrTopLLu: false);
+                        resFlats.Add(flats);
+                    }
+                }
+
+#else
+
                 // Проверка однотипной секции
                 FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
                 if (!IsIdenticalSection(flats, resFlats))
@@ -68,6 +90,7 @@ namespace AR_Zhuk_Schema.Insolation
                         }
                     }
                 }
+#endif
             }
             return resFlats;
         }

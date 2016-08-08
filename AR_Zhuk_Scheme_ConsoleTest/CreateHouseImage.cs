@@ -37,24 +37,59 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 }
             }            
         }
-        
+
         public void TestCreateImage (HouseInfo house)
+        {
+            List<HouseInfo> houses = new List<HouseInfo>();
+            var countVarHauses = house.SectionsBySize.Max(s => s.Sections.Count);
+            for (int i = 0; i < countVarHauses; i++)
+            {
+                HouseInfo houseVar = new HouseInfo();
+                houseVar.SpotInf = house.SpotInf;
+                houseVar.Sections = new List<FlatInfo>();
+                foreach (var item in house.SectionsBySize)
+                {
+                    FlatInfo flat;
+                    if (i >= item.Sections.Count)
+                    {
+                        flat = item.Sections.Last();
+                    }
+                    else
+                    {
+                        flat = item.Sections[i];
+                    }
+                    houseVar.Sections.Add(flat);
+                }
+                houses.Add(houseVar);
+            }
+
+            foreach (var item in houses)
+            {
+                TestCreateImageOneHouse(item);
+            }
+        }
+
+        public void TestCreateImageOneHouse (HouseInfo house)
         {
             GeneralObject go = new GeneralObject();
             go.SpotInf = house.SpotInf;
-            //double area = GetTotalArea(house);            
-            go.Houses.Add(house);
+            //double area = GetTotalArea(house);                        
             //go.SpotInf.RealArea = area;
             go.GUID = Guid.NewGuid().ToString();
             // ob.Add(go);
-            house.Sections = new List<FlatInfo>();
-            foreach (var item in house.SectionsBySize)
-            {
-                house.Sections.Add(item.Sections[0]);
-            }            
+            go.Houses = new List<HouseInfo>();
 
-            string spotName = house.SectionsBySize[0].SpotOwner;
-            string curSteps = string.Join(".", house.Sections.Select(s=>s.CountStep.ToString()));
+            //house.Sections = new List<FlatInfo>();
+            //foreach (var item in house.SectionsBySize)
+            //{
+            //    house.Sections.Add(item.Sections[0]);
+            //}
+            //go.Houses.Add(house);
+
+            go.Houses.Add(house);
+
+            string spotName = house.Sections[0].SpotOwner;
+            string curSteps = string.Join(".", house.Sections.Select(s=>s.CountStep.ToString()));            
 
             if (steps != curSteps)
             {
@@ -63,11 +98,13 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 countSteps++;
             }
 
+            string insPassed = house.Sections.Any(s => s.Flats.Any(f => !f.IsInsPassed)) ? "Fail": "Passed";            
+
             countFile++;
             contFileString = countSteps.ToString("0000") + "_" +  countFile.ToString("0000");
 
             string ids = string.Join("_", house.Sections.Select(s => s.IdSection.ToString()));
-            string name = $"{contFileString}_{spotName}_{steps}_{ids}.png";            
+            string name = $"{contFileString}_{spotName}_{steps}_{ids}_{insPassed}.png";            
 
             string imagePath = Path.Combine(testsResultFolder, name);
 

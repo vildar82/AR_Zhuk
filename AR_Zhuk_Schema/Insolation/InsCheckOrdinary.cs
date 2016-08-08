@@ -128,7 +128,7 @@ namespace AR_Zhuk_Schema.Insolation
                     lightingOtherSide = null;
                     if (isTop)
                     {
-                        if (lightingOtherSide != null && (isFirstFlatInSide || isLastFlatInSide))
+                        if (lightingOtherSideString != null && (isFirstFlatInSide || isLastFlatInSide))
                         {
                             lightingOtherSide = LightingStringParser.GetLightings(lightingOtherSideString, false);
                         }
@@ -155,11 +155,16 @@ namespace AR_Zhuk_Schema.Insolation
 
                 if (!flatPassed || specialFail)
                 {
+#if !TEST
                     // квартира не прошла инсоляцию - вся секция не проходит                    
                     return false;
+#endif
                 }
-                // Для тестовой визуализации - с подписью не прошедших квартир (пропуская всё через инсоляцию)
-                flat.IsInsPassed = true;
+                else
+                {
+                    // Для тестовой визуализации - с подписью не прошедших квартир (пропуская всё через инсоляцию)
+                    flat.IsInsPassed = true;
+                }
 
                 // Определение торца квартиры
                 DefineJoint(ref flat, isFirstFlatInSide, isLastFlatInSide, isTop);

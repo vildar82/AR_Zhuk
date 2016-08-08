@@ -85,9 +85,7 @@ namespace AR_Zhuk_Schema.Insolation
                 res = CheckFlats();
             }
             return res;
-        }
-
-        
+        }        
 
         /// <summary>
         /// Требования инсоляции удовлетворены

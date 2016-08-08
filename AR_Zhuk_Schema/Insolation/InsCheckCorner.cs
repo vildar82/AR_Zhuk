@@ -110,14 +110,19 @@ namespace AR_Zhuk_Schema.Insolation
                         break;
                     }
                 }
-                
+
                 if (!flatPassed)
                 {
+#if !TEST
                     // квартира не прошла инсоляцию - вся секция не проходит                    
                     return false;
-                }                
-                // Для тесовой визуализации
-                flat.IsInsPassed = true;
+#endif
+                }
+                else
+                {
+                    // Для тесовой визуализации
+                    flat.IsInsPassed = true;
+                }
 
                 // Определение торца квартиры     
                 DefineJoint(ref flat, isFirstFlatInSide, isLastFlatInSide, isTop);
