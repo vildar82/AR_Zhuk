@@ -25,6 +25,16 @@ namespace AR_AreaZhuk
             return area / 14.4 / 3.6;
         }
 
+        public double DoubleConvert(object value)
+        {
+            if (value == null) return 0;
+            double val = 0;
+            if (!double.TryParse(value.ToString(), out val))
+                double.TryParse(value.ToString().Replace('.', ','), out val);
+            return val;
+
+        }
+
         public int GetIndexSection(RoomInfo selectedRoom, RoomInfo preRoom, bool isNizIndex)
         {
             if (selectedRoom.ShortType.Equals("2KL2"))
@@ -228,11 +238,10 @@ namespace AR_AreaZhuk
             return insulation;
         }
 
-        public
-             List<RoomInfo> GetRoomData(string path)
+        public List<RoomInfo> GetRoomData(string path)
         {
             List<RoomInfo> roomsInfo = new List<RoomInfo>();
-            path = @"E:\__ROM_Типы квартир.xlsx";
+           // path = @"E:\__ROM_Типы квартир.xlsx";
             using (var xlPackage = new ExcelPackage(new FileInfo(path.ToString())))
             {
                 int counter = 2;

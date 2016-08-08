@@ -21,6 +21,7 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using AR_Zhuk_Schema;
 using OfficeOpenXml;
+using Zuby.ADGV;
 
 
 namespace AR_AreaZhuk
@@ -29,6 +30,7 @@ namespace AR_AreaZhuk
     {
         public MainForm()
         {
+
             InitializeComponent();
         }
 
@@ -2113,6 +2115,13 @@ indexColumnLLUBottom];
 
         private void groupBox2_Enter(object sender, EventArgs e)
         {
+
+        }
+
+        private void UpdateDbFlats_Click(object sender, EventArgs e)
+        {
+           DbController dbController = new DbController();
+            dbController.UpdateFlats(chkUpdateSections.Checked);
 
         }
     }
