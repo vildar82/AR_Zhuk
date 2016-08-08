@@ -2121,7 +2121,8 @@ indexColumnLLUBottom];
         private void UpdateDbFlats_Click(object sender, EventArgs e)
         {
            DbController dbController = new DbController();
-            dbController.UpdateFlats();
+            dbController.UpdateFlats(chkUpdateSections.Checked);
+
         }
     }
 }

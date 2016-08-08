@@ -97,11 +97,11 @@ namespace AR_AreaZhuk.Controller
        }
 
 
-       public static void ExportSectionsToSQL(int countModules,string typeSection,int countFloors,bool isCornerLeft,bool isCornerRight)
+       public static void ExportSectionsToSQL(int countModules,string typeSection,int countFloors,bool isCornerLeft,bool isCornerRight,List<RoomInfo> roomInfo)
        {
 
            FrameWork fw = new FrameWork();
-            var roomInfo = fw.GetRoomData("");
+            //var roomInfo = fw.GetRoomData("");
            var sections = fw.GenerateSections(roomInfo, countModules, isCornerLeft, isCornerRight, countFloors);
            string floors = "10-18";
            if(countFloors==25)
