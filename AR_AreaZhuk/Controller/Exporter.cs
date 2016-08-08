@@ -4,21 +4,95 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AR_Zhuk_DataModel;
+using OfficeOpenXml;
+using System.IO;
 
 namespace AR_AreaZhuk.Controller
 {
    public static class Exporter
     {
-       public static void ExportFlatsToSQL()
+       public static void ExportFlatsToSQL(string excelPath)
+       {
+           ExportBasicInfo(excelPath);
+           ExportFlatsAreas(excelPath);
+       }
+
+       static void ExportFlatsAreas(string excelPath)
+       {
+            FrameWork fw = new FrameWork();
+           C_Flats_PIK1_AreasTableAdapter flatsPik1Areas = new C_Flats_PIK1_AreasTableAdapter();
+           var flatsAreas = flatsPik1Areas.GetData();
+           using (var xlPackage = new ExcelPackage(new FileInfo(excelPath)))
+           {
+               int counter = 2;
+               var worksheet = xlPackage.Workbook.Worksheets[2];
+               while (worksheet.Cells[counter, 1].Value != null)
+               {
+                   string shortType = Convert.ToString(worksheet.Cells[counter, 2].Value);
+                   double area_Total_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 4].Value);
+                   double area_Total_Standart_More18 = fw.DoubleConvert(worksheet.Cells[counter, 5].Value);
+                   double area_Total_Strong_More18 = fw.DoubleConvert(worksheet.Cells[counter, 6].Value);
+                   double area_Total_End_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 7].Value);
+                   double area_Total_Standart_End_More18 = fw.DoubleConvert(worksheet.Cells[counter, 8].Value);
+                   double area_Total_Strong_End_More18 = fw.DoubleConvert(worksheet.Cells[counter, 9].Value);
+                   double area_Total_Standart_Seam_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 10].Value);
+                   double area_Total_Standart_Seam_More18 = fw.DoubleConvert(worksheet.Cells[counter, 11].Value);
+                   double area_Total_Strong_Seam_More18 = fw.DoubleConvert(worksheet.Cells[counter, 12].Value);
+                   string correction_Low18 = Convert.ToString(worksheet.Cells[counter, 13].Value);
+                   string correction_More18 = Convert.ToString(worksheet.Cells[counter, 14].Value);
+                   double area_Live_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 15].Value);
+                   double area_Live_Standart_More18 = fw.DoubleConvert(worksheet.Cells[counter, 16].Value);
+                   double area_Live_Strong_More18 = fw.DoubleConvert(worksheet.Cells[counter, 17].Value);
+                   double area_Live_End_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 18].Value);
+                   double area_Live_Standart_End_More18 = fw.DoubleConvert(worksheet.Cells[counter, 9].Value);
+                   double area_Live_Strong_End_More18 = fw.DoubleConvert(worksheet.Cells[counter, 20].Value);
+                   double area_Live_Seam_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 21].Value);
+                   double area_Live_Standart_Seam_More18 = fw.DoubleConvert(worksheet.Cells[counter, 22].Value);
+                   double area_Live_Strong_Seam_More18 = fw.DoubleConvert(worksheet.Cells[counter, 23].Value);
+                   double area_Level = fw.DoubleConvert(worksheet.Cells[counter, 24].Value);
+                   if (flatsAreas.Any(x => x.Short_Type.Equals(shortType)))
+                       flatsPik1Areas.UpdateAreaFlat(area_Total_Low18, area_Total_Standart_More18,
+                           area_Total_Strong_More18, area_Total_End_Low18, area_Total_Standart_End_More18,
+                           area_Total_Strong_End_More18, area_Total_Standart_Seam_Low18, area_Total_Standart_Seam_More18,
+                           area_Total_Strong_Seam_More18,
+                           correction_Low18, correction_More18, area_Live_Low18, area_Live_Standart_More18,
+                           area_Live_Strong_More18,
+                           area_Live_End_Low18, area_Live_Standart_End_More18, area_Live_Strong_End_More18,
+                           area_Live_Seam_Low18, area_Live_Standart_Seam_More18,
+                           area_Live_Strong_Seam_More18, area_Level, shortType);
+                   else
+                       flatsPik1Areas.Insert(shortType, area_Total_Low18, area_Total_Standart_More18,
+                           area_Total_Strong_More18, area_Total_End_Low18, area_Total_Standart_End_More18,
+                           area_Total_Strong_End_More18, area_Total_Standart_Seam_Low18, area_Total_Standart_Seam_More18,
+                           area_Total_Strong_Seam_More18,
+                           correction_Low18, correction_More18, area_Live_Low18, area_Live_Standart_More18,
+                           area_Live_Strong_More18,
+                           area_Live_End_Low18, area_Live_Standart_End_More18, area_Live_Strong_End_More18,
+                           area_Live_Seam_Low18, area_Live_Standart_Seam_More18,
+                           area_Live_Strong_Seam_More18, area_Level);
+
+                   counter++;
+               }
+           }
+       }
+
+       private static void ExportBasicInfo(string excelPath)
        {
            FrameWork fw = new FrameWork();
-           var roomInfo = fw.GetRoomData("");
+           var roomInfo = fw.GetRoomData(excelPath);
            PIK1TableAdapters.C_Flats_PIK1TableAdapter flatsPIK1 = new C_Flats_PIK1TableAdapter();
+           var flats = flatsPIK1.GetData();
            foreach (var rr in roomInfo)
            {
-               flatsPIK1.InsertFlat(rr.Type, rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,
-                   Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
-                   rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR);
+               if (flats.Any(x => x.Type.Equals(rr.Type)))
+                   flatsPIK1.UpdateFlat(rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
+                       rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR, rr.Type);
+               
+               else
+                   flatsPIK1.InsertFlat(rr.Type, rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
+                       rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR);
+               
            }
        }
 
