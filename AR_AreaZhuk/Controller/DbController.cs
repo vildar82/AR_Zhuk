@@ -22,6 +22,7 @@ namespace AR_AreaZhuk.Controller
                excelPath = openFileDialog.FileName;
            if (excelPath == "") return;
            Exporter.ExportFlatsToSQL(excelPath);
+           FrameWork fw = new FrameWork();
            var roomInfo = fw.GetRoomData(excelPath);
            if (isUpdateSections)
            {
