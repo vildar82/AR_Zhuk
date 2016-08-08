@@ -30,6 +30,9 @@ namespace AR_Zhuk_Schema.Insolation
         string insSideCurTopRight;
         string insSideCurBotRight;
 
+        Joint jointCurLeft;
+        Joint jointCurRight;
+
         bool isFirstFlatInSide;
         bool isLastFlatInSide;        
 
@@ -56,7 +59,9 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     insCurSide = insBotStandart;
                     insOtherSide = insTopStandart;
-                }                
+                }
+                jointCurLeft = section.JointLeft;
+                jointCurRight = section.JointRight;            
             }
             else
             {
@@ -69,7 +74,9 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     insCurSide = insBotInvert;
                     insOtherSide = insTopInvert;
-                }                 
+                }
+                jointCurLeft = section.JointRight;
+                jointCurRight = section.JointLeft;
             }
 
             if (isTop)
@@ -114,7 +121,7 @@ namespace AR_Zhuk_Schema.Insolation
                     else
                     {
                         lightingCurSideString = flat.LightingNiz;
-                    }
+                    }                    
 
                     lightingCurSide = LightingStringParser.GetLightings(lightingCurSideString, isTop);
                     // Для верхних крайних верхних квартир нужно проверить низ
@@ -151,14 +158,18 @@ namespace AR_Zhuk_Schema.Insolation
                     // квартира не прошла инсоляцию - вся секция не проходит                    
                     return false;
                 }
+                // Для тестовой визуализации - с подписью не прошедших квартир (пропуская всё через инсоляцию)
                 flat.IsInsPassed = true;
+
+                // Определение торца квартиры
+                DefineJoint(ref flat, isFirstFlatInSide, isLastFlatInSide, isTop);
 
                 // Сдвиг шага
                 step += isTop ? flat.SelectedIndexTop : flat.SelectedIndexBottom;
             }
             // Все квартиры прошли инсоляцию
             return true;
-        }
+        }        
 
         private bool CheckRule (InsRule rule, int step)
         {
@@ -181,38 +192,18 @@ namespace AR_Zhuk_Schema.Insolation
             // Округление вниз - от окон внутри одного помещения
             var isPassed = RequirementsIsEmpty(requires);                    
             return isPassed;            
-        }   
-        
+        }
 
-        ///// <summary>
-        ///// Определение с какого торца секции расположена квартира
-        ///// </summary>        
-        //private EnumEndSide GetEndFlatSide ()
-        //{
-        //    EnumEndSide res = EnumEndSide.None;
-        //    if (isFirstFlatInSide)
-        //    {
-        //        if (isTop)
-        //        {
-        //            res = EnumEndSide.Right;
-        //        }
-        //        else
-        //        {
-        //            res = EnumEndSide.Left;
-        //        }
-        //    }
-        //    else if (isLastFlatInSide)
-        //    {
-        //        if (isTop)
-        //        {
-        //            res = EnumEndSide.Left;
-        //        }
-        //        else
-        //        {
-        //            res = EnumEndSide.Right;
-        //        }
-        //    }            
-        //    return res;
-        //}
+        private void DefineJoint (ref RoomInfo flat, bool isFirstFlatInSide, bool isLastFlatInSide, bool isTop)
+        {
+            if (isFirstFlatInSide)
+            {
+                flat.Joint = isTop ? jointCurRight : jointCurLeft;
+            }
+            else if (isLastFlatInSide)
+            {
+                flat.Joint = isTop ? jointCurLeft : jointCurRight;
+            }
+        }       
     }
 }

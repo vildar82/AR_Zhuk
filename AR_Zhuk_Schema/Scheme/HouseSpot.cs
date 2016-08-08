@@ -123,6 +123,7 @@ namespace AR_Zhuk_Schema.Scheme
                 if (countStepInThisSeg > WidthOrdinary + 1)
                 {
                     // Хвост угловой секции на этом сегменте
+                    section.IsCornerStartTail = true;                        
 
                     // тип угловой секции
                     section.SectionType = segment.EndType == SegmentEnd.CornerRight ? SectionType.CornerLeft : SectionType.CornerRight;
@@ -187,7 +188,7 @@ namespace AR_Zhuk_Schema.Scheme
                 }
                 else
                 {
-                    // Хвост угловой секции на след сегменте
+                    // Хвост угловой секции на след сегменте                    
 
                     // тип угловой секции
                     section.SectionType = segment.EndType == SegmentEnd.CornerRight ? SectionType.CornerRight : SectionType.CornerLeft;

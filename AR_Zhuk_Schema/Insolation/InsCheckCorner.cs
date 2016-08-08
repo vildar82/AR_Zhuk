@@ -116,11 +116,43 @@ namespace AR_Zhuk_Schema.Insolation
                     // квартира не прошла инсоляцию - вся секция не проходит                    
                     return false;
                 }                
-                flat.IsInsPassed = true;                    
+                // Для тесовой визуализации
+                flat.IsInsPassed = true;
+
+                // Определение торца квартиры     
+                DefineJoint(ref flat, isFirstFlatInSide, isLastFlatInSide, isTop);
 
                 step += isTop ? flat.SelectedIndexTop : flat.SelectedIndexBottom;
             }
             return true;
-        }  
+        }
+
+        private void DefineJoint (ref RoomInfo flat, bool isFirstFlatInSide, bool isLastFlatInSide, bool isTop)
+        {
+            if (section.SectionType == SectionType.CornerLeft)
+            {
+                if (isFirstFlatInSide)
+                {
+                    if (isTop)
+                        flat.Joint = section.JointRight;
+                }
+                else if (isLastFlatInSide)
+                {                    
+                    flat.Joint = isTop ? section.JointLeft : section.JointRight;
+                }
+            }
+            else
+            {
+                if (isFirstFlatInSide)
+                {
+                    flat.Joint = isTop ? section.JointRight : section.JointLeft;                    
+                }
+                else if (isLastFlatInSide)
+                {
+                    if (isTop)
+                        flat.Joint = section.JointLeft;
+                }
+            }
+        }
     }
 }

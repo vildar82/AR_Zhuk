@@ -70,9 +70,7 @@ namespace AR_Zhuk_Schema.Insolation
                 }
             }
 
-
-            InvertInsSide(isRightOrTopLLu);
-            
+            InvertInsSide(isRightOrTopLLu);            
 
             // Проверка инсоляции квартир сверху
             isTop = true;
