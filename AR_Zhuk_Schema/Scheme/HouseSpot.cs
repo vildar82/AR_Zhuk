@@ -159,30 +159,71 @@ namespace AR_Zhuk_Schema.Scheme
                     // Стартовая ячейка секции картинки
                     if (section.Direction>0)
                     {
+                        // Левая угловая - вниз или вправо
                         if (section.SectionType == SectionType.CornerLeft)
                         {
-                            var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);                            
-                            section.ImageStart = startCell.Offset(segment.DirectionLeftToRight);
-                            section.ImageAngle = 270;
+                            if (section.IsVertical)
+                            {
+                                var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                                section.ImageStart = startCell.Offset(segment.DirectionLeftToRight);
+                                section.ImageAngle = 270;
+                            }
+                            else
+                            {
+                                section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                                section.ImageAngle = 180;
+                            }
                         }
+                        // Правая угловая - вниз или вправо
                         else
                         {
-                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
-                            section.ImageAngle = 90;
+                            if (section.IsVertical)
+                            {
+                                section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                                section.ImageAngle = 90;
+                            }
+                            else
+                            {
+                                var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                                section.ImageStart = startCell.Offset(segment.DirectionLeftToRight.Negative);
+                                section.ImageAngle = 0;
+                            }
                         }
                     }
                     else
                     {
+                        // Левая угловая - вверх или влево
                         if (section.SectionType == SectionType.CornerLeft)
                         {
-                            section.ImageStart = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
-                            section.ImageAngle = 90;
+                            if (section.IsVertical)
+                            {
+                                var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                                section.ImageStart = startCell.Offset(segment.Direction * (section.CountStep - 1));
+                                section.ImageAngle = 90;                                
+                            }
+                            else
+                            {
+                                var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                                section.ImageStart = startCell.Offset(segment.DirectionLeftToRight);
+                                section.ImageAngle = 0;
+                            }
                         }
+                        // Правая угловая - вверх или влево
                         else
                         {
-                            var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);                            
-                            section.ImageStart = startCell.Offset(segment.DirectionLeftToRight.Negative);
-                            section.ImageAngle = 270;
+                            if (section.IsVertical)
+                            {
+                                var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
+                                startCell = startCell.Offset(segment.Direction * (section.CountStep - 1));
+                                section.ImageStart = startCell.Offset(segment.DirectionLeftToRight.Negative);
+                                section.ImageAngle = 270;
+                            }
+                            else
+                            {
+                                var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                                section.ImageStart = startCell.Offset(segment.Direction * (section.CountStep - 1));
+                                section.ImageAngle = 180;
+                            }
                         }
                     }
                 }

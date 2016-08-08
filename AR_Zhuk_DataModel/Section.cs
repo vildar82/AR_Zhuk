@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AR_Zhuk_DataModel
 {
     public class Section
-    {   
+    {
         /// <summary>
         /// Стартовая ячейка секции - левый верхний угол
         /// Для построения картинки

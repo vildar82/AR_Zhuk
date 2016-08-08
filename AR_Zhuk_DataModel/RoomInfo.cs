@@ -10,7 +10,7 @@ namespace AR_Zhuk_DataModel
     public class RoomInfo : IEquatable<RoomInfo>
     {
         /// <summary>
-        /// Только для тестов!! Прошлали инсоляция
+        /// Прошла ли квартира инсоляцию.
         /// </summary>
         public bool IsInsPassed { get; set; }
         /// <summary>
