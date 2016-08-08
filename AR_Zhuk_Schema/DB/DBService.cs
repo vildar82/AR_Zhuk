@@ -61,7 +61,7 @@ namespace AR_Zhuk_Schema.DB
                     fl.Flats = new List<RoomInfo>();
                     fl.IsCorner = section.IsCorner;
                     fl.IsVertical = section.IsVertical;
-                    fl.NumberInSpot = section.NumberInSpot;
+                    //fl.NumberInSpot = section.NumberInSpot;
                     fl.SpotOwner = section.SpotOwner;                    
                     isValidSection = true;
                     bool isContains = false;
@@ -126,7 +126,14 @@ namespace AR_Zhuk_Schema.DB
                 // Паралельная загрузка секций   
                 //foreach (var item in notInDictSS)
                 //{
-                //    dictDbFlats.TryAdd(item, LoadFromDbSection(item));
+                //    try
+                //    {
+                //        dictDbFlats.TryAdd(item, LoadFromDbSection(item));
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        string err = ex.Message;
+                //    }                    
                 //}                 
                 Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
