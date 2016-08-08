@@ -155,7 +155,7 @@ namespace AR_Zhuk_Schema.DB
                 // отсекаем последние квартиры секции (она может быть неполной)                
                 if (flatsDb.Count == maxSectionBySize)
                 {
-                    flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();
+                    flatsDb = flatsDb.OrderBy(x => x.ID_Section).ToList();
                     var lastDbFlat = flatsDb.Last();
                     var idSectionLast = lastDbFlat.ID_Section;
                     do
