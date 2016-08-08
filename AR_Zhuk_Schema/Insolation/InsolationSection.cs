@@ -195,7 +195,8 @@ namespace AR_Zhuk_Schema.Insolation
 
         private FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert)
         {
-            FlatInfo resFlats = flat.Copy();            
+            FlatInfo resFlats = flat.Copy();
+            resFlats.NumberInSpot = section.NumberInSpot;         
             resFlats.IsInvert = isInvert;            
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
