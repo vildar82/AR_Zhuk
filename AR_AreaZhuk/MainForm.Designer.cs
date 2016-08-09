@@ -222,6 +222,7 @@ namespace AR_AreaZhuk
             // 
             // dg2
             // 
+            this.dg2.AllowUserToAddRows = false;
             this.dg2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -230,9 +231,12 @@ namespace AR_AreaZhuk
             this.dg2.Location = new System.Drawing.Point(6, 19);
             this.dg2.MultiSelect = false;
             this.dg2.Name = "dg2";
+            this.dg2.ReadOnly = true;
             this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dg2.Size = new System.Drawing.Size(618, 757);
             this.dg2.TabIndex = 0;
+            this.dg2.SortStringChanged += new System.EventHandler(this.dg2_SortStringChanged);
+            this.dg2.FilterStringChanged += new System.EventHandler(this.dg2_FilterStringChanged);
             this.dg2.SelectionChanged += new System.EventHandler(this.dg2_SelectionChanged);
             // 
             // btnStartScan
