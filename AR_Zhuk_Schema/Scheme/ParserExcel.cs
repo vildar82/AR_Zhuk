@@ -140,6 +140,10 @@ namespace AR_Zhuk_Schema.Scheme
             if (cell.Row <= 0 || cell.Col <= 0) return false;
             var cellValue = worksheet.Cells[cell.Row, cell.Col].Text;
             var res = IsInsCell(cellValue);
+            if (res)
+            {
+                module.Cell = cell;
+            }
             return res;
         }
 
