@@ -196,7 +196,11 @@ namespace AR_Zhuk_Schema.Insolation
             resFlats.NumberInSpot = section.NumberInSpot;
             resFlats.SpotOwner = section.SpotOwner;      
             resFlats.IsInvert = isInvert;
-            resFlats.IsVertical = section.IsVertical;               
+            resFlats.IsVertical = section.IsVertical; 
+            if (isInvert)
+            {
+                resFlats.ImageAngle += 180;
+            }
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
             // Временно - подмена индекса освещенностим для боковых квартир!!!???
