@@ -45,17 +45,12 @@ namespace AR_AreaZhuk
           spotInfo.requirments = new List<Requirment>();
           for (int i = 0; i < dg.RowCount - 1; i++)
           {
-             // double off = 0;//double.Parse(Convert.ToString(dg[3, i].Value),CultureInfo.InvariantCulture);
-              
-             // if (double.TryParse(Convert.ToString(dg[3, i].Value).Replace('.', ','), out tmp))
               string[] parse = dg[1, i].Value.ToString().Split('-');
               double off = XmlConvert.ToDouble(Convert.ToString(dg[3, i].Value));
               string subZone = dg[0, i].Value.ToString();
               Requirment r = new Requirment();
               r.SubZone = subZone;
-              //var r = spotInfo.requirments.Where(x => x.SubZone.Equals())
-              //    .Where(x => x.MinArea.ToString().Equals(parse[0]))
-              //    .ToList()[0];
+
               r.Percentage =Convert.ToInt16(dg[2, i].Value);
              r.OffSet = off;
               r.MinArea = Convert.ToInt16(parse[0]);
@@ -92,15 +87,6 @@ namespace AR_AreaZhuk
               dt.Columns.Add(string.Format("{0} {1}-{2}м2 (%)",rew.SubZone,rew.MinArea,rew.MaxArea), typeof(Double));
           }
           dt.Columns.Add("GenObject", typeof(GeneralObject));
-      // ob =   ob.OrderBy(x => x.GUID).ToList();
-        //  dt.Columns.Add("Студии 22-23м2 (%)", typeof(Double));
-        ////  dt.Columns.Add("Студии 33-35м2 (%)", typeof(Double));
-        //  dt.Columns.Add("Однокомн. 35-47м2 (%)", typeof(Double));
-        //  dt.Columns.Add("Двухкомн. 45-47м2 (%)", typeof(Double));
-        ////  dt.Columns.Add("Двухкомн. 53-56м2 (%)", typeof(Double));
-        ////  dt.Columns.Add("Двухкомн. 68-70м2 (%)", typeof(Double));
-        //  dt.Columns.Add("Трехкомн. 85-95м2 (%)", typeof(Double));
-          //dt.Columns.Add("GUID", typeof(String));
           int counter = 0;
           foreach (var ss in ob)
           {
@@ -120,13 +106,8 @@ namespace AR_AreaZhuk
               {
                   newrow[4 + i] = percent[i];
               }
-            //  newrow[4 + percent.Count] = ss.SpotInf.GUID;
               newrow[4 + percent.Count] = ss;
-                //{
-                //   // Math.Round(ss.RealArea,1),ss.TotalSections,ss.TypicalSections,ss.TotalFlats, percent[0], percent[1], percent[2], percent[3], percent[4], percent[5],
-                //   Math.Round(ss.RealArea,1),ss.TotalSections,ss.TypicalSections,ss.TotalFlats, percent[0], percent[1], percent[2], percent[3], ss.GUID
-                //};
-              
+
               dt.Rows.Add(newrow);
               counter++;
           }

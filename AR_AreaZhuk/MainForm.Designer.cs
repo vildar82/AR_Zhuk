@@ -132,7 +132,7 @@ namespace AR_AreaZhuk
             this.dg.TabIndex = 0;
             this.dg.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellEndEdit);
             this.dg.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellValueChanged);
-            this.dg.SelectionChanged += new System.EventHandler(this.dg_SelectionChanged);
+          //  this.dg.SelectionChanged += new System.EventHandler(this.dg_SelectionChanged);
             // 
             // Column1
             // 
@@ -218,7 +218,7 @@ namespace AR_AreaZhuk
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Подробная информация";
-            this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
+           // this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
             // dg2
             // 
@@ -310,7 +310,7 @@ namespace AR_AreaZhuk
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(336, 117);
             this.tabControl1.TabIndex = 2;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            //this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
