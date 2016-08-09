@@ -275,11 +275,9 @@ namespace AR_Zhuk_Schema.Scheme
                                 section.ImageAngle = 90;
                             }
                             else
-                            {
-                                var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
-                                startCell = startCell.Offset(segment.Direction * (WidthOrdinary));
-                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep-1));
-                                section.ImageAngle = 180;
+                            {                                
+                                section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                                section.ImageAngle = 0;
                             }
                         }
                         // Правая угловая - вниз или вправо

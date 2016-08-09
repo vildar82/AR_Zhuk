@@ -14,10 +14,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest
     {
         static long countFile = 0;
         static string contFileString;
-        static string testsResultFolder;
-        static string steps;
-        static int countSteps;
+        static string testsResultFolder;        
         static string curDir;
+        Random rnd = new Random();
 
         public CreateHouseImage()
         {
@@ -38,41 +37,52 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             }            
         }
 
-        public void TestCreateImage (HouseInfo house)
+        public void TestCreateImage (List<List<HouseInfo>> houses)
         {
-            List<HouseInfo> houses = new List<HouseInfo>();
-            var countVarHauses = house.SectionsBySize.Max(s => s.Sections.Count);
-            for (int i = 0; i < countVarHauses; i++)
+            var countHousesVar = houses.Max(h => h.Count);
+            for (int i = 0; i < countHousesVar; i++)
             {
-                HouseInfo houseVar = new HouseInfo();
-                houseVar.SpotInf = house.SpotInf;
-                houseVar.Sections = new List<FlatInfo>();
-                foreach (var item in house.SectionsBySize)
+                List<HouseInfo> housesVar = new List<HouseInfo>();
+                foreach (var house in houses)
                 {
-                    FlatInfo flat;
-                    if (i >= item.Sections.Count)
+                    HouseInfo hi;
+                    if (i < house.Count)
                     {
-                        flat = item.Sections.Last();
+                        hi = house[i];
                     }
                     else
                     {
-                        flat = item.Sections[i];
+                        hi = house.Last();
                     }
-                    houseVar.Sections.Add(flat);
+                    housesVar.Add(hi);
                 }
-                houses.Add(houseVar);
-            }
+                var countsectBySize = housesVar.Max(h => h.SectionsBySize.Max(s=>s.Sections.Count));
+                for (int s = 0; s < countsectBySize; s++)
+                {
+                    List<HouseInfo> hbs = new List<HouseInfo>();                    
+                    foreach (var house in housesVar)
+                    {
+                        HouseInfo hi = new HouseInfo();
+                        hi.SpotInf = house.SpotInf;
 
-            foreach (var item in houses)
-            {
-                TestCreateImageOneHouse(item);
+                        hi.Sections = new List<FlatInfo>();
+
+                        foreach (var sbs in house.SectionsBySize)
+                        {
+                            var iSbs = rnd.Next(sbs.Sections.Count - 1);
+                            hi.Sections.Add(sbs.Sections[iSbs]);
+                        }
+                        hbs.Add(hi);
+                    }
+                    TestCreateImageOneHouse(hbs);
+                }               
             }
         }
 
-        public void TestCreateImageOneHouse (HouseInfo house)
+        public void TestCreateImageOneHouse (List<HouseInfo> houses)
         {
             GeneralObject go = new GeneralObject();
-            go.SpotInf = house.SpotInf;
+            go.SpotInf = houses[0].SpotInf;
             //double area = GetTotalArea(house);                        
             //go.SpotInf.RealArea = area;
             go.GUID = Guid.NewGuid().ToString();
@@ -86,25 +96,14 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             //}
             //go.Houses.Add(house);
 
-            go.Houses.Add(house);
-
-            string spotName = house.Sections[0].SpotOwner;
-            string curSteps = string.Join(".", house.Sections.Select(s=>s.CountStep.ToString()));            
-
-            if (steps != curSteps)
-            {
-                steps = curSteps;
-                countFile = 0;
-                countSteps++;
-            }
-
-            string insPassed = house.Sections.Any(s => s.Flats.Any(f => !f.IsInsPassed)) ? "Fail": "Passed";            
-
+            go.Houses = houses;
+            
             countFile++;
-            contFileString = countSteps.ToString("0000") + "_" +  countFile.ToString("0000");
+            contFileString = countFile.ToString("0000");
+            var hName = string.Join("_", houses.Select(h => h.Sections[0].SpotOwner + "_" + string.Join(".", h.Sections.Select(s => (s.IsCorner ? "c":"")+ s.CountStep.ToString()))));
 
-            string ids = string.Join("_", house.Sections.Select(s => s.IdSection.ToString()));
-            string name = $"{contFileString}_{spotName}_{steps}_{ids}_{insPassed}.png";            
+            string name = $"{contFileString}_{hName}.png";
+            
 
             string imagePath = Path.Combine(testsResultFolder, name);
 
