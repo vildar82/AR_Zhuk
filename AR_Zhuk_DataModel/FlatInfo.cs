@@ -3,15 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
 
 namespace AR_Zhuk_DataModel
 {
     public class FlatInfo
-
-    {    
-        [XmlIgnore]
-        public Section Section { get; set; }
+    {
+        /// <summary>
+        /// Стартовая ячейка секции - левый верхний угол
+        /// Для построения картинки
+        /// </summary>
+        public Cell ImageStart { get; set; }
+        /// <summary>
+        /// Угол поворота секции - по часовой стрелке.
+        /// 0 - в стандартном положении секции.
+        /// </summary>
+        public int ImageAngle { get; set; }        
         public int IdSection { get; set; }
         public int CountStep { get; set; }
         public bool IsInvert { get; set; }

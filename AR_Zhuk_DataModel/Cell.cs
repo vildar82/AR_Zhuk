@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace AR_Zhuk_DataModel
 {
@@ -26,7 +27,7 @@ namespace AR_Zhuk_DataModel
         /// <summary>
         /// Направление вправо
         /// </summary>
-        public static readonly Cell Right = new Cell(0, 1);        
+        public static readonly Cell Right = new Cell(0, 1);
 
         /// <summary>
         /// Строка
@@ -36,8 +37,11 @@ namespace AR_Zhuk_DataModel
         /// Столбец
         /// </summary>
         public int Col { get; set; }
-        public Cell Negative {
-            get {
+        [XmlIgnore]
+        public Cell Negative
+        {
+            get
+            {
                 return new Cell(Row * -1, Col * -1);
             }
         }
@@ -47,53 +51,54 @@ namespace AR_Zhuk_DataModel
         /// </summary>
         /// <param name="row"></param>
         /// <param name="col"></param>
-        public Cell(int row, int col) : this()
+        public Cell(int row, int col)
+            : this()
         {
             Row = row;
-            Col = col;            
+            Col = col;
         }
 
 
 
 
-        public Cell Offset (Cell offset)
+        public Cell Offset(Cell offset)
         {
             var result = new Cell(Row + offset.Row, Col + offset.Col);
             return result;
         }
 
-        public Cell OffsetNegative (Cell offset)
+        public Cell OffsetNegative(Cell offset)
         {
             var result = new Cell(Row - offset.Row, Col - offset.Col);
             return result;
         }
 
-        public static Cell operator * (Cell cell, int factor)
+        public static Cell operator *(Cell cell, int factor)
         {
-            Cell res = new Cell(cell.Row * factor, cell.Col * factor);            
+            Cell res = new Cell(cell.Row * factor, cell.Col * factor);
             return res;
         }
 
-        public override string ToString ()
+        public override string ToString()
         {
             return "s[r" + Row + ",c" + Col + "]";
         }
 
-        public bool Equals (Cell other)
+        public bool Equals(Cell other)
         {
             var res = Row == other.Row && Col == other.Col;
             return res;
         }
 
-        public override int GetHashCode ()
+        public override int GetHashCode()
         {
-            return Row.GetHashCode() ^ Col.GetHashCode();                
+            return Row.GetHashCode() ^ Col.GetHashCode();
         }
 
         /// <summary>
         /// Направление полученное поворотом направо от текущего
         /// </summary>        
-        public Cell ToRight ()
+        public Cell ToRight()
         {
             Cell toRight = new Cell(0, 0);
             if (Row != 0)
@@ -110,12 +115,12 @@ namespace AR_Zhuk_DataModel
         /// <summary>
         /// Направление полученное поворотом налево от текущего
         /// </summary>        
-        public Cell ToLeft ()
+        public Cell ToLeft()
         {
-            Cell toLeft = new Cell(0,0);
+            Cell toLeft = new Cell(0, 0);
             if (Row != 0)
             {
-                toLeft.Col = Row > 0 ? 1 : -1;                
+                toLeft.Col = Row > 0 ? 1 : -1;
             }
             else
             {

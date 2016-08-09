@@ -46,8 +46,8 @@ namespace AR_AreaZhuk
                     {
                         //try
                         //{
-                           // XmlSerializer ser = new XmlSerializer(go.GetType());
-                           // ser.Serialize(fs, go);
+                        XmlSerializer ser = new XmlSerializer(go.GetType());
+                        ser.Serialize(fs, go);
                            // isContinue = false;
                         //}
                         //catch

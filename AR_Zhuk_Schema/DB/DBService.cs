@@ -55,7 +55,8 @@ namespace AR_Zhuk_Schema.DB
                 {
                     fl = new FlatInfo();
 
-                    fl.Section = section;
+                    fl.ImageAngle = section.ImageAngle;
+                    fl.ImageStart = section.ImageStart;
                     fl.Floors = section.Floors;
                     fl.CountStep = section.CountStep;
                     fl.Flats = new List<RoomInfo>();
@@ -124,18 +125,18 @@ namespace AR_Zhuk_Schema.DB
             if (notInDictSS.Count > 0)
             {
                 // Паралельная загрузка секций   
-                //foreach (var item in notInDictSS)
-                //{
-                //    try
-                //    {
-                //        dictDbFlats.TryAdd(item, LoadFromDbSection(item));
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        string err = ex.Message;
-                //    }
-                //}
-                Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
+                foreach (var item in notInDictSS)
+                {
+                    try
+                    {
+                        dictDbFlats.TryAdd(item, LoadFromDbSection(item));
+                    }
+                    catch (Exception ex)
+                    {
+                        string err = ex.Message;
+                    }
+                }
+                //Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
 
@@ -152,10 +153,10 @@ namespace AR_Zhuk_Schema.DB
             {
                 flatsDb = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize,
                             selectSectParam.Step, selectSectParam.Type, selectSectParam.Levels).ToList();
-                // отсекаем последние квартиры секции (она может быть неполной)                
+                // отсекаем первые и последние квартиры секции (она может быть неполной)                
                 if (flatsDb.Count == maxSectionBySize)
                 {
-                    flatsDb = flatsDb.OrderBy(x => x.ID_Section).ToList();
+                    //flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();
                     var lastDbFlat = flatsDb.Last();
                     var idSectionLast = lastDbFlat.ID_Section;
                     do
@@ -163,6 +164,14 @@ namespace AR_Zhuk_Schema.DB
                         flatsDb.Remove(lastDbFlat);
                         lastDbFlat = flatsDb.Last();
                     } while (lastDbFlat.ID_Section== idSectionLast);
+
+                    var firstDbFlat = flatsDb.First();
+                    var idSectionFirst = firstDbFlat.ID_Section;
+                    do
+                    {
+                        flatsDb.Remove(firstDbFlat);
+                        firstDbFlat = flatsDb.First();
+                    } while (firstDbFlat.ID_Section == idSectionFirst);
                 }
             }
             return flatsDb;            
