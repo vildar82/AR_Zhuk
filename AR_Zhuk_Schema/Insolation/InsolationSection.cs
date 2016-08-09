@@ -196,7 +196,9 @@ namespace AR_Zhuk_Schema.Insolation
             resFlats.NumberInSpot = section.NumberInSpot;
             resFlats.SpotOwner = section.SpotOwner;      
             resFlats.IsInvert = isInvert;
-            resFlats.IsVertical = section.IsVertical; 
+            resFlats.IsVertical = section.IsVertical;
+            resFlats.ImageAngle = section.ImageAngle;
+            resFlats.ImageStart = section.ImageStart;
             if (isInvert)
             {
                 resFlats.ImageAngle += 180;
