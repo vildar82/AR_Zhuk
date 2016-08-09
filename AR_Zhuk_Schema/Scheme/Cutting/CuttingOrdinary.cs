@@ -80,11 +80,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
             Debug.WriteLine("failedSections=" + failedSections.Count);
             Debug.WriteLine("passedSections=" + passedSections.Count);
-            Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);
-
-            // Отбор минимальной размерности дома   
-           if(resHouses.Count!=0)
-               resHouses = resHouses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).FirstOrDefault().ToList();
+            Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);           
 
            return resHouses;
         }

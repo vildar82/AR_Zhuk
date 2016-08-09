@@ -304,7 +304,7 @@ namespace AR_Zhuk_Schema.Scheme
                             if (section.IsVertical)
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);                                
-                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep-1));
+                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep-2));
                                 section.ImageAngle = 270;
                             }
                             else
@@ -320,13 +320,13 @@ namespace AR_Zhuk_Schema.Scheme
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
                                 startCell = startCell.Offset(segment.Direction * WidthOrdinary);
-                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep-1));
+                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep-2));
                                 section.ImageAngle = 270;
                             }
                             else
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
-                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep - 1));
+                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep - 2));
                                 section.ImageAngle = 0;
                             }
                         }
