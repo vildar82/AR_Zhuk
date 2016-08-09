@@ -30,16 +30,10 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             // Получение всех домов
             var totalHouses = projectSpot.GetTotalHouses(1000);
 
-            Console.WriteLine($"Пятен = {totalHouses.Count}; Домов = {totalHouses.Sum(s => s.Count)} - {string.Join(",", totalHouses.Select(t=>t.Count))}");
-
-            foreach (var hs in totalHouses)
-            {
-                Console.WriteLine($"Пятно дома = {hs[0].SectionsBySize[0].SpotOwner}; Кол домов = {hs.Count}");
-                foreach (var house in hs)
-                {
-                    testCreateHouse.TestCreateImage(house);
-                }
-            }
+            Console.WriteLine($"Пятен = {totalHouses.Count}; Домов = {totalHouses.Sum(s => s.Count)} - {string.Join(",", totalHouses.Select(t => t.Count))}");
+            
+            Console.WriteLine($"{string.Join("; ", totalHouses.Select(h=>h[0].SectionsBySize[0].SpotOwner + " домов=" +  h.Count))}");
+            testCreateHouse.TestCreateImage(totalHouses);
         }
 
         public static SpotInfo GetSpotInformation ()
