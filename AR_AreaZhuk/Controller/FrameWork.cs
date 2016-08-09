@@ -363,13 +363,23 @@ namespace AR_AreaZhuk
         public SpotInfo GetSpotInformation()
         {
             SpotInfo spotInfo = new SpotInfo();
-            spotInfo.requirments.Add(new Requirment("Студия", 22, 23, 15, 15, 3, 0, 0, 1,"01"));
-            spotInfo.requirments.Add(new Requirment("Студия", 33, 35, 8, 0, 8, 0, 0, 4,"01"));
-            spotInfo.requirments.Add(new Requirment("Однокомн.", 33, 47, 17, 0, 4, 0, 0, 1,"1"));
+            spotInfo.requirments.Add(new Requirment("Студия", 22, 23, 15, 15, 3, 0, 0, 1, "01"));
+            spotInfo.requirments.Add(new Requirment("Студия", 33, 35, 8, 0, 8, 0, 0, 4, "01"));
+            spotInfo.requirments.Add(new Requirment("Однокомн.", 33, 47, 17, 0, 4, 0, 0, 1, "1"));
             spotInfo.requirments.Add(new Requirment("Двухкомн.", 45, 47, 16, 0, 3, 0, 0, 4, "2"));
             spotInfo.requirments.Add(new Requirment("Двухкомн.", 57, 60, 11, 0, 3, 0, 0, 8, "2"));
-            spotInfo.requirments.Add(new Requirment("Двухкомн.", 68, 71, 12, 0, 3, 0, 0, 1,"2"));
-            spotInfo.requirments.Add(new Requirment("Трехкомн.", 85, 95, 21, 0, 2, 0, 0, 1,"3"));
+            spotInfo.requirments.Add(new Requirment("Двухкомн.", 68, 71, 12, 0, 3, 0, 0, 1, "2"));
+            spotInfo.requirments.Add(new Requirment("Трехкомн.", 85, 95, 21, 0, 2, 0, 0, 1, "3"));
+
+            //spotInfo.requirments.Add(new Requirment("Студия", 22, 25, 10, 15, 3, 0, 0, 2, "01"));
+
+            //spotInfo.requirments.Add(new Requirment("Однокомн.", 40, 47, 31, 0, 4, 0, 0, 2, "1"));
+
+            //spotInfo.requirments.Add(new Requirment("Двухкомн.", 45, 70, 40, 0, 3, 0, 0, 8, "2"));
+
+            //spotInfo.requirments.Add(new Requirment("Трехкомн.", 80, 95, 16, 0, 2, 0, 0, 2, "3"));
+
+            //spotInfo.requirments.Add(new Requirment("Четырехкомн.", 90, 120, 3, 0, 2, 0, 0, 2, "4"));
             return spotInfo;
         }
 

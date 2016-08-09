@@ -30,6 +30,7 @@ namespace AR_Zhuk_DataModel
             {
                 s.requirments.Add(new Requirment(r.SubZone, r.MinArea, r.MaxArea, r.Percentage, r.MinCountFlat, r.MaxCountFlat, 0, 0, r.OffSet,r.CodeZone));
             }
+            s.Size = Size;
             return s;
         }
     }
