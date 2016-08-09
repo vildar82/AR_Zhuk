@@ -78,6 +78,7 @@
     <Compile Include="Scheme\Cutting\CuttingFactory.cs" />
     <Compile Include="Scheme\Cutting\CuttingOrdinary.cs" />
     <Compile Include="Scheme\Cutting\ICutting.cs" />
+    <Compile Include="Scheme\Cutting\SectionBySize.cs" />
     <Compile Include="Scheme\HouseSpot.cs" />
     <Compile Include="Scheme\ISchemeParser.cs" />
     <Compile Include="Scheme\ParserExcel.cs" />

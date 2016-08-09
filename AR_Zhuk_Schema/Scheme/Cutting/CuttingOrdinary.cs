@@ -63,7 +63,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
                 var houseVar = GetHouseVariant(houseSteps);
 
-                if (houseVar != null)
+                if (houseVar != null && houseVar.Count > 0)
                 {
                     HouseInfo hi = new HouseInfo();
                     hi.SpotInf = sp;
@@ -103,18 +103,58 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 return null;
             }
 
-            List<Section> resSections = new List<Section>();
+            List<Section> resHouseSections = new List<Section>();
+
+            // Нарезка секций одной размерности дома
+            List<SectionBySize> sectionsBySize;
+            if (CutSectionsBySize(houseSteps, out sectionsBySize))
+            {                
+                // Определение торцов секции
+                DefineSectionEnds(ref sectionsBySize);
+
+                foreach (var sectionBySize in sectionsBySize)
+                {
+                    if (!sectionBySize.isFromPassedDict)                    
+                    {
+                        // Проверка инсоляции секции                
+                        List<FlatInfo> flatsCheckedIns = insService.GetInsolationSections(sectionBySize.Section);
+                        if (flatsCheckedIns.Count == 0)
+                        {
+#if TEST
+                        Debug.WriteLine("fail ins - key=" + sectionBySize.Key);
+#endif
+                            failedSections.Add(sectionBySize.Key);
+                            resHouseSections = null;
+                            break;
+                        }
+                        sectionBySize.Section.Sections = flatsCheckedIns;
+                        passedSections.Add(sectionBySize.Key, sectionBySize.Section);
+                    }
+                    resHouseSections.Add(sectionBySize.Section);                    
+                }                
+            }
+#if TEST
+            if (resHouseSections != null && resHouseSections.Count > 0)
+            {
+                Debug.WriteLine("Passed!     Passed!       Passed!     Passed! - " + houseSize);
+            }
+#endif
+            return resHouseSections;
+        }
+
+        private bool CutSectionsBySize(int[] houseSteps,out List<SectionBySize> sectionsBySize)
+        {
+            sectionsBySize = new List<SectionBySize>();
+            bool fail = false;
+            string houseStepsPassed = string.Empty;            
+            bool addToFailed = true;
             int curStepInHouse = 1;
             int sectionsInHouse = houseSteps.Length;
-
             string key = string.Empty;
-            bool fail = false;
-            bool addToFailed = true;
-            string houseStepsPassed = string.Empty;
-
             // Перебор нарезанных секций в доме
             for (int numberSect = 1; numberSect <= sectionsInHouse; numberSect++)
             {
+                SectionBySize sectBySyze = new SectionBySize();
                 fail = false;
                 Section section = null;
 
@@ -126,11 +166,12 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
                 // ключ размерности секции
                 key = GetSectionDataKey(sectCountStep, numberSect, curStepInHouse);
+                sectBySyze.Key = key;
                 if (failedSections.Contains(key))
                 {
 #if TEST
                     Debug.WriteLine("failedSection - " + key);
-#endif
+#endif                    
                     fail = true;
                     addToFailed = false;
                     break;
@@ -141,6 +182,8 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 #if TEST
                     Debug.WriteLine("new sect key = " + key);
 #endif
+                    sectBySyze.isFromPassedDict = false;
+
                     //
                     // Отрезка секции из дома
                     //
@@ -151,6 +194,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         Debug.WriteLine("fail нарезки - key=" + key);
 #endif
                         fail = true;
+                        addToFailed = true;
                         break;
                     }
 
@@ -176,47 +220,26 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         Debug.WriteLine("fail no in db - key=" + key + "; type=" + type + "; levels=" + levels);
 #endif
                         fail = true;
+                        addToFailed =  true;
                         break;
                     }
-
-                    // Определение торцов секции
-                    DefineSectionEnds(section, sectionsInHouse);
-
-                    //
-                    // Проверка инсоляции секции
-                    //
-                    List<FlatInfo> flatsCheckedIns = insService.GetInsolationSections(section);
-                    if (flatsCheckedIns.Count == 0)
-                    {
-#if TEST
-                        Debug.WriteLine("fail ins - key=" + key);
-#endif
-                        fail = true;
-                        break;
-                    }
-                    section.Sections = flatsCheckedIns;
-                    passedSections.Add(key, section);
+                }
+                else
+                {
+                    sectBySyze.isFromPassedDict = true;
                 }
                 curStepInHouse += sectCountStep;
-                resSections.Add(section);
+                sectBySyze.Section = section;                
+                sectionsBySize.Add(sectBySyze);
             }
 
             if (fail)
-            {
-                resSections = null;
+            {                
                 if (addToFailed)
                     failedSections.Add(key);
                 failedHouseSteps.Add(houseStepsPassed);
             }
-
-#if TEST
-            if (resSections != null && resSections.Count != 0)
-            {
-                Debug.WriteLine("Passed!     Passed!       Passed!     Passed! - " + houseSize);
-            }
-#endif      
-
-            return resSections;
+            return !fail;
         }
 
         private void InitLoadDBSections(List<int> stepsSet)
@@ -381,62 +404,71 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         /// <summary>
         /// Определение торцов в секции
         /// </summary>        
-        private void DefineSectionEnds (Section section, int sectionsInHouse)
+        private void DefineSectionEnds (ref List<SectionBySize> sections)
         {
-            if (section == null) return;
-
-            int floorsPrev =0;
-            int floorsNext =0;
-            if (section.NumberInSpot != 1)
-                floorsPrev = GetSectionFloors(section.NumberInSpot - 1, sectionsInHouse, section.IsCorner);            
-            if (section.NumberInSpot != sectionsInHouse)
-                floorsNext = GetSectionFloors(section.NumberInSpot + 1, sectionsInHouse, section.IsCorner);
-
-            var jointStart = GetJoint(section.Floors, floorsPrev);
-            var jointEnd = GetJoint(section.Floors, floorsNext);
-
-            if (section.IsCorner)
+            for (int i = 0; i < sections.Count; i++)
             {
-                // Угловая левая
-                if (section.SectionType == SectionType.CornerLeft)
+                int floorsPrev = 0;
+                int floorsNext = 0;
+
+                var section = sections[i].Section;
+                if (section.NumberInSpot != 1)
                 {
-                    if (section.IsCornerStartTail)
+                    var sectionPrev = sections[i - 1].Section;
+                    floorsPrev = GetSectionFloors(sectionPrev.NumberInSpot, sections.Count, sectionPrev.IsCorner);
+                }
+                if (section.NumberInSpot != sections.Count)
+                {
+                    var sectionNext = sections[i + 1].Section;
+                    floorsNext = GetSectionFloors(sectionNext.NumberInSpot, sections.Count, sectionNext.IsCorner);
+                }
+
+                var jointStart = GetJoint(section.Floors, floorsPrev);
+                var jointEnd = GetJoint(section.Floors, floorsNext);
+
+                if (section.IsCorner)
+                {
+                    // Угловая левая
+                    if (section.SectionType == SectionType.CornerLeft)
+                    {
+                        if (section.IsCornerStartTail)
+                        {
+                            section.JointRight = jointStart;
+                            section.JointLeft = jointEnd;
+                        }
+                        else
+                        {
+                            section.JointRight = jointEnd;
+                            section.JointLeft = jointStart;
+                        }
+                    }
+                    // Угловая правая
+                    else
+                    {
+                        if (section.IsCornerStartTail)
+                        {
+                            section.JointLeft = jointStart;
+                            section.JointRight = jointEnd;
+                        }
+                        else
+                        {
+                            section.JointRight = jointStart;
+                            section.JointLeft = jointEnd;
+                        }
+                    }
+                }
+                else
+                {
+                    if (section.Direction > 0)
+                    {
+                        section.JointLeft = jointStart;
+                        section.JointRight = jointEnd;
+                    }
+                    else
                     {
                         section.JointRight = jointStart;
                         section.JointLeft = jointEnd;
                     }
-                    else
-                    {
-                        section.JointRight = jointEnd;
-                        section.JointLeft = jointStart;
-                    }
-                }
-                // Угловая правая
-                else
-                {
-                    if (section.IsCornerStartTail)
-                    {
-                        section.JointLeft = jointStart;
-                        section.JointRight = jointEnd;
-                    }
-                    else
-                    {
-                        section.JointRight = jointStart;
-                        section.JointLeft = jointEnd;
-                    }
-                }
-            }
-            else
-            {
-                if (section.Direction > 0)
-                {
-                    section.JointLeft = jointStart;
-                    section.JointRight = jointEnd;
-                }
-                else
-                {
-                    section.JointRight = jointStart;
-                    section.JointLeft = jointEnd;
                 }
             }
         }
