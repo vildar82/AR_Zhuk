@@ -1477,9 +1477,8 @@ namespace AR_AreaZhuk
             profectShema.ReadScheme(PathToFileInsulation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(1000);
 
-            //.. totalObject[0] = totalObject[0].Where(x => x.Sections.Count==4).ToList();
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
             int megacounter = 0;
@@ -1608,13 +1607,14 @@ namespace AR_AreaZhuk
                     }
                     //if (isOverFlow)
                     //    continue;
+                    if (counterGood > 5)
+                    {
+
+                        break;
+                    }
                     if (isValidPercentage)
                     {
-                        //if (counterGood > 5)
-                        //{
-
-                        //    break;
-                        //}
+                      
                         counterGood++;
                         for (int i = 0; i < sections.Count; i++)
                         {
@@ -1721,8 +1721,8 @@ namespace AR_AreaZhuk
             {
                 int offsetDom = DominantOffSet;
 
-                int remaining =Math.Abs(totalObject[0][selectedHouse[0]].SectionsBySize[totalObject[0][selectedHouse[0]].SectionsBySize.Count - 1].CountStep -
-                        totalObject[1][selectedHouse[1]].SectionsBySize[totalObject[1][selectedHouse[1]].SectionsBySize.Count - 1].CountStep);
+                int remaining =Math.Abs(totalObject[0][selectedHouse[0]].SectionsBySize[0].CountStep -
+                        totalObject[1][selectedHouse[1]].SectionsBySize[0].CountStep);
                 if (remaining > offsetDom)
                 {
                     selectedHouse[selectedHouse.Length - 1]++;
@@ -1758,7 +1758,7 @@ namespace AR_AreaZhuk
         {
             if (index == 0)
             {
-                isContinue = false;
+                MainForm.isContinue = false;
                 return;
             }
             houses[index] = 0;
