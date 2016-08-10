@@ -18,11 +18,13 @@ namespace AR_Zhuk_Schema.Insolation
                 new RoomInsolation ("Четырехкомнатная", 4, new List<string>() { "2C", "C+2B" })
             };
 
-        private readonly SpotInfo spOrig;        
+        private readonly SpotInfo sp;
+
+        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes = new Dictionary<List<RoomInfo>, string> (new FlatComparer ());
 
         public InsolationSection(SpotInfo sp)
         {
-            this.spOrig = sp;
+            this.sp = sp;
         }
 
         /// <summary>
@@ -119,30 +121,35 @@ namespace AR_Zhuk_Schema.Insolation
             //return true;
         }
 
-        private string GetFlatCode(FlatInfo flats)
+        private string GetFlatCode(FlatInfo flat)
         {
-            var sp = spOrig.CopySpotInfo(spOrig);
-            for (int l = 0; l < flats.Flats.Count; l++) //Квартиры
+            string code;
+            if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
             {
-                if (flats.Flats[l].SubZone.Equals("0")) continue;
-                var reqs =
-                    sp.requirments.Where(
-                        x => x.CodeZone.Equals(flats.Flats[l].SubZone))
-                        .Where(
-                            x =>
-                                x.MaxArea + 5 >= flats.Flats[l].AreaTotal &
-                                x.MinArea - 5 <= flats.Flats[l].AreaTotal)
-                        .ToList();
-                if (reqs.Count == 0) continue;
-                reqs[0].RealCountFlats++;
-            }
-            string code = "";
-            foreach (var r in sp.requirments)
-            {
-                code += r.RealCountFlats.ToString();
+                var sp = this.sp.CopySpotInfo(this.sp);
+                for (int l = 0; l < flat.Flats.Count; l++) //Квартиры
+                {
+                    if (flat.Flats[l].SubZone.Equals("0")) continue;
+                    var reqs =
+                        sp.requirments.Where(
+                            x => x.CodeZone.Equals(flat.Flats[l].SubZone))
+                            .Where(
+                                x =>
+                                    x.MaxArea + 5 >= flat.Flats[l].AreaTotal &
+                                    x.MinArea - 5 <= flat.Flats[l].AreaTotal)
+                            .ToList();
+                    if (reqs.Count == 0) continue;
+                    reqs[0].RealCountFlats++;
+                }
+                code = string.Empty;
+                foreach (var r in sp.requirments)
+                {
+                    code += r.RealCountFlats.ToString();
+                }            
+                dictFlatsCodes.Add(flat.Flats, code);
             }
             return code;            
-        }
+        }        
 
         public RoomInsolation FindRule (RoomInfo flat)
         {
@@ -342,6 +349,26 @@ namespace AR_Zhuk_Schema.Insolation
             // Если проектный индекс больше требуемого, то проходит            
             var res = insIndexProject.CompareTo(InsIndex) >= 0;
             return res;
+        }
+    }
+
+    class FlatComparer : IEqualityComparer<List<RoomInfo>>
+    {
+        public bool Equals (List<RoomInfo> x, List<RoomInfo> y)
+        {
+            var res = x.Count == y.Count &&
+                x.Where(r => r.SubZone != "0").All(a => y.Where(r => r.SubZone != "0").Any(n => n.ShortType == a.ShortType));
+            return res;
+        }
+
+        public int GetHashCode (List<RoomInfo> rooms)
+        {
+            int hashcode = 0;
+            foreach (RoomInfo r in rooms.Where(r=>r.SubZone != "0"))
+            {
+                hashcode ^= r.ShortType.GetHashCode();
+            }
+            return hashcode;
         }
     }
 }

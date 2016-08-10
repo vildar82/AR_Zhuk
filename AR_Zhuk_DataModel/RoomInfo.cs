@@ -46,26 +46,18 @@ namespace AR_Zhuk_DataModel
         public int SelectedIndexBottom { get; set; }
         public bool IsInclude { get; set; }
         public string FactorSmoke { get; set; }
-
         public int NextOffsetX { get; set; }
-
         public int CurrentOffsetX { get; set; }
         public string ImageNameSuffix { get; set; }
         public int HorisontalModules { get; set; }
 
-
-
-
-
-
-
-
-
         public RoomInfo()
         { }
+
         public RoomInfo(string shortType, string subZone, string type, 
-    string indexLenghtNIZ, string indexLenghtTOP, string linkageBefore, string linkageAfter, string linkageOR, string requirment, string typeSection, string levelSection, string typeHouse,
-            string order, string lightNiz, string lightTop, string factorSmoke)
+                        string indexLenghtNIZ, string indexLenghtTOP, string linkageBefore, string linkageAfter, 
+                        string linkageOR, string requirment, string typeSection, string levelSection, string typeHouse,
+                        string order, string lightNiz, string lightTop, string factorSmoke)
         {
             this.ShortType = shortType;
             this.SubZone = subZone;

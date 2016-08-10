@@ -71,10 +71,15 @@ namespace AR_Zhuk_Schema.DB
                     {
                         var f = gg[i];
                         fl.IdSection = f.ID_Section;
+#if TEST
+                        isContains = true;
+                        isValidSection = false;
+#else
                         isContains = false;
                         if (!f.SubZone.Equals("0"))
                         {
                             isValidSection = false;
+
                             foreach (var r in sp.requirments.Where(x => x.CodeZone.Equals(f.SubZone)).ToList())
                             {
                                 if (!(r.MinArea - 4 <= f.AreaTotalStandart & r.MaxArea + 4 >= f.AreaTotalStandart))
@@ -89,7 +94,7 @@ namespace AR_Zhuk_Schema.DB
                                 break;
                             }
                         }
-
+#endif
                         var fflat = new RoomInfo(f.ShortType, f.SubZone, f.TypeFlat, "",
                             "", f.LinkageBefore, f.LinkageAfter, "", "", "", f.Levels, "", "", f.LightBottom, f.LightTop,
                             "");

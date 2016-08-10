@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AR_Zhuk_DataModel;
+using AR_Zhuk_Schema.Insolation;
 using AR_Zhuk_Schema.Scheme.SpatialIndex;
 
 namespace AR_Zhuk_Schema.Scheme
@@ -36,6 +37,10 @@ namespace AR_Zhuk_Schema.Scheme
         /// Кол-во шагов в доме
         /// </summary>
         public int CountSteps { get; private set; }
+        /// <summary>
+        /// Приоритетная сторона для ЛЛУ
+        /// </summary>
+        public Side PriorityLluSide { get; internal set; }
 
         public HouseSpot (string spotName, Cell cellStart, ISchemeParser parser)
         {
