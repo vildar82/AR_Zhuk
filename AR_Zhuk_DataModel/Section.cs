@@ -9,6 +9,11 @@ namespace AR_Zhuk_DataModel
     public class Section
     {
         /// <summary>
+        /// Секция - этажная доминанта. 
+        /// Угловая секция не может быть доминантой!
+        /// </summary>
+        public bool IsDominant { get; set; }
+        /// <summary>
         /// Стартовая ячейка секции - левый верхний угол
         /// Для построения картинки
         /// </summary>
