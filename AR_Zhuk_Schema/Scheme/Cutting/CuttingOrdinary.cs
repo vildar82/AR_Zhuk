@@ -80,11 +80,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
             Debug.WriteLine("failedSections=" + failedSections.Count);
             Debug.WriteLine("passedSections=" + passedSections.Count);
-            Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);
-
-            // Отбор минимальной размерности дома   
-           if(resHouses.Count!=0)
-               resHouses = resHouses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).FirstOrDefault().ToList();
+            Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);           
 
            return resHouses;
         }
@@ -200,7 +196,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
                     // Этажность секции, тип
                     var type = GetSectionType(section.SectionType);
-                    section.Floors = GetSectionFloors(numberSect, sectionsInHouse, section.IsCorner);
+                    section.Floors = GetSectionFloors(ref section, sectionsInHouse);
                     var levels = GetSectionLevels(section.Floors);
 
                     section.NumberInSpot = numberSect;
@@ -279,10 +275,11 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return key;
         }        
 
-        private int GetSectionFloors(int numberSect, int sectionsInHouse, bool isCorner)
+        private int GetSectionFloors(ref Section section, int sectionsInHouse)
         {
+            int numberSect = section.NumberInSpot;
             int floors = houseSpot.HouseOptions.CountFloorsMain;
-            if (!isCorner)
+            if (!section.IsCorner)
             {
                 bool isDominant = false;
                 if (numberSect < 4)
@@ -301,6 +298,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 {
                     floors = houseSpot.HouseOptions.CountFloorsDominant;
                 }
+                section.IsDominant = isDominant;
             }
             return floors;
         }
@@ -415,12 +413,12 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 if (section.NumberInSpot != 1)
                 {
                     var sectionPrev = sections[i - 1].Section;
-                    floorsPrev = GetSectionFloors(sectionPrev.NumberInSpot, sections.Count, sectionPrev.IsCorner);
+                    floorsPrev = GetSectionFloors(ref sectionPrev, sections.Count);
                 }
                 if (section.NumberInSpot != sections.Count)
                 {
                     var sectionNext = sections[i + 1].Section;
-                    floorsNext = GetSectionFloors(sectionNext.NumberInSpot, sections.Count, sectionNext.IsCorner);
+                    floorsNext = GetSectionFloors(ref sectionNext, sections.Count);
                 }
 
                 var jointStart = GetJoint(section.Floors, floorsPrev);

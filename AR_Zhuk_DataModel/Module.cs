@@ -13,6 +13,7 @@ namespace AR_Zhuk_DataModel
     {   
         public string InsValue { get;  set; }
         public double Length { get;  set; }
+        public Cell Cell { get; set;}
 
         public Module() { }
         private Module (string insValue, double length)

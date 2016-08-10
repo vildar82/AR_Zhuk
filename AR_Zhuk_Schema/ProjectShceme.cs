@@ -40,7 +40,10 @@ namespace AR_Zhuk_Schema
             // Чтение матрицы ячеек первого листа в Excel файле
             ISchemeParser parserExcel = new ParserExcel(this);
             parserExcel.Parse(schemeFile);
-            HouseSpots = parserExcel.HouseSpots;            
+            HouseSpots = parserExcel.HouseSpots;
+
+            // Инсоляция - все ячейки            
+            List<Module> insModulesAll = new List<Module>();
 
             foreach (var houseSpot in HouseSpots)
             {
@@ -50,12 +53,25 @@ namespace AR_Zhuk_Schema
                     string allowedHouseNames = string.Join(",", houseOptions.Select(h => h.HouseName));
                     throw new Exception("Имя пятна дома определенное в файле инсоляции - '" + houseSpot.SpotName + "' не соответствует одному из допустимых значений: " + allowedHouseNames);
                 }
-                houseSpot.HouseOptions = houseOpt;                
+                houseSpot.HouseOptions = houseOpt;
+
+                foreach (var segment in houseSpot.Segments)
+                {
+                    insModulesAll.AddRange(segment.ModulesLeft);
+                    insModulesAll.AddRange(segment.ModulesRight);
+                    if (segment.ModulesSideEnd != null)
+                       insModulesAll.AddRange(segment.ModulesSideEnd);
+                    if (segment.ModulesSideStart != null)
+                        insModulesAll.AddRange(segment.ModulesSideStart);
+                }               
             }
+
+            // Инсоляция - все ячейки            
+            sp.InsModulesAll = insModulesAll;
 
             // Размер застройки
             var bounds = tree.getBounds();
-            sp.Size = new Cell(Convert.ToInt32(bounds.max[1])+1, Convert.ToInt32(bounds.max[0])+1);           
+            sp.Size = new Cell(Convert.ToInt32(bounds.max[1])+1, Convert.ToInt32(bounds.max[0])+1);            
         }        
 
         /// <summary>
@@ -72,6 +88,12 @@ namespace AR_Zhuk_Schema
                 var houses = cutting.Cut();
                 if (houses.Count != 0)
                 {
+#if !TEST
+                    // Отбор минимальной размерности дома   
+                    if (houses.Count != 0)
+                        houses = houses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).FirstOrDefault().ToList();
+#endif
+
                     totalHouses.Add(houses);
                 }
             }

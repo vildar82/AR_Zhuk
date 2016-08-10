@@ -21,6 +21,10 @@ namespace AR_Zhuk_DataModel
         /// Стартовая ячейка 1,1.
         /// </summary>
         public Cell Size { get; set; }
+        /// <summary>
+        /// Ячейки инсоляции всех домов
+        /// </summary>
+        public List<Module> InsModulesAll { get; set; }
         public List<Requirment> requirments = new List<Requirment>();
 
         public SpotInfo CopySpotInfo(SpotInfo sp)

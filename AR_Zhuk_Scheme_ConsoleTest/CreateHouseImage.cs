@@ -57,7 +57,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                     housesVar.Add(hi);
                 }
                 var countsectBySize = housesVar.Max(h => h.SectionsBySize.Max(s=>s.Sections.Count));
-                for (int s = 0; s < countsectBySize; s++)
+                for (int s = 0; s < 1; s++)
                 {
                     List<HouseInfo> hbs = new List<HouseInfo>();                    
                     foreach (var house in housesVar)
