@@ -194,16 +194,16 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         break;
                     }
 
-                    // Этажность секции, тип
-                    var type = GetSectionType(section.SectionType);
-                    section.Floors = GetSectionFloors(ref section, sectionsInHouse);
-                    var levels = GetSectionLevels(section.Floors);
-
                     section.NumberInSpot = numberSect;
                     section.SpotOwner = houseSpot.SpotName;
 
                     section.IsStartSectionInHouse = numberSect == 1;
                     section.IsEndSectionInHouse = numberSect == sectionsInHouse;
+
+                    // Этажность секции, тип
+                    var type = GetSectionType(section.SectionType);
+                    section.Floors = GetSectionFloors(ref section, sectionsInHouse);
+                    var levels = GetSectionLevels(section.Floors);                    
 
                     //
                     // Запрос секций из базы
