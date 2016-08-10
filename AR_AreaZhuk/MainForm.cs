@@ -1721,15 +1721,15 @@ namespace AR_AreaZhuk
             {
                 int offsetDom = DominantOffSet;
 
-                int remaining =Math.Abs(totalObject[0][selectedHouse[0]].SectionsBySize[0].CountStep -
-                        totalObject[1][selectedHouse[1]].SectionsBySize[0].CountStep);
-                if (remaining > offsetDom)
-                {
-                    selectedHouse[selectedHouse.Length - 1]++;
-                    if (selectedHouse[selectedHouse.Length - 1] >= totalObject[selectedHouse.Length - 1].Count)
-                        IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject);
-                    return true;
-                }
+                //int remaining =Math.Abs(totalObject[0][selectedHouse[0]].SectionsBySize[4].CountStep -
+                //        totalObject[1][selectedHouse[1]].SectionsBySize[0].CountStep);
+                //if (remaining > offsetDom)
+                //{
+                //    selectedHouse[selectedHouse.Length - 1]++;
+                //    if (selectedHouse[selectedHouse.Length - 1] >= totalObject[selectedHouse.Length - 1].Count)
+                //        IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject);
+                //    return true;
+                //}
             }
             selectedHouse[selectedHouse.Length - 1]++;
 
