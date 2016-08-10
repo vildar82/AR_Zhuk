@@ -55,6 +55,7 @@ namespace AR_Zhuk_Schema.DB
                 {
                     fl = new FlatInfo();
 
+                    fl.IsDominant = section.IsDominant;
                     fl.ImageAngle = section.ImageAngle;
                     fl.ImageStart = section.ImageStart;
                     fl.Floors = section.Floors;

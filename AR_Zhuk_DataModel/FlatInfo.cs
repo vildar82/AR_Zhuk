@@ -8,6 +8,7 @@ namespace AR_Zhuk_DataModel
 {
     public class FlatInfo
     {
+        public bool IsDominant { get; set; }
         /// <summary>
         /// Стартовая ячейка секции - левый верхний угол
         /// Для построения картинки
