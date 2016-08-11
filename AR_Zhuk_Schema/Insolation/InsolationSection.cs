@@ -18,11 +18,13 @@ namespace AR_Zhuk_Schema.Insolation
                 new RoomInsolation ("Четырехкомнатная", 4, new List<string>() { "2C", "C+2B" })
             };
 
-        private readonly SpotInfo spOrig;        
+        private readonly SpotInfo sp;
+
+        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes = new Dictionary<List<RoomInfo>, string> (new FlatComparer ());
 
         public InsolationSection(SpotInfo sp)
         {
-            this.spOrig = sp;
+            this.sp = sp;
         }
 
         /// <summary>
@@ -32,74 +34,19 @@ namespace AR_Zhuk_Schema.Insolation
         /// <returns>Секции прошедшие инсоляцию</returns>
         public List<FlatInfo> GetInsolationSections (Section section)
         {
-            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);
-
-            List<FlatInfo> resFlats = new List<FlatInfo>();
-
-            foreach (var sectFlats in section.Sections)
-            {
-                sectFlats.Code = GetFlatCode(sectFlats);
-#if TEST
-                // Проверка однотипной секции
-                FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
-                if (!IsIdenticalSection(flats, resFlats))
-                {
-                    insCheck.CheckSection(flats, isRightOrTopLLu: true);
-                    resFlats.Add(flats);
-                }
-                if (!section.IsCorner)
-                {
-                    // Проверка однотипной секции
-                    flats = NewFlats(section, sectFlats, isInvert: true);
-                    if (!IsIdenticalSection(flats, resFlats))
-                    {
-                        // Проверка инсоляции инвертированной секции                        
-                        insCheck.CheckSection(flats, isRightOrTopLLu: false);
-                        resFlats.Add(flats);
-                    }
-                }
-#else
-                // Проверка однотипной секции
-                FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
-                if (!IsIdenticalSection(flats, resFlats))
-                {
-                    // Добавление прошедших инсоляцию секций
-                    if (insCheck.CheckSection(flats, isRightOrTopLLu: true))
-                    {
-                        resFlats.Add(flats);
-                    }
-                    else
-                    {
-                        // не прошла инсоляция стандартной секции
-                        // Проверка инвертированной секции для рядовых
-                        if (!section.IsCorner)
-                        {
-                            // Проверка однотипной секции
-                            flats = NewFlats(section, sectFlats, isInvert: true);
-                            if (!IsIdenticalSection(flats, resFlats))
-                            {
-                                // Проверка инсоляции инвертированной секции                        
-                                if (insCheck.CheckSection(flats, isRightOrTopLLu: false))
-                                {
-                                    resFlats.Add(flats);
-                                }
-                            }
-                        }
-                    }
-                }
-#endif
-            }
+            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                                    
+            var resFlats = insCheck.CheckSections(section);
             return resFlats;
         }
 
-        private bool IsIdenticalSection (FlatInfo curSection, List<FlatInfo> resulsSections)
+        public bool IsIdenticalSection (FlatInfo curSection, List<FlatInfo> resulsSections)
         {
             var res = resulsSections.Any(s => (s.IsInvert == curSection.IsInvert) &&
                                 IsEqualSections(s.Flats, curSection.Flats));
             return res;
         }
 
-        public bool IsEqualSections (List<RoomInfo> section1, List<RoomInfo> section2)
+        private bool IsEqualSections (List<RoomInfo> section1, List<RoomInfo> section2)
         {
             if (section1.Count != section2.Count) return false;
             // Если одной из квартир нет во второй секции, то это разные секции
@@ -108,41 +55,38 @@ namespace AR_Zhuk_Schema.Insolation
                 return false;
             }
             // все квартиры из первой секции есть во второй
-            return true;
-            //foreach (var flat1 in section1)
-            //{
-            //    int countInSection1 = section1.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-            //    int countInSection2 = section2.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-            //    if (countInSection1 != countInSection2)
-            //        return false;
-            //}
-            //return true;
+            return true;            
         }
 
-        private string GetFlatCode(FlatInfo flats)
+        public string GetFlatCode(FlatInfo flat)
         {
-            var sp = spOrig.CopySpotInfo(spOrig);
-            for (int l = 0; l < flats.Flats.Count; l++) //Квартиры
+            string code;
+            if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
             {
-                if (flats.Flats[l].SubZone.Equals("0")) continue;
-                var reqs =
-                    sp.requirments.Where(
-                        x => x.CodeZone.Equals(flats.Flats[l].SubZone))
-                        .Where(
-                            x =>
-                                x.MaxArea + 5 >= flats.Flats[l].AreaTotal &
-                                x.MinArea - 5 <= flats.Flats[l].AreaTotal)
-                        .ToList();
-                if (reqs.Count == 0) continue;
-                reqs[0].RealCountFlats++;
-            }
-            string code = "";
-            foreach (var r in sp.requirments)
-            {
-                code += r.RealCountFlats.ToString();
+                var sp = this.sp.CopySpotInfo(this.sp);
+                for (int l = 0; l < flat.Flats.Count; l++) //Квартиры
+                {
+                    if (flat.Flats[l].SubZone.Equals("0")) continue;
+                    var reqs =
+                        sp.requirments.Where(
+                            x => x.CodeZone.Equals(flat.Flats[l].SubZone))
+                            .Where(
+                                x =>
+                                    x.MaxArea + 5 >= flat.Flats[l].AreaTotal &
+                                    x.MinArea - 5 <= flat.Flats[l].AreaTotal)
+                            .ToList();
+                    if (reqs.Count == 0) continue;
+                    reqs[0].RealCountFlats++;
+                }
+                code = string.Empty;
+                foreach (var r in sp.requirments)
+                {
+                    code += r.RealCountFlats.ToString();
+                }            
+                dictFlatsCodes.Add(flat.Flats, code);
             }
             return code;            
-        }
+        }        
 
         public RoomInsolation FindRule (RoomInfo flat)
         {
@@ -190,7 +134,7 @@ namespace AR_Zhuk_Schema.Insolation
             return topFlats;
         }        
 
-        private FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert)
+        public FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert)
         {
             FlatInfo resFlats = flat.Copy();
             resFlats.NumberInSpot = section.NumberInSpot;
@@ -342,6 +286,26 @@ namespace AR_Zhuk_Schema.Insolation
             // Если проектный индекс больше требуемого, то проходит            
             var res = insIndexProject.CompareTo(InsIndex) >= 0;
             return res;
+        }
+    }
+
+    class FlatComparer : IEqualityComparer<List<RoomInfo>>
+    {
+        public bool Equals (List<RoomInfo> x, List<RoomInfo> y)
+        {
+            var res = x.Count == y.Count &&
+                x.Where(r => r.SubZone != "0").All(a => y.Where(r => r.SubZone != "0").Any(n => n.ShortType == a.ShortType));
+            return res;
+        }
+
+        public int GetHashCode (List<RoomInfo> rooms)
+        {
+            int hashcode = 0;
+            foreach (RoomInfo r in rooms.Where(r=>r.SubZone != "0"))
+            {
+                hashcode ^= r.ShortType.GetHashCode();
+            }
+            return hashcode;
         }
     }
 }

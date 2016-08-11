@@ -50,8 +50,8 @@ namespace AR_Zhuk_Schema.Scheme
                     UnmergeCell();
                     // Определение домов
                     ScanHouses();
-
-                    HouseSpots.Sort((h1, h2) => h1.SpotName.CompareTo(h2.SpotName));
+                    // сортировка домов по имени петна
+                    HouseSpots.Sort((h1, h2) => h1.SpotName.CompareTo(h2.SpotName));                    
                 }
             }
             finally
@@ -171,5 +171,7 @@ namespace AR_Zhuk_Schema.Scheme
                 }
             }
         }
+
+        
     }
 }

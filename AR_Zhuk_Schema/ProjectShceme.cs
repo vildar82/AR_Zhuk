@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AR_Zhuk_DataModel;
+using AR_Zhuk_Schema.Insolation;
 using AR_Zhuk_Schema.Scheme;
 using AR_Zhuk_Schema.Scheme.Cutting;
 using AR_Zhuk_Schema.Scheme.SpatialIndex;
@@ -55,6 +56,7 @@ namespace AR_Zhuk_Schema
                 }
                 houseSpot.HouseOptions = houseOpt;
 
+                // добавление ячеек инсоляции
                 foreach (var segment in houseSpot.Segments)
                 {
                     insModulesAll.AddRange(segment.ModulesLeft);
@@ -63,7 +65,9 @@ namespace AR_Zhuk_Schema
                        insModulesAll.AddRange(segment.ModulesSideEnd);
                     if (segment.ModulesSideStart != null)
                         insModulesAll.AddRange(segment.ModulesSideStart);
-                }               
+                }
+                // Определение приоритетной стороны для ЛЛУ в доме
+                houseSpot.PriorityLluSide = houseSpot.Segments.First().DefineLluPriority(sp.Size);
             }
 
             // Инсоляция - все ячейки            
@@ -167,6 +171,6 @@ namespace AR_Zhuk_Schema
 
             Rectangle r = new Rectangle(startRightMin.Col, startRightMin.Row, endLeftMax.Col, endLeftMax.Row, 0, 0);
             return r;
-        }
+        }        
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AR_Zhuk_DataModel;
+using AR_Zhuk_Schema.Insolation;
 
 namespace AR_Zhuk_Schema.Scheme
 {
@@ -40,6 +41,7 @@ namespace AR_Zhuk_Schema.Scheme
         public readonly SegmentEnd StartType;
         public readonly SegmentEnd EndType;
         public readonly bool IsVertical;
+        
 
         public HouseSpot HouseSpot { get; private set; }
 
@@ -53,7 +55,7 @@ namespace AR_Zhuk_Schema.Scheme
         /// </summary>
         public int CountSteps { get; private set; }
 
-        public Segment(Cell cellStartLeft, Cell cellStartRight, Cell direction, ISchemeParser parser, HouseSpot houseSpot)
+        internal Segment (Cell cellStartLeft, Cell cellStartRight, Cell direction, ISchemeParser parser, HouseSpot houseSpot)
         {
             HouseSpot = houseSpot;
             Number = houseSpot.Segments.Count + 1;
@@ -86,11 +88,11 @@ namespace AR_Zhuk_Schema.Scheme
             }
 
             // боковая инсоляция
-            ModulesSideStart = DefineSideModules(StartType);
-            ModulesSideEnd = DefineSideModules(EndType);
+            ModulesSideStart = DefineSideModules(StartType, true);
+            ModulesSideEnd = DefineSideModules(EndType, false);            
         }
-        
-        public List<Module> GetModules (List<Module> sourceModules, int startStep, int countSteps)
+
+        internal List<Module> GetModules (List<Module> sourceModules, int startStep, int countSteps)
         {
             List<Module> resModules;
             if ((StartType == SegmentEnd.CornerLeft || StartType == SegmentEnd.CornerRight) &&
@@ -109,7 +111,7 @@ namespace AR_Zhuk_Schema.Scheme
         /// <param name="from">стартовый шаг секции</param>  
         /// <param name="step">Отступ шагов в основном направлении от заданной ячейки</param>
         /// <param name="isLeft">Левая сторона сегмента или правая</param>
-        public Cell GetSectionStartCell (Cell from, int step, bool isLeft)
+        internal Cell GetSectionStartCell (Cell from, int step, bool isLeft)
         {
             if ((StartType == SegmentEnd.CornerLeft && !isLeft) ||
                 StartType == SegmentEnd.CornerRight && isLeft)
@@ -120,65 +122,29 @@ namespace AR_Zhuk_Schema.Scheme
             return resCell;
         }
 
-        ///// <summary>
-        ///// Проверка попадает ли шаг в мертвую зону сегмента (угол)
-        ///// </summary>
-        ///// <param name="step">Шаг в сегменте</param>        
-        //public bool StartStepInDeadZone (int step)
-        //{
-        //    //// Если стартовый торец секции - угловой и шаг попадает в угол
-        //    //if ((StartType == SegmentEnd.CornerLeft || StartType == SegmentEnd.CornerRight) &&
-        //    //    (step < HouseSpot.CornerSectionMinStep-1 && step != HouseSpot.WidthOrdinary +1 ))
-        //    //{
-        //    //    return true;
-        //    //}
-        //    // Если стартовый шаг попадает в угловой конец сегмента
-        //    if (EndType == SegmentEnd.CornerLeft || EndType == SegmentEnd.CornerRight)
-        //    {
-        //        int counToEnd = CountSteps - step;
-        //        if (counToEnd < HouseSpot.CornerSectionMinStep - 2 && counToEnd != HouseSpot.WidthOrdinary)
-        //        {
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
-
-        ///// <summary>
-        ///// Проверка попадает ли шаг в мертвую зону сегмента (угол)
-        ///// </summary>
-        ///// <param name="step">Шаг в сегменте</param>        
-        //public bool EndStepInDeadZone (int step)
-        //{            
-        //    if (EndType == SegmentEnd.CornerLeft || EndType == SegmentEnd.CornerRight)
-        //    {
-        //        int counToEnd = CountSteps - step;
-        //        if (counToEnd > 0)
-        //        {
-        //            // Это не угловая секция, она должна встать до угла
-        //            if (counToEnd < HouseSpot.CornerSectionMinStep-1 && counToEnd != HouseSpot.WidthOrdinary + 1)
-        //            {
-        //                return true;
-        //            }                    
-        //        }
-        //        else
-        //        {
-        //            // Это угловая секция - она должа встать на допустимый шаг на след сегменте
-        //            int minStepInNextSeg = HouseSpot.CornerSectionMinStep - HouseSpot.WidthOrdinary - 1;// =3, -1 шаг зашиба
-        //            counToEnd = Math.Abs(counToEnd);
-        //            if (counToEnd != 1 && counToEnd < minStepInNextSeg)
-        //            {
-        //                return true;
-        //            }
-        //        }
-        //    }
-        //    return false;
-        //}
+        internal Side DefineLluPriority (Cell size)
+        {
+            Side resPriorLluSide = Side.None;
+            // Если это угловой дом (сегмент угловой), то приоритетная сторона внутренняя (т.е. где меньше ячеек инсоляции)
+            if (StartType == SegmentEnd.CornerLeft || StartType == SegmentEnd.CornerRight)
+            {
+                resPriorLluSide = ModulesLeft.Count < ModulesRight.Count ? Side.Left : Side.Right;
+            }
+            else
+            {
+                // Для дома из одного прямого сегмента, приоритетная сторона, та котрая ближе к центру застройки
+                var center = new Cell(size.Row / 2, size.Col / 2);
+                var countLeft = (center.Row - CellStartLeft.Row) + (center.Col - CellStartLeft.Col);
+                var countRight = (center.Row - CellStartRight.Row) + (center.Col - CellStartRight.Col);
+                resPriorLluSide = countLeft < countRight ? Side.Left : Side.Right;
+            }
+            return resPriorLluSide;
+        }
 
         /// <summary>
         /// Проверка попадает ли шаг в мертвую зону сегмента (угол)
         /// </summary>        
-        public bool StepInDeadZone (int startStep, int endStep)
+        internal bool StepInDeadZone (int startStep, int endStep)
         {
             int endToEnd = CountSteps - endStep;
             if ((EndType == SegmentEnd.CornerLeft || EndType == SegmentEnd.CornerRight) &&
@@ -292,24 +258,27 @@ namespace AR_Zhuk_Schema.Scheme
             return resEndCornerType;
         }
 
-        private List<Module> DefineSideModules (SegmentEnd end)
+        private List<Module> DefineSideModules (SegmentEnd end, bool isStart)
         {
             List<Module> res = null;
-            var dir = DirectionLeftToRight;// Direction.ToRight();
             if (end == SegmentEnd.End)
-            {                
-                Cell lastCell;
-                res = parser.GetSteps(CellStartLeft, dir, out lastCell);                
-            }
-            else if (end == SegmentEnd.End)
-            {                
-                Cell lastCell;
-                res = parser.GetSteps(CellEndLeft, dir, out lastCell);
-            }
-            if (res != null && res.Count == 4)
             {
-                res.RemoveAt(0);
-                res.RemoveAt(res.Count - 1);
+                var dir = DirectionLeftToRight;// Direction.ToRight();
+                if (isStart)
+                {
+                    Cell lastCell;
+                    res = parser.GetSteps(CellStartLeft, dir, out lastCell);
+                }
+                else
+                {
+                    Cell lastCell;
+                    res = parser.GetSteps(CellEndLeft, dir, out lastCell);
+                }
+                if (res != null && res.Count == 4)
+                {
+                    res.RemoveAt(0);
+                    res.RemoveAt(res.Count - 1);
+                }
             }
             return res;
         }
@@ -336,6 +305,6 @@ namespace AR_Zhuk_Schema.Scheme
         {
             var res = IsVertical ? cell.Row : cell.Col;
             return res;
-        }
+        }        
     }
 }

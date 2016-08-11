@@ -8,7 +8,7 @@ using AR_Zhuk_DataModel;
 namespace AR_Zhuk_Schema.Insolation
 {
     interface IInsCheck
-    {        
-        bool CheckSection (FlatInfo sect, bool isRightOrTopLLu);
+    {   
+        List<FlatInfo> CheckSections (Section section);
     }
 }
