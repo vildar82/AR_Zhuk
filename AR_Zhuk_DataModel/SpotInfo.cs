@@ -14,7 +14,21 @@ namespace AR_Zhuk_DataModel
         public int TotalFlats { get; set; }
         public int TotalSections { get; set; }
         public string TypicalSections { get; set; }
-        public double RealArea { get; set; }
+
+        //Общая площадь с учетом ЛЛУ       
+        public double TotalStandartArea { get; set; }
+        /// <summary>
+        //Общая площадь без учета ЛЛУ
+        /// </summary>
+        public double TotalArea { get; set; }
+        public double TotalLiveArea { get; set; }
+        public double LevelArea { get; set; }
+
+        //Коэф TotalStandartArea/S этажа
+        public double K1 { get; set; }
+
+        //Коэф TotalStandartArea/TotalArea
+        public double K2 { get; set; }
         /// <summary>
         /// Размер объекта застройки
         /// Правая нижняя ячейка Excel.
@@ -34,7 +48,8 @@ namespace AR_Zhuk_DataModel
             {
                 s.requirments.Add(new Requirment(r.SubZone, r.MinArea, r.MaxArea, r.Percentage, r.MinCountFlat, r.MaxCountFlat, 0, 0, r.OffSet,r.CodeZone));
             }
-            s.Size = Size;
+            s.InsModulesAll = sp.InsModulesAll;
+            s.Size = sp.Size;
             return s;
         }
     }

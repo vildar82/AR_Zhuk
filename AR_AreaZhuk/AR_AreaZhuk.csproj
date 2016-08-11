@@ -11,7 +11,7 @@
     <AssemblyName>AR_AreaZhuk</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AssemblyVersion>1.0.223.4134</AssemblyVersion>
+    <AssemblyVersion>1.0.224.4231</AssemblyVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -39,20 +39,17 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdvancedDataGridView, Version=1.0.190.12, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\AdvancedDataGridView.dll</HintPath>
+    <Reference Include="AdvancedDataGridView">
+      <HintPath>\\picompany.ru\root\dep_ort\8.САПР\технические данные\source\Dll\ЖУКИ\AdvancedDataGridView.dll</HintPath>
     </Reference>
-    <Reference Include="BeetlyVisualisation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\BeetlyVisualisation.dll</HintPath>
+    <Reference Include="BeetlyVisualisation">
+      <HintPath>\\picompany.ru\root\dep_ort\8.САПР\технические данные\source\Dll\ЖУКИ\BeetlyVisualisation.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
       <HintPath>Z:\Revit_server\10. Dll's\Dll\EPPlus.dll</HintPath>
     </Reference>
-    <Reference Include="ProgressControls, Version=1.2.109.1, Culture=neutral, PublicKeyToken=f34d47135ea7baa5, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Z:\Revit_server\10. Dll's\Dll\PIK\Dlls\ProgressControls.dll</HintPath>
+    <Reference Include="ProgressControls">
+      <HintPath>\\picompany.ru\root\dep_ort\8.САПР\технические данные\source\Dll\ЖУКИ\ProgressControls.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\Calculate.cs" />
     <Compile Include="Controller\DbController.cs" />
     <Compile Include="Controller\Exporter.cs" />
     <Compile Include="Controller\FormManager.cs" />
@@ -98,7 +96,7 @@
       <DependentUpon>PIK1.xsd</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PIK1.Designer.cs">
+    <Compile Include="PIK11.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PIK1.xsd</DependentUpon>
@@ -129,13 +127,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="PIK1.xsc">
-      <DependentUpon>PIK1.xsd</DependentUpon>
-    </None>
     <None Include="PIK1.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PIK1.Designer.cs</LastGenOutput>
+      <LastGenOutput>PIK11.Designer.cs</LastGenOutput>
     </None>
     <None Include="PIK1.xss">
       <DependentUpon>PIK1.xsd</DependentUpon>

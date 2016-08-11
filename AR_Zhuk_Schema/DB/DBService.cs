@@ -77,7 +77,7 @@ namespace AR_Zhuk_Schema.DB
                             isValidSection = false;
                             foreach (var r in sp.requirments.Where(x => x.CodeZone.Equals(f.SubZone)).ToList())
                             {
-                                if (!(r.MinArea - 4 <= f.AreaTotalStandart & r.MaxArea + 4 >= f.AreaTotalStandart))
+                                if (!(r.MinArea<= f.AreaTotalStandart & r.MaxArea> f.AreaTotalStandart))
                                     continue;
                                 isContains = true;
                                 break;

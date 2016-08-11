@@ -8,7 +8,7 @@ using AR_Zhuk_DataModel;
 using OfficeOpenXml;
 using System.IO;
 
-namespace AR_AreaZhuk.Controller
+namespace AR_AreaZhuk
 {
    public static class Exporter
     {
@@ -50,7 +50,9 @@ namespace AR_AreaZhuk.Controller
                    double area_Live_Seam_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 21].Value);
                    double area_Live_Standart_Seam_More18 = fw.DoubleConvert(worksheet.Cells[counter, 22].Value);
                    double area_Live_Strong_Seam_More18 = fw.DoubleConvert(worksheet.Cells[counter, 23].Value);
-                   double area_Level = fw.DoubleConvert(worksheet.Cells[counter, 24].Value);
+                   double area_Level_Combo = fw.DoubleConvert(worksheet.Cells[counter, 24].Value);
+                   double area_Level_End = fw.DoubleConvert(worksheet.Cells[counter, 25].Value);
+                   double area_Level_Seam = fw.DoubleConvert(worksheet.Cells[counter, 26].Value);
                    if (flatsAreas.Any(x => x.Short_Type.Equals(shortType)))
                        flatsPik1Areas.UpdateAreaFlat(area_Total_Low18, area_Total_Standart_More18,
                            area_Total_Strong_More18, area_Total_End_Low18, area_Total_Standart_End_More18,
@@ -60,7 +62,7 @@ namespace AR_AreaZhuk.Controller
                            area_Live_Strong_More18,
                            area_Live_End_Low18, area_Live_Standart_End_More18, area_Live_Strong_End_More18,
                            area_Live_Seam_Low18, area_Live_Standart_Seam_More18,
-                           area_Live_Strong_Seam_More18, area_Level, shortType);
+                           area_Live_Strong_Seam_More18, area_Level_Combo,area_Level_End,area_Level_Seam, shortType);
                    else
                        flatsPik1Areas.Insert(shortType, area_Total_Low18, area_Total_Standart_More18,
                            area_Total_Strong_More18, area_Total_End_Low18, area_Total_Standart_End_More18,
@@ -70,7 +72,7 @@ namespace AR_AreaZhuk.Controller
                            area_Live_Strong_More18,
                            area_Live_End_Low18, area_Live_Standart_End_More18, area_Live_Strong_End_More18,
                            area_Live_Seam_Low18, area_Live_Standart_Seam_More18,
-                           area_Live_Strong_Seam_More18, area_Level);
+                           area_Live_Strong_Seam_More18, area_Level_Combo, area_Level_End, area_Level_Seam);
 
                    counter++;
                }

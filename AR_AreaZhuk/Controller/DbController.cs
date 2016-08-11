@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AR_AreaZhuk.PIK1TableAdapters;
 
-namespace AR_AreaZhuk.Controller
+namespace AR_AreaZhuk
 {
    public class DbController
     {
