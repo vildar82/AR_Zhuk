@@ -88,8 +88,8 @@ namespace AR_Zhuk_Schema.Scheme
             }
 
             // боковая инсоляция
-            ModulesSideStart = DefineSideModules(StartType);
-            ModulesSideEnd = DefineSideModules(EndType);            
+            ModulesSideStart = DefineSideModules(StartType, true);
+            ModulesSideEnd = DefineSideModules(EndType, false);            
         }
 
         internal List<Module> GetModules (List<Module> sourceModules, int startStep, int countSteps)
@@ -258,24 +258,27 @@ namespace AR_Zhuk_Schema.Scheme
             return resEndCornerType;
         }
 
-        private List<Module> DefineSideModules (SegmentEnd end)
+        private List<Module> DefineSideModules (SegmentEnd end, bool isStart)
         {
             List<Module> res = null;
-            var dir = DirectionLeftToRight;// Direction.ToRight();
             if (end == SegmentEnd.End)
-            {                
-                Cell lastCell;
-                res = parser.GetSteps(CellStartLeft, dir, out lastCell);                
-            }
-            else if (end == SegmentEnd.End)
-            {                
-                Cell lastCell;
-                res = parser.GetSteps(CellEndLeft, dir, out lastCell);
-            }
-            if (res != null && res.Count == 4)
             {
-                res.RemoveAt(0);
-                res.RemoveAt(res.Count - 1);
+                var dir = DirectionLeftToRight;// Direction.ToRight();
+                if (isStart)
+                {
+                    Cell lastCell;
+                    res = parser.GetSteps(CellStartLeft, dir, out lastCell);
+                }
+                else
+                {
+                    Cell lastCell;
+                    res = parser.GetSteps(CellEndLeft, dir, out lastCell);
+                }
+                if (res != null && res.Count == 4)
+                {
+                    res.RemoveAt(0);
+                    res.RemoveAt(res.Count - 1);
+                }
             }
             return res;
         }
