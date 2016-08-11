@@ -43,6 +43,10 @@ namespace AR_Zhuk_Schema
             parserExcel.Parse(schemeFile);
             HouseSpots = parserExcel.HouseSpots;
 
+            // Размер застройки
+            var bounds = tree.getBounds();
+            sp.Size = new Cell(Convert.ToInt32(bounds.max[1]) + 1, Convert.ToInt32(bounds.max[0]) + 1);
+
             // Инсоляция - все ячейки            
             List<Module> insModulesAll = new List<Module>();
 
@@ -73,9 +77,7 @@ namespace AR_Zhuk_Schema
             // Инсоляция - все ячейки            
             sp.InsModulesAll = insModulesAll;
 
-            // Размер застройки
-            var bounds = tree.getBounds();
-            sp.Size = new Cell(Convert.ToInt32(bounds.max[1])+1, Convert.ToInt32(bounds.max[0])+1);            
+                        
         }        
 
         /// <summary>

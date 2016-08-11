@@ -126,7 +126,8 @@ namespace AR_Zhuk_Schema.Scheme
         {
             Side resPriorLluSide = Side.None;
             // Если это угловой дом (сегмент угловой), то приоритетная сторона внутренняя (т.е. где меньше ячеек инсоляции)
-            if (StartType == SegmentEnd.CornerLeft || StartType == SegmentEnd.CornerRight)
+            if (StartType == SegmentEnd.CornerLeft || StartType == SegmentEnd.CornerRight ||
+                EndType == SegmentEnd.CornerLeft || EndType == SegmentEnd.CornerRight)
             {
                 resPriorLluSide = ModulesLeft.Count < ModulesRight.Count ? Side.Left : Side.Right;
             }

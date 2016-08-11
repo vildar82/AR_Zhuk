@@ -326,7 +326,7 @@ namespace AR_Zhuk_Schema.Scheme
                                 var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
                                 startCell = startCell.Offset(segment.Direction * WidthOrdinary);
                                 section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep-2));
-                                section.ImageAngle = 270;
+                                section.ImageAngle = 90;
                             }
                             else
                             {
