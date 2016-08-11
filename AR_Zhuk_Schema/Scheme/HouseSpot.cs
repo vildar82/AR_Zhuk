@@ -203,13 +203,13 @@ namespace AR_Zhuk_Schema.Scheme
                             if (section.IsVertical)
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
-                                section.ImageStart = startCell.Offset(segment.Direction * (section.CountStep - 1));
+                                section.ImageStart = startCell.Offset(segment.Direction * (section.CountStep - 2));
                                 section.ImageAngle = 90;                                
                             }
                             else
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
-                                startCell = startCell.Offset(segment.Direction * (section.CountStep - 1));
+                                startCell = startCell.Offset(segment.Direction * (section.CountStep - 2));
                                 section.ImageStart = startCell.Offset(segment.DirectionLeftToRight);
                                 section.ImageAngle = 0;
                             }
@@ -220,14 +220,14 @@ namespace AR_Zhuk_Schema.Scheme
                             if (section.IsVertical)
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
-                                startCell = startCell.Offset(segment.Direction * (section.CountStep - 1));
+                                startCell = startCell.Offset(segment.Direction * (section.CountStep - 2));
                                 section.ImageStart = startCell.Offset(segment.DirectionLeftToRight.Negative);
                                 section.ImageAngle = 270;
                             }
                             else
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
-                                section.ImageStart = startCell.Offset(segment.Direction * (section.CountStep - 1));
+                                section.ImageStart = startCell.Offset(segment.Direction * (section.CountStep - 2));
                                 section.ImageAngle = 180;
                             }
                         }
