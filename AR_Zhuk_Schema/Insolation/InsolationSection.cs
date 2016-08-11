@@ -34,74 +34,19 @@ namespace AR_Zhuk_Schema.Insolation
         /// <returns>Секции прошедшие инсоляцию</returns>
         public List<FlatInfo> GetInsolationSections (Section section)
         {
-            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);
-
-            List<FlatInfo> resFlats = new List<FlatInfo>();
-
-            foreach (var sectFlats in section.Sections)
-            {
-                sectFlats.Code = GetFlatCode(sectFlats);
-#if TEST
-                // Проверка однотипной секции
-                FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
-                if (!IsIdenticalSection(flats, resFlats))
-                {
-                    insCheck.CheckSection(flats, isRightOrTopLLu: true);
-                    resFlats.Add(flats);
-                }
-                if (!section.IsCorner)
-                {
-                    // Проверка однотипной секции
-                    flats = NewFlats(section, sectFlats, isInvert: true);
-                    if (!IsIdenticalSection(flats, resFlats))
-                    {
-                        // Проверка инсоляции инвертированной секции                        
-                        insCheck.CheckSection(flats, isRightOrTopLLu: false);
-                        resFlats.Add(flats);
-                    }
-                }
-#else
-                // Проверка однотипной секции
-                FlatInfo flats = NewFlats(section, sectFlats, isInvert: false);
-                if (!IsIdenticalSection(flats, resFlats))
-                {
-                    // Добавление прошедших инсоляцию секций
-                    if (insCheck.CheckSection(flats, isRightOrTopLLu: true))
-                    {
-                        resFlats.Add(flats);
-                    }
-                    else
-                    {
-                        // не прошла инсоляция стандартной секции
-                        // Проверка инвертированной секции для рядовых
-                        if (!section.IsCorner)
-                        {
-                            // Проверка однотипной секции
-                            flats = NewFlats(section, sectFlats, isInvert: true);
-                            if (!IsIdenticalSection(flats, resFlats))
-                            {
-                                // Проверка инсоляции инвертированной секции                        
-                                if (insCheck.CheckSection(flats, isRightOrTopLLu: false))
-                                {
-                                    resFlats.Add(flats);
-                                }
-                            }
-                        }
-                    }
-                }
-#endif
-            }
+            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                                    
+            var resFlats = insCheck.CheckSections(section);
             return resFlats;
         }
 
-        private bool IsIdenticalSection (FlatInfo curSection, List<FlatInfo> resulsSections)
+        public bool IsIdenticalSection (FlatInfo curSection, List<FlatInfo> resulsSections)
         {
             var res = resulsSections.Any(s => (s.IsInvert == curSection.IsInvert) &&
                                 IsEqualSections(s.Flats, curSection.Flats));
             return res;
         }
 
-        public bool IsEqualSections (List<RoomInfo> section1, List<RoomInfo> section2)
+        private bool IsEqualSections (List<RoomInfo> section1, List<RoomInfo> section2)
         {
             if (section1.Count != section2.Count) return false;
             // Если одной из квартир нет во второй секции, то это разные секции
@@ -110,18 +55,10 @@ namespace AR_Zhuk_Schema.Insolation
                 return false;
             }
             // все квартиры из первой секции есть во второй
-            return true;
-            //foreach (var flat1 in section1)
-            //{
-            //    int countInSection1 = section1.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-            //    int countInSection2 = section2.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-            //    if (countInSection1 != countInSection2)
-            //        return false;
-            //}
-            //return true;
+            return true;            
         }
 
-        private string GetFlatCode(FlatInfo flat)
+        public string GetFlatCode(FlatInfo flat)
         {
             string code;
             if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
@@ -197,7 +134,7 @@ namespace AR_Zhuk_Schema.Insolation
             return topFlats;
         }        
 
-        private FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert)
+        public FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert)
         {
             FlatInfo resFlats = flat.Copy();
             resFlats.NumberInSpot = section.NumberInSpot;

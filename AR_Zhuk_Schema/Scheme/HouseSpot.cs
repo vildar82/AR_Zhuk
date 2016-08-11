@@ -350,7 +350,7 @@ namespace AR_Zhuk_Schema.Scheme
 
                 // Инсоляция левая
                 var insLeft = segment.GetModules(segment.ModulesLeft, startStepInSeg, section.CountStep);
-                // правая
+                // Инсоляция правая
                 var insRight = segment.GetModules(segment.ModulesRight, startStepInSeg, section.CountStep);
                 // определение инсоляции по верху и по низу секции для правого/верхнего расположения ЛЛУ
                 if (section.Direction > 0)
@@ -388,6 +388,14 @@ namespace AR_Zhuk_Schema.Scheme
                     }
                 }
                 section.ImageAngle = section.IsVertical ? 90 : 0;
+
+                // Приоритетная сторона ЛЛУ
+                Side topSide;
+                if (section.IsVertical)                                    
+                    topSide = segment.CellStartLeft.Col > segment.CellStartRight.Col ? Side.Left : Side.Right;                
+                else                
+                    topSide = segment.CellStartLeft.Row < segment.CellStartRight.Row ? Side.Left : Side.Right;                
+                section.PriorityLluSideIsTop = (PriorityLluSide == topSide);
             }
 
             // Боковая инсоляция в торце

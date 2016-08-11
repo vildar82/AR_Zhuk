@@ -9,6 +9,10 @@ namespace AR_Zhuk_DataModel
     public class Section
     {
         /// <summary>
+        /// Приоритетная сторона секции верхняя(true) или нижняя(false), в стандартном положении рядовой секции. Для угловой не нужно.
+        /// </summary>
+        public bool PriorityLluSideIsTop { get; set; }
+        /// <summary>
         /// Секция - этажная доминанта. 
         /// Угловая секция не может быть доминантой!
         /// </summary>

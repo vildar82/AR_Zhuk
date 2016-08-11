@@ -103,6 +103,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
             // Нарезка секций одной размерности дома
             List<SectionBySize> sectionsBySize;
+
             if (CutSectionsBySize(houseSteps, out sectionsBySize))
             {                
                 // Определение торцов секции

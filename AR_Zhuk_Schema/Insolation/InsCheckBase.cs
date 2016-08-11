@@ -50,42 +50,7 @@ namespace AR_Zhuk_Schema.Insolation
             DefineInsSideCells();
         }
 
-        public bool CheckSection (FlatInfo sect, bool isRightOrTopLLu)
-        {
-            bool res = false;
-            this.isRightOrTopLLu = isRightOrTopLLu;
-            checkSection = sect;
-
-            topFlats = insService.GetSideFlatsInSection(sect.Flats, true, section.SectionType);
-            bottomFlats = insService.GetSideFlatsInSection(sect.Flats, false, section.SectionType);
-
-            // Временно!!! подмена индекса угловой квартиры 2KL2
-            if (section.SectionType == SectionType.CornerLeft || section.SectionType == SectionType.CornerRight)
-            {
-                var cornerFlat = section.SectionType == SectionType.CornerLeft ? bottomFlats.First() : bottomFlats.Last();
-                if (cornerFlat.ShortType == "2KL2")
-                {
-                    cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
-                    cornerFlat.SelectedIndexBottom = 4;
-                }
-            }
-
-            InvertInsSide(isRightOrTopLLu);            
-
-            // Проверка инсоляции квартир сверху
-            isTop = true;
-            curSideFlats = topFlats;
-            res = CheckFlats();
-
-            if (res) // прошла инсоляция верхних квартир
-            {
-                // Проверка инсоляции квартир снизу                
-                isTop = false;
-                curSideFlats = bottomFlats;
-                res = CheckFlats();
-            }
-            return res;
-        }        
+        public abstract List<FlatInfo> CheckSections (Section section);        
 
         /// <summary>
         /// Требования инсоляции удовлетворены
@@ -345,7 +310,7 @@ namespace AR_Zhuk_Schema.Insolation
                     if (section.Direction > 0)
                     {
                         if (section.SectionType == SectionType.CornerLeft)
-                        {                            
+                        {
                             insSideRightBotStandart = section.InsSideStart[0].InsValue;
                             insSideRightTopStandart = section.InsSideStart[1].InsValue;
                         }
@@ -353,14 +318,14 @@ namespace AR_Zhuk_Schema.Insolation
                         {
                             insSideLeftTopStandart = section.InsSideStart[0].InsValue;
                             insSideLeftBotStandart = section.InsSideStart[1].InsValue;
-                        }                        
+                        }
                     }
                     else
                     {
                         if (section.SectionType == SectionType.CornerLeft)
                         {
                             insSideRightTopStandart = section.InsSideStart[0].InsValue;
-                            insSideRightBotStandart = section.InsSideStart[1].InsValue;                            
+                            insSideRightBotStandart = section.InsSideStart[1].InsValue;
                         }
                         else
                         {
@@ -376,7 +341,7 @@ namespace AR_Zhuk_Schema.Insolation
                         if (section.SectionType == SectionType.CornerLeft)
                         {
                             insSideRightTopStandart = section.InsSideStart[0].InsValue;
-                            insSideRightBotStandart = section.InsSideStart[1].InsValue;                            
+                            insSideRightBotStandart = section.InsSideStart[1].InsValue;
                         }
                         else
                         {
@@ -394,7 +359,7 @@ namespace AR_Zhuk_Schema.Insolation
                         else
                         {
                             insSideLeftBotStandart = section.InsSideStart[0].InsValue;
-                            insSideLeftTopStandart = section.InsSideStart[1].InsValue;                            
+                            insSideLeftTopStandart = section.InsSideStart[1].InsValue;
                         }
                     }
                 }
@@ -427,10 +392,13 @@ namespace AR_Zhuk_Schema.Insolation
                         insSideLeftBotStandart = section.InsSideStart[1].InsValue;
                     }
                 }
-            }            
+            }
+            insSideLeftTop = insSideLeftTopStandart;
+            insSideLeftBot = insSideLeftBotStandart;
+            insSideRightTop = insSideRightTopStandart;
+            insSideRightBot = insSideRightBotStandart;
         }
-
-        private void InvertInsSide (bool isRightOrTopLLu)
+        protected void InvertInsSide (bool isRightOrTopLLu)
         {
             if (isRightOrTopLLu)
             {

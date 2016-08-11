@@ -36,7 +36,9 @@ namespace AR_Zhuk_Schema.Insolation
         Joint jointCurRight;
 
         bool isFirstFlatInSide;
-        bool isLastFlatInSide;        
+        bool isLastFlatInSide;
+
+        
 
         public InsCheckOrdinary (IInsolation insService, Section section) 
             : base(insService, section)
@@ -45,6 +47,79 @@ namespace AR_Zhuk_Schema.Insolation
             insBotStandart = section.InsBot.Select(m => m.InsValue).ToArray();            
             insTopInvert = insBotStandart;
             insBotInvert = insTopStandart;            
+        }
+
+        public override List<FlatInfo> CheckSections (Section section)
+        {
+            List<FlatInfo> resFlats = new List<FlatInfo>();
+            foreach (var sectFlats in section.Sections)
+            {
+                sectFlats.Code = insService.GetFlatCode(sectFlats);
+
+                // Для рядовой секции - проверка инсоляции с приоритетной стороны                    
+                var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);
+                // Проверка однотипной секции
+                if (!insService.IsIdenticalSection(flats, resFlats))
+                {
+                    if (CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop))
+                    {
+                        // Прошла инсоляция с приоритетной стороны. С неприоритетной не надо проверять.
+                        resFlats.Add(flats);
+                    }
+                    else
+                    {
+                        // Проверка инсоляции с неприоритетной стороны секции                        
+                        flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
+                        // Проверка однотипной секции
+                        if (!insService.IsIdenticalSection(flats, resFlats))
+                        {                            
+                            if (CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop))
+                            {
+                                // Прошла инсоляция с неприоритетной стороны.
+                                resFlats.Add(flats);
+                            }
+                        }
+                    }
+                }
+            }
+            return resFlats;
+        }
+
+        public bool CheckSection (FlatInfo sect, bool isRightOrTopLLu)
+        {
+            bool res = false;
+            this.isRightOrTopLLu = isRightOrTopLLu;
+            checkSection = sect;
+
+            topFlats = insService.GetSideFlatsInSection(sect.Flats, true, section.SectionType);
+            bottomFlats = insService.GetSideFlatsInSection(sect.Flats, false, section.SectionType);
+
+            // Временно!!! подмена индекса угловой квартиры 2KL2
+            if (section.SectionType == SectionType.CornerLeft || section.SectionType == SectionType.CornerRight)
+            {
+                var cornerFlat = section.SectionType == SectionType.CornerLeft ? bottomFlats.First() : bottomFlats.Last();
+                if (cornerFlat.ShortType == "2KL2")
+                {
+                    cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
+                    cornerFlat.SelectedIndexBottom = 4;
+                }
+            }
+
+            InvertInsSide(isRightOrTopLLu);
+
+            // Проверка инсоляции квартир сверху
+            isTop = true;
+            curSideFlats = topFlats;
+            res = CheckFlats();
+
+            if (res) // прошла инсоляция верхних квартир
+            {
+                // Проверка инсоляции квартир снизу                
+                isTop = false;
+                curSideFlats = bottomFlats;
+                res = CheckFlats();
+            }
+            return res;
         }
 
         protected override bool CheckFlats ()
@@ -231,6 +306,6 @@ namespace AR_Zhuk_Schema.Insolation
             {
                 flat.Joint = isTop ? jointCurLeft : jointCurRight;
             }
-        }       
+        }        
     }
 }
