@@ -2314,7 +2314,11 @@ namespace AR_AreaZhuk {
             
             private global::System.Data.DataColumn columnArea_Live_Strong_Seam_More18;
             
-            private global::System.Data.DataColumn columnArea_Level;
+            private global::System.Data.DataColumn columnArea_Level_Combo;
+            
+            private global::System.Data.DataColumn columnArea_Level_End;
+            
+            private global::System.Data.DataColumn columnArea_Level_Seam;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -2527,9 +2531,25 @@ namespace AR_AreaZhuk {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn Area_LevelColumn {
+            public global::System.Data.DataColumn Area_Level_ComboColumn {
                 get {
-                    return this.columnArea_Level;
+                    return this.columnArea_Level_Combo;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn Area_Level_EndColumn {
+                get {
+                    return this.columnArea_Level_End;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn Area_Level_SeamColumn {
+                get {
+                    return this.columnArea_Level_Seam;
                 }
             }
             
@@ -2592,7 +2612,9 @@ namespace AR_AreaZhuk {
                         double Area_Live_Seam_Low18, 
                         double Area_Live_Standart_Seam_More18, 
                         double Area_Live_Strong_Seam_More18, 
-                        double Area_Level) {
+                        double Area_Level_Combo, 
+                        double Area_Level_End, 
+                        double Area_Level_Seam) {
                 C_Flats_PIK1_AreasRow rowC_Flats_PIK1_AreasRow = ((C_Flats_PIK1_AreasRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         null,
@@ -2617,7 +2639,9 @@ namespace AR_AreaZhuk {
                         Area_Live_Seam_Low18,
                         Area_Live_Standart_Seam_More18,
                         Area_Live_Strong_Seam_More18,
-                        Area_Level};
+                        Area_Level_Combo,
+                        Area_Level_End,
+                        Area_Level_Seam};
                 rowC_Flats_PIK1_AreasRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowC_Flats_PIK1_AreasRow);
                 return rowC_Flats_PIK1_AreasRow;
@@ -2669,7 +2693,9 @@ namespace AR_AreaZhuk {
                 this.columnArea_Live_Seam_Low18 = base.Columns["Area_Live_Seam_Low18"];
                 this.columnArea_Live_Standart_Seam_More18 = base.Columns["Area_Live_Standart_Seam_More18"];
                 this.columnArea_Live_Strong_Seam_More18 = base.Columns["Area_Live_Strong_Seam_More18"];
-                this.columnArea_Level = base.Columns["Area_Level"];
+                this.columnArea_Level_Combo = base.Columns["Area_Level_Combo"];
+                this.columnArea_Level_End = base.Columns["Area_Level_End"];
+                this.columnArea_Level_Seam = base.Columns["Area_Level_Seam"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2719,8 +2745,12 @@ namespace AR_AreaZhuk {
                 base.Columns.Add(this.columnArea_Live_Standart_Seam_More18);
                 this.columnArea_Live_Strong_Seam_More18 = new global::System.Data.DataColumn("Area_Live_Strong_Seam_More18", typeof(double), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnArea_Live_Strong_Seam_More18);
-                this.columnArea_Level = new global::System.Data.DataColumn("Area_Level", typeof(double), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnArea_Level);
+                this.columnArea_Level_Combo = new global::System.Data.DataColumn("Area_Level_Combo", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnArea_Level_Combo);
+                this.columnArea_Level_End = new global::System.Data.DataColumn("Area_Level_End", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnArea_Level_End);
+                this.columnArea_Level_Seam = new global::System.Data.DataColumn("Area_Level_Seam", typeof(double), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnArea_Level_Seam);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnId_Area}, true));
                 this.columnId_Area.AutoIncrement = true;
@@ -2753,7 +2783,6 @@ namespace AR_AreaZhuk {
                 this.columnArea_Live_Seam_Low18.AllowDBNull = false;
                 this.columnArea_Live_Standart_Seam_More18.AllowDBNull = false;
                 this.columnArea_Live_Strong_Seam_More18.AllowDBNull = false;
-                this.columnArea_Level.AllowDBNull = false;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3876,13 +3905,89 @@ namespace AR_AreaZhuk {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public double Area_Level {
+            public double Area_Level_Combo {
                 get {
-                    return ((double)(this[this.tableC_Flats_PIK1_Areas.Area_LevelColumn]));
+                    try {
+                        return ((double)(this[this.tableC_Flats_PIK1_Areas.Area_Level_ComboColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("Значение для столбца \'Area_Level_Combo\' в таблице \'C_Flats_PIK1_Areas\' равно DBNu" +
+                                "ll.", e);
+                    }
                 }
                 set {
-                    this[this.tableC_Flats_PIK1_Areas.Area_LevelColumn] = value;
+                    this[this.tableC_Flats_PIK1_Areas.Area_Level_ComboColumn] = value;
                 }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public double Area_Level_End {
+                get {
+                    try {
+                        return ((double)(this[this.tableC_Flats_PIK1_Areas.Area_Level_EndColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("Значение для столбца \'Area_Level_End\' в таблице \'C_Flats_PIK1_Areas\' равно DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableC_Flats_PIK1_Areas.Area_Level_EndColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public double Area_Level_Seam {
+                get {
+                    try {
+                        return ((double)(this[this.tableC_Flats_PIK1_Areas.Area_Level_SeamColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("Значение для столбца \'Area_Level_Seam\' в таблице \'C_Flats_PIK1_Areas\' равно DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableC_Flats_PIK1_Areas.Area_Level_SeamColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsArea_Level_ComboNull() {
+                return this.IsNull(this.tableC_Flats_PIK1_Areas.Area_Level_ComboColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetArea_Level_ComboNull() {
+                this[this.tableC_Flats_PIK1_Areas.Area_Level_ComboColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsArea_Level_EndNull() {
+                return this.IsNull(this.tableC_Flats_PIK1_Areas.Area_Level_EndColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetArea_Level_EndNull() {
+                this[this.tableC_Flats_PIK1_Areas.Area_Level_EndColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsArea_Level_SeamNull() {
+                return this.IsNull(this.tableC_Flats_PIK1_Areas.Area_Level_SeamColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetArea_Level_SeamNull() {
+                this[this.tableC_Flats_PIK1_Areas.Area_Level_SeamColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -6280,7 +6385,9 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
             tableMapping.ColumnMappings.Add("Area_Live_Seam_Low18", "Area_Live_Seam_Low18");
             tableMapping.ColumnMappings.Add("Area_Live_Standart_Seam_More18", "Area_Live_Standart_Seam_More18");
             tableMapping.ColumnMappings.Add("Area_Live_Strong_Seam_More18", "Area_Live_Strong_Seam_More18");
-            tableMapping.ColumnMappings.Add("Area_Level", "Area_Level");
+            tableMapping.ColumnMappings.Add("Area_Level_Combo", "Area_Level_Combo");
+            tableMapping.ColumnMappings.Add("Area_Level_End", "Area_Level_End");
+            tableMapping.ColumnMappings.Add("Area_Level_Seam", "Area_Level_Seam");
             this._adapter.TableMappings.Add(tableMapping);
             this._adapter.DeleteCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.DeleteCommand.Connection = this.Connection;
@@ -6303,7 +6410,11 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
                 "ive_Strong_End_More18) AND ([Area_Live_Seam_Low18] = @Original_Area_Live_Seam_Lo" +
                 "w18) AND ([Area_Live_Standart_Seam_More18] = @Original_Area_Live_Standart_Seam_M" +
                 "ore18) AND ([Area_Live_Strong_Seam_More18] = @Original_Area_Live_Strong_Seam_Mor" +
-                "e18) AND ([Area_Level] = @Original_Area_Level))";
+                "e18) AND ((@IsNull_Area_Level_Combo = 1 AND [Area_Level_Combo] IS NULL) OR ([Are" +
+                "a_Level_Combo] = @Original_Area_Level_Combo)) AND ((@IsNull_Area_Level_End = 1 A" +
+                "ND [Area_Level_End] IS NULL) OR ([Area_Level_End] = @Original_Area_Level_End)) A" +
+                "ND ((@IsNull_Area_Level_Seam = 1 AND [Area_Level_Seam] IS NULL) OR ([Area_Level_" +
+                "Seam] = @Original_Area_Level_Seam)))";
             this._adapter.DeleteCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id_Area", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id_Area", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Short_Type", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Short_Type", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
@@ -6327,7 +6438,12 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Live_Seam_Low18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Seam_Low18", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Live_Standart_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Standart_Seam_More18", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Live_Strong_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Strong_Seam_More18", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Area_Level_Combo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Combo", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level_Combo", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Combo", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Area_Level_End", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_End", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level_End", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_End", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Area_Level_Seam", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Seam", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.DeleteCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level_Seam", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Seam", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.InsertCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.InsertCommand.Connection = this.Connection;
             this._adapter.InsertCommand.CommandText = "INSERT INTO [dbo].[C_Flats_PIK1_Areas] ([Short_Type], [Area_Total_Low18], [Area_T" +
@@ -6337,22 +6453,24 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
                 "], [Correction_Low18], [Correction_More18], [Area_Live_Low18], [Area_Live_Standa" +
                 "rt_More18], [Area_Live_Strong_More18], [Area_Live_End_Low18], [Area_Live_Standar" +
                 "t_End_More18], [Area_Live_Strong_End_More18], [Area_Live_Seam_Low18], [Area_Live" +
-                "_Standart_Seam_More18], [Area_Live_Strong_Seam_More18], [Area_Level]) VALUES (@S" +
-                "hort_Type, @Area_Total_Low18, @Area_Total_Standart_More18, @Area_Total_Strong_Mo" +
-                "re18, @Area_Total_End_Low18, @Area_Total_Standart_End_More18, @Area_Total_Strong" +
-                "_End_More18, @Area_Total_Standart_Seam_Low18, @Area_Total_Standart_Seam_More18, " +
-                "@Area_Total_Strong_Seam_More18, @Correction_Low18, @Correction_More18, @Area_Liv" +
-                "e_Low18, @Area_Live_Standart_More18, @Area_Live_Strong_More18, @Area_Live_End_Lo" +
-                "w18, @Area_Live_Standart_End_More18, @Area_Live_Strong_End_More18, @Area_Live_Se" +
-                "am_Low18, @Area_Live_Standart_Seam_More18, @Area_Live_Strong_Seam_More18, @Area_" +
-                "Level);\r\nSELECT Id_Area, Short_Type, Area_Total_Low18, Area_Total_Standart_More1" +
-                "8, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Total_Standart_End_More1" +
-                "8, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_Low18, Area_Total_Stan" +
-                "dart_Seam_More18, Area_Total_Strong_Seam_More18, Correction_Low18, Correction_Mo" +
-                "re18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live_Strong_More18, Area_" +
-                "Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_Strong_End_More18, Area" +
-                "_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live_Strong_Seam_More18, " +
-                "Area_Level FROM C_Flats_PIK1_Areas WHERE (Id_Area = SCOPE_IDENTITY())";
+                "_Standart_Seam_More18], [Area_Live_Strong_Seam_More18], [Area_Level_Combo], [Are" +
+                "a_Level_End], [Area_Level_Seam]) VALUES (@Short_Type, @Area_Total_Low18, @Area_T" +
+                "otal_Standart_More18, @Area_Total_Strong_More18, @Area_Total_End_Low18, @Area_To" +
+                "tal_Standart_End_More18, @Area_Total_Strong_End_More18, @Area_Total_Standart_Sea" +
+                "m_Low18, @Area_Total_Standart_Seam_More18, @Area_Total_Strong_Seam_More18, @Corr" +
+                "ection_Low18, @Correction_More18, @Area_Live_Low18, @Area_Live_Standart_More18, " +
+                "@Area_Live_Strong_More18, @Area_Live_End_Low18, @Area_Live_Standart_End_More18, " +
+                "@Area_Live_Strong_End_More18, @Area_Live_Seam_Low18, @Area_Live_Standart_Seam_Mo" +
+                "re18, @Area_Live_Strong_Seam_More18, @Area_Level_Combo, @Area_Level_End, @Area_L" +
+                "evel_Seam);\r\nSELECT Id_Area, Short_Type, Area_Total_Low18, Area_Total_Standart_M" +
+                "ore18, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Total_Standart_End_M" +
+                "ore18, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_Low18, Area_Total_" +
+                "Standart_Seam_More18, Area_Total_Strong_Seam_More18, Correction_Low18, Correctio" +
+                "n_More18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live_Strong_More18, A" +
+                "rea_Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_Strong_End_More18, " +
+                "Area_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live_Strong_Seam_More" +
+                "18, Area_Level_Combo, Area_Level_End, Area_Level_Seam FROM C_Flats_PIK1_Areas WH" +
+                "ERE (Id_Area = SCOPE_IDENTITY())";
             this._adapter.InsertCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Short_Type", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Short_Type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Total_Low18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Total_Low18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -6375,7 +6493,9 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Seam_Low18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Seam_Low18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Standart_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Standart_Seam_More18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Strong_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Strong_Seam_More18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_Combo", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Combo", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_End", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_End", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.InsertCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_Seam", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Seam", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand = new global::System.Data.SqlClient.SqlCommand();
             this._adapter.UpdateCommand.Connection = this.Connection;
             this._adapter.UpdateCommand.CommandText = "UPDATE [dbo].[C_Flats_PIK1_Areas] SET [Short_Type] = @Short_Type, [Area_Total_Low" +
@@ -6393,34 +6513,39 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
                 "Strong_End_More18] = @Area_Live_Strong_End_More18, [Area_Live_Seam_Low18] = @Are" +
                 "a_Live_Seam_Low18, [Area_Live_Standart_Seam_More18] = @Area_Live_Standart_Seam_M" +
                 "ore18, [Area_Live_Strong_Seam_More18] = @Area_Live_Strong_Seam_More18, [Area_Lev" +
-                "el] = @Area_Level WHERE (([Id_Area] = @Original_Id_Area) AND ([Short_Type] = @Or" +
-                "iginal_Short_Type) AND ([Area_Total_Low18] = @Original_Area_Total_Low18) AND ([A" +
-                "rea_Total_Standart_More18] = @Original_Area_Total_Standart_More18) AND ([Area_To" +
-                "tal_Strong_More18] = @Original_Area_Total_Strong_More18) AND ([Area_Total_End_Lo" +
-                "w18] = @Original_Area_Total_End_Low18) AND ([Area_Total_Standart_End_More18] = @" +
-                "Original_Area_Total_Standart_End_More18) AND ([Area_Total_Strong_End_More18] = @" +
-                "Original_Area_Total_Strong_End_More18) AND ([Area_Total_Standart_Seam_Low18] = @" +
-                "Original_Area_Total_Standart_Seam_Low18) AND ([Area_Total_Standart_Seam_More18] " +
-                "= @Original_Area_Total_Standart_Seam_More18) AND ([Area_Total_Strong_Seam_More18" +
-                "] = @Original_Area_Total_Strong_Seam_More18) AND ([Correction_Low18] = @Original" +
-                "_Correction_Low18) AND ([Correction_More18] = @Original_Correction_More18) AND (" +
-                "[Area_Live_Low18] = @Original_Area_Live_Low18) AND ([Area_Live_Standart_More18] " +
-                "= @Original_Area_Live_Standart_More18) AND ([Area_Live_Strong_More18] = @Origina" +
-                "l_Area_Live_Strong_More18) AND ([Area_Live_End_Low18] = @Original_Area_Live_End_" +
-                "Low18) AND ([Area_Live_Standart_End_More18] = @Original_Area_Live_Standart_End_M" +
-                "ore18) AND ([Area_Live_Strong_End_More18] = @Original_Area_Live_Strong_End_More1" +
-                "8) AND ([Area_Live_Seam_Low18] = @Original_Area_Live_Seam_Low18) AND ([Area_Live" +
-                "_Standart_Seam_More18] = @Original_Area_Live_Standart_Seam_More18) AND ([Area_Li" +
-                "ve_Strong_Seam_More18] = @Original_Area_Live_Strong_Seam_More18) AND ([Area_Leve" +
-                "l] = @Original_Area_Level));\r\nSELECT Id_Area, Short_Type, Area_Total_Low18, Area" +
-                "_Total_Standart_More18, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Tot" +
-                "al_Standart_End_More18, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_L" +
-                "ow18, Area_Total_Standart_Seam_More18, Area_Total_Strong_Seam_More18, Correction" +
-                "_Low18, Correction_More18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live" +
-                "_Strong_More18, Area_Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_St" +
-                "rong_End_More18, Area_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live" +
-                "_Strong_Seam_More18, Area_Level FROM C_Flats_PIK1_Areas WHERE (Id_Area = @Id_Are" +
-                "a)";
+                "el_Combo] = @Area_Level_Combo, [Area_Level_End] = @Area_Level_End, [Area_Level_S" +
+                "eam] = @Area_Level_Seam WHERE (([Id_Area] = @Original_Id_Area) AND ([Short_Type]" +
+                " = @Original_Short_Type) AND ([Area_Total_Low18] = @Original_Area_Total_Low18) A" +
+                "ND ([Area_Total_Standart_More18] = @Original_Area_Total_Standart_More18) AND ([A" +
+                "rea_Total_Strong_More18] = @Original_Area_Total_Strong_More18) AND ([Area_Total_" +
+                "End_Low18] = @Original_Area_Total_End_Low18) AND ([Area_Total_Standart_End_More1" +
+                "8] = @Original_Area_Total_Standart_End_More18) AND ([Area_Total_Strong_End_More1" +
+                "8] = @Original_Area_Total_Strong_End_More18) AND ([Area_Total_Standart_Seam_Low1" +
+                "8] = @Original_Area_Total_Standart_Seam_Low18) AND ([Area_Total_Standart_Seam_Mo" +
+                "re18] = @Original_Area_Total_Standart_Seam_More18) AND ([Area_Total_Strong_Seam_" +
+                "More18] = @Original_Area_Total_Strong_Seam_More18) AND ([Correction_Low18] = @Or" +
+                "iginal_Correction_Low18) AND ([Correction_More18] = @Original_Correction_More18)" +
+                " AND ([Area_Live_Low18] = @Original_Area_Live_Low18) AND ([Area_Live_Standart_Mo" +
+                "re18] = @Original_Area_Live_Standart_More18) AND ([Area_Live_Strong_More18] = @O" +
+                "riginal_Area_Live_Strong_More18) AND ([Area_Live_End_Low18] = @Original_Area_Liv" +
+                "e_End_Low18) AND ([Area_Live_Standart_End_More18] = @Original_Area_Live_Standart" +
+                "_End_More18) AND ([Area_Live_Strong_End_More18] = @Original_Area_Live_Strong_End" +
+                "_More18) AND ([Area_Live_Seam_Low18] = @Original_Area_Live_Seam_Low18) AND ([Are" +
+                "a_Live_Standart_Seam_More18] = @Original_Area_Live_Standart_Seam_More18) AND ([A" +
+                "rea_Live_Strong_Seam_More18] = @Original_Area_Live_Strong_Seam_More18) AND ((@Is" +
+                "Null_Area_Level_Combo = 1 AND [Area_Level_Combo] IS NULL) OR ([Area_Level_Combo]" +
+                " = @Original_Area_Level_Combo)) AND ((@IsNull_Area_Level_End = 1 AND [Area_Level" +
+                "_End] IS NULL) OR ([Area_Level_End] = @Original_Area_Level_End)) AND ((@IsNull_A" +
+                "rea_Level_Seam = 1 AND [Area_Level_Seam] IS NULL) OR ([Area_Level_Seam] = @Origi" +
+                "nal_Area_Level_Seam)));\r\nSELECT Id_Area, Short_Type, Area_Total_Low18, Area_Tota" +
+                "l_Standart_More18, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Total_St" +
+                "andart_End_More18, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_Low18," +
+                " Area_Total_Standart_Seam_More18, Area_Total_Strong_Seam_More18, Correction_Low1" +
+                "8, Correction_More18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live_Stro" +
+                "ng_More18, Area_Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_Strong_" +
+                "End_More18, Area_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live_Stro" +
+                "ng_Seam_More18, Area_Level_Combo, Area_Level_End, Area_Level_Seam FROM C_Flats_P" +
+                "IK1_Areas WHERE (Id_Area = @Id_Area)";
             this._adapter.UpdateCommand.CommandType = global::System.Data.CommandType.Text;
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Short_Type", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Short_Type", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Total_Low18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Total_Low18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -6443,7 +6568,9 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Seam_Low18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Seam_Low18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Standart_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Standart_Seam_More18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Strong_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Strong_Seam_More18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_Combo", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Combo", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_End", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_End", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_Seam", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Seam", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Id_Area", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Id_Area", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Short_Type", global::System.Data.SqlDbType.NVarChar, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Short_Type", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Total_Low18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Total_Low18", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
@@ -6466,7 +6593,12 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Live_Seam_Low18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Seam_Low18", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Live_Standart_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Standart_Seam_More18", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Live_Strong_Seam_More18", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Strong_Seam_More18", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
-            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Area_Level_Combo", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Combo", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level_Combo", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Combo", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Area_Level_End", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_End", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level_End", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_End", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@IsNull_Area_Level_Seam", global::System.Data.SqlDbType.Int, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Seam", global::System.Data.DataRowVersion.Original, true, null, "", "", ""));
+            this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Area_Level_Seam", global::System.Data.SqlDbType.Float, 0, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Seam", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
             this._adapter.UpdateCommand.Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Id_Area", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "Id_Area", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
         }
         
@@ -6483,23 +6615,30 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
             this._commandCollection = new global::System.Data.SqlClient.SqlCommand[2];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
-            this._commandCollection[0].CommandText = @"SELECT Id_Area, Short_Type, Area_Total_Low18, Area_Total_Standart_More18, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Total_Standart_End_More18, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_Low18, Area_Total_Standart_Seam_More18, Area_Total_Strong_Seam_More18, Correction_Low18, Correction_More18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live_Strong_More18, Area_Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_Strong_End_More18, Area_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live_Strong_Seam_More18, Area_Level FROM dbo.C_Flats_PIK1_Areas";
+            this._commandCollection[0].CommandText = @"SELECT Id_Area, Short_Type, Area_Total_Low18, Area_Total_Standart_More18, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Total_Standart_End_More18, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_Low18, Area_Total_Standart_Seam_More18, Area_Total_Strong_Seam_More18, Correction_Low18, Correction_More18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live_Strong_More18, Area_Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_Strong_End_More18, Area_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live_Strong_Seam_More18, Area_Level_Combo, Area_Level_End, Area_Level_Seam FROM dbo.C_Flats_PIK1_Areas";
             this._commandCollection[0].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[1].Connection = this.Connection;
-            this._commandCollection[1].CommandText = @"UPDATE       C_Flats_PIK1_Areas
-SET                Area_Total_Low18 = @Area_Total_Low18, Area_Total_Standart_More18 = @Area_Total_Standart_More18, 
-                         Area_Total_Strong_More18 = @Area_Total_Strong_More18, Area_Total_End_Low18 = @Area_Total_End_Low18, 
-                         Area_Total_Standart_End_More18 = @Area_Total_Standart_End_More18, Area_Total_Strong_End_More18 = @Area_Total_Strong_End_More18, 
-                         Area_Total_Standart_Seam_Low18 = @Area_Total_Standart_Seam_Low18, Area_Total_Standart_Seam_More18 = @Area_Total_Standart_Seam_More18, 
-                         Area_Total_Strong_Seam_More18 = @Area_Total_Strong_Seam_More18, Correction_Low18 = @Correction_Low18, Correction_More18 = @Correction_More18, 
-                         Area_Live_Low18 = @Area_Live_Low18, Area_Live_Standart_More18 = @Area_Live_Standart_More18, Area_Live_Strong_More18 = @Area_Live_Strong_More18, 
-                         Area_Live_End_Low18 = @Area_Live_End_Low18, Area_Live_Standart_End_More18 = @Area_Live_Standart_End_More18, 
-                         Area_Live_Strong_End_More18 = @Area_Live_Strong_End_More18, Area_Live_Seam_Low18 = @Area_Live_Seam_Low18, 
-                         Area_Live_Standart_Seam_More18 = @Area_Live_Standart_Seam_More18, Area_Live_Strong_Seam_More18 = @Area_Live_Strong_Seam_More18, 
-                         Area_Level = @Area_Level
-WHERE        (Short_Type = @Original_Short_Type); 
-";
+            this._commandCollection[1].CommandText = "UPDATE       C_Flats_PIK1_Areas\r\nSET                Area_Total_Low18 = @Area_Tota" +
+                "l_Low18, Area_Total_Standart_More18 = @Area_Total_Standart_More18, \r\n           " +
+                "              Area_Total_Strong_More18 = @Area_Total_Strong_More18, Area_Total_E" +
+                "nd_Low18 = @Area_Total_End_Low18, \r\n                         Area_Total_Standart" +
+                "_End_More18 = @Area_Total_Standart_End_More18, Area_Total_Strong_End_More18 = @A" +
+                "rea_Total_Strong_End_More18, \r\n                         Area_Total_Standart_Seam" +
+                "_Low18 = @Area_Total_Standart_Seam_Low18, Area_Total_Standart_Seam_More18 = @Are" +
+                "a_Total_Standart_Seam_More18, \r\n                         Area_Total_Strong_Seam_" +
+                "More18 = @Area_Total_Strong_Seam_More18, Correction_Low18 = @Correction_Low18, C" +
+                "orrection_More18 = @Correction_More18, \r\n                         Area_Live_Low1" +
+                "8 = @Area_Live_Low18, Area_Live_Standart_More18 = @Area_Live_Standart_More18, Ar" +
+                "ea_Live_Strong_More18 = @Area_Live_Strong_More18, \r\n                         Are" +
+                "a_Live_End_Low18 = @Area_Live_End_Low18, Area_Live_Standart_End_More18 = @Area_L" +
+                "ive_Standart_End_More18, \r\n                         Area_Live_Strong_End_More18 " +
+                "= @Area_Live_Strong_End_More18, Area_Live_Seam_Low18 = @Area_Live_Seam_Low18, \r\n" +
+                "                         Area_Live_Standart_Seam_More18 = @Area_Live_Standart_Se" +
+                "am_More18, Area_Live_Strong_Seam_More18 = @Area_Live_Strong_Seam_More18, \r\n     " +
+                "                    Area_Level_Combo = @Area_Level_Combo, Area_Level_End = @Area" +
+                "_Level_End, Area_Level_Seam = @Area_Level_Seam\r\nWHERE        (Short_Type = @Orig" +
+                "inal_Short_Type); \r\n";
             this._commandCollection[1].CommandType = global::System.Data.CommandType.Text;
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Total_Low18", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Total_Low18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Total_Standart_More18", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Total_Standart_More18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
@@ -6521,7 +6660,9 @@ WHERE        (Short_Type = @Original_Short_Type);
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Seam_Low18", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Seam_Low18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Standart_Seam_More18", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Standart_Seam_More18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Live_Strong_Seam_More18", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Live_Strong_Seam_More18", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
-            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_Combo", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Combo", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_End", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_End", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Area_Level_Seam", global::System.Data.SqlDbType.Float, 8, global::System.Data.ParameterDirection.Input, 0, 0, "Area_Level_Seam", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[1].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@Original_Short_Type", global::System.Data.SqlDbType.NVarChar, 50, global::System.Data.ParameterDirection.Input, 0, 0, "Short_Type", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
@@ -6605,7 +6746,9 @@ WHERE        (Short_Type = @Original_Short_Type);
                     double Original_Area_Live_Seam_Low18, 
                     double Original_Area_Live_Standart_Seam_More18, 
                     double Original_Area_Live_Strong_Seam_More18, 
-                    double Original_Area_Level) {
+                    global::System.Nullable<double> Original_Area_Level_Combo, 
+                    global::System.Nullable<double> Original_Area_Level_End, 
+                    global::System.Nullable<double> Original_Area_Level_Seam) {
             this.Adapter.DeleteCommand.Parameters[0].Value = ((int)(Original_Id_Area));
             if ((Original_Short_Type == null)) {
                 throw new global::System.ArgumentNullException("Original_Short_Type");
@@ -6643,7 +6786,30 @@ WHERE        (Short_Type = @Original_Short_Type);
             this.Adapter.DeleteCommand.Parameters[19].Value = ((double)(Original_Area_Live_Seam_Low18));
             this.Adapter.DeleteCommand.Parameters[20].Value = ((double)(Original_Area_Live_Standart_Seam_More18));
             this.Adapter.DeleteCommand.Parameters[21].Value = ((double)(Original_Area_Live_Strong_Seam_More18));
-            this.Adapter.DeleteCommand.Parameters[22].Value = ((double)(Original_Area_Level));
+            if ((Original_Area_Level_Combo.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[22].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[23].Value = ((double)(Original_Area_Level_Combo.Value));
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[22].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[23].Value = global::System.DBNull.Value;
+            }
+            if ((Original_Area_Level_End.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[24].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[25].Value = ((double)(Original_Area_Level_End.Value));
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[24].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[25].Value = global::System.DBNull.Value;
+            }
+            if ((Original_Area_Level_Seam.HasValue == true)) {
+                this.Adapter.DeleteCommand.Parameters[26].Value = ((object)(0));
+                this.Adapter.DeleteCommand.Parameters[27].Value = ((double)(Original_Area_Level_Seam.Value));
+            }
+            else {
+                this.Adapter.DeleteCommand.Parameters[26].Value = ((object)(1));
+                this.Adapter.DeleteCommand.Parameters[27].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.DeleteCommand.Connection.State;
             if (((this.Adapter.DeleteCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -6686,7 +6852,9 @@ WHERE        (Short_Type = @Original_Short_Type);
                     double Area_Live_Seam_Low18, 
                     double Area_Live_Standart_Seam_More18, 
                     double Area_Live_Strong_Seam_More18, 
-                    double Area_Level) {
+                    global::System.Nullable<double> Area_Level_Combo, 
+                    global::System.Nullable<double> Area_Level_End, 
+                    global::System.Nullable<double> Area_Level_Seam) {
             if ((Short_Type == null)) {
                 throw new global::System.ArgumentNullException("Short_Type");
             }
@@ -6723,7 +6891,24 @@ WHERE        (Short_Type = @Original_Short_Type);
             this.Adapter.InsertCommand.Parameters[18].Value = ((double)(Area_Live_Seam_Low18));
             this.Adapter.InsertCommand.Parameters[19].Value = ((double)(Area_Live_Standart_Seam_More18));
             this.Adapter.InsertCommand.Parameters[20].Value = ((double)(Area_Live_Strong_Seam_More18));
-            this.Adapter.InsertCommand.Parameters[21].Value = ((double)(Area_Level));
+            if ((Area_Level_Combo.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[21].Value = ((double)(Area_Level_Combo.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[21].Value = global::System.DBNull.Value;
+            }
+            if ((Area_Level_End.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[22].Value = ((double)(Area_Level_End.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[22].Value = global::System.DBNull.Value;
+            }
+            if ((Area_Level_Seam.HasValue == true)) {
+                this.Adapter.InsertCommand.Parameters[23].Value = ((double)(Area_Level_Seam.Value));
+            }
+            else {
+                this.Adapter.InsertCommand.Parameters[23].Value = global::System.DBNull.Value;
+            }
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.InsertCommand.Connection.State;
             if (((this.Adapter.InsertCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -6766,7 +6951,9 @@ WHERE        (Short_Type = @Original_Short_Type);
                     double Area_Live_Seam_Low18, 
                     double Area_Live_Standart_Seam_More18, 
                     double Area_Live_Strong_Seam_More18, 
-                    double Area_Level, 
+                    global::System.Nullable<double> Area_Level_Combo, 
+                    global::System.Nullable<double> Area_Level_End, 
+                    global::System.Nullable<double> Area_Level_Seam, 
                     int Original_Id_Area, 
                     string Original_Short_Type, 
                     double Original_Area_Total_Low18, 
@@ -6789,7 +6976,9 @@ WHERE        (Short_Type = @Original_Short_Type);
                     double Original_Area_Live_Seam_Low18, 
                     double Original_Area_Live_Standart_Seam_More18, 
                     double Original_Area_Live_Strong_Seam_More18, 
-                    double Original_Area_Level, 
+                    global::System.Nullable<double> Original_Area_Level_Combo, 
+                    global::System.Nullable<double> Original_Area_Level_End, 
+                    global::System.Nullable<double> Original_Area_Level_Seam, 
                     int Id_Area) {
             if ((Short_Type == null)) {
                 throw new global::System.ArgumentNullException("Short_Type");
@@ -6827,46 +7016,86 @@ WHERE        (Short_Type = @Original_Short_Type);
             this.Adapter.UpdateCommand.Parameters[18].Value = ((double)(Area_Live_Seam_Low18));
             this.Adapter.UpdateCommand.Parameters[19].Value = ((double)(Area_Live_Standart_Seam_More18));
             this.Adapter.UpdateCommand.Parameters[20].Value = ((double)(Area_Live_Strong_Seam_More18));
-            this.Adapter.UpdateCommand.Parameters[21].Value = ((double)(Area_Level));
-            this.Adapter.UpdateCommand.Parameters[22].Value = ((int)(Original_Id_Area));
+            if ((Area_Level_Combo.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[21].Value = ((double)(Area_Level_Combo.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[21].Value = global::System.DBNull.Value;
+            }
+            if ((Area_Level_End.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[22].Value = ((double)(Area_Level_End.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[22].Value = global::System.DBNull.Value;
+            }
+            if ((Area_Level_Seam.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[23].Value = ((double)(Area_Level_Seam.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[23].Value = global::System.DBNull.Value;
+            }
+            this.Adapter.UpdateCommand.Parameters[24].Value = ((int)(Original_Id_Area));
             if ((Original_Short_Type == null)) {
                 throw new global::System.ArgumentNullException("Original_Short_Type");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[23].Value = ((string)(Original_Short_Type));
+                this.Adapter.UpdateCommand.Parameters[25].Value = ((string)(Original_Short_Type));
             }
-            this.Adapter.UpdateCommand.Parameters[24].Value = ((double)(Original_Area_Total_Low18));
-            this.Adapter.UpdateCommand.Parameters[25].Value = ((double)(Original_Area_Total_Standart_More18));
-            this.Adapter.UpdateCommand.Parameters[26].Value = ((double)(Original_Area_Total_Strong_More18));
-            this.Adapter.UpdateCommand.Parameters[27].Value = ((double)(Original_Area_Total_End_Low18));
-            this.Adapter.UpdateCommand.Parameters[28].Value = ((double)(Original_Area_Total_Standart_End_More18));
-            this.Adapter.UpdateCommand.Parameters[29].Value = ((double)(Original_Area_Total_Strong_End_More18));
-            this.Adapter.UpdateCommand.Parameters[30].Value = ((double)(Original_Area_Total_Standart_Seam_Low18));
-            this.Adapter.UpdateCommand.Parameters[31].Value = ((double)(Original_Area_Total_Standart_Seam_More18));
-            this.Adapter.UpdateCommand.Parameters[32].Value = ((double)(Original_Area_Total_Strong_Seam_More18));
+            this.Adapter.UpdateCommand.Parameters[26].Value = ((double)(Original_Area_Total_Low18));
+            this.Adapter.UpdateCommand.Parameters[27].Value = ((double)(Original_Area_Total_Standart_More18));
+            this.Adapter.UpdateCommand.Parameters[28].Value = ((double)(Original_Area_Total_Strong_More18));
+            this.Adapter.UpdateCommand.Parameters[29].Value = ((double)(Original_Area_Total_End_Low18));
+            this.Adapter.UpdateCommand.Parameters[30].Value = ((double)(Original_Area_Total_Standart_End_More18));
+            this.Adapter.UpdateCommand.Parameters[31].Value = ((double)(Original_Area_Total_Strong_End_More18));
+            this.Adapter.UpdateCommand.Parameters[32].Value = ((double)(Original_Area_Total_Standart_Seam_Low18));
+            this.Adapter.UpdateCommand.Parameters[33].Value = ((double)(Original_Area_Total_Standart_Seam_More18));
+            this.Adapter.UpdateCommand.Parameters[34].Value = ((double)(Original_Area_Total_Strong_Seam_More18));
             if ((Original_Correction_Low18 == null)) {
                 throw new global::System.ArgumentNullException("Original_Correction_Low18");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[33].Value = ((string)(Original_Correction_Low18));
+                this.Adapter.UpdateCommand.Parameters[35].Value = ((string)(Original_Correction_Low18));
             }
             if ((Original_Correction_More18 == null)) {
                 throw new global::System.ArgumentNullException("Original_Correction_More18");
             }
             else {
-                this.Adapter.UpdateCommand.Parameters[34].Value = ((string)(Original_Correction_More18));
+                this.Adapter.UpdateCommand.Parameters[36].Value = ((string)(Original_Correction_More18));
             }
-            this.Adapter.UpdateCommand.Parameters[35].Value = ((double)(Original_Area_Live_Low18));
-            this.Adapter.UpdateCommand.Parameters[36].Value = ((double)(Original_Area_Live_Standart_More18));
-            this.Adapter.UpdateCommand.Parameters[37].Value = ((double)(Original_Area_Live_Strong_More18));
-            this.Adapter.UpdateCommand.Parameters[38].Value = ((double)(Original_Area_Live_End_Low18));
-            this.Adapter.UpdateCommand.Parameters[39].Value = ((double)(Original_Area_Live_Standart_End_More18));
-            this.Adapter.UpdateCommand.Parameters[40].Value = ((double)(Original_Area_Live_Strong_End_More18));
-            this.Adapter.UpdateCommand.Parameters[41].Value = ((double)(Original_Area_Live_Seam_Low18));
-            this.Adapter.UpdateCommand.Parameters[42].Value = ((double)(Original_Area_Live_Standart_Seam_More18));
-            this.Adapter.UpdateCommand.Parameters[43].Value = ((double)(Original_Area_Live_Strong_Seam_More18));
-            this.Adapter.UpdateCommand.Parameters[44].Value = ((double)(Original_Area_Level));
-            this.Adapter.UpdateCommand.Parameters[45].Value = ((int)(Id_Area));
+            this.Adapter.UpdateCommand.Parameters[37].Value = ((double)(Original_Area_Live_Low18));
+            this.Adapter.UpdateCommand.Parameters[38].Value = ((double)(Original_Area_Live_Standart_More18));
+            this.Adapter.UpdateCommand.Parameters[39].Value = ((double)(Original_Area_Live_Strong_More18));
+            this.Adapter.UpdateCommand.Parameters[40].Value = ((double)(Original_Area_Live_End_Low18));
+            this.Adapter.UpdateCommand.Parameters[41].Value = ((double)(Original_Area_Live_Standart_End_More18));
+            this.Adapter.UpdateCommand.Parameters[42].Value = ((double)(Original_Area_Live_Strong_End_More18));
+            this.Adapter.UpdateCommand.Parameters[43].Value = ((double)(Original_Area_Live_Seam_Low18));
+            this.Adapter.UpdateCommand.Parameters[44].Value = ((double)(Original_Area_Live_Standart_Seam_More18));
+            this.Adapter.UpdateCommand.Parameters[45].Value = ((double)(Original_Area_Live_Strong_Seam_More18));
+            if ((Original_Area_Level_Combo.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[46].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[47].Value = ((double)(Original_Area_Level_Combo.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[46].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[47].Value = global::System.DBNull.Value;
+            }
+            if ((Original_Area_Level_End.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[48].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[49].Value = ((double)(Original_Area_Level_End.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[48].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[49].Value = global::System.DBNull.Value;
+            }
+            if ((Original_Area_Level_Seam.HasValue == true)) {
+                this.Adapter.UpdateCommand.Parameters[50].Value = ((object)(0));
+                this.Adapter.UpdateCommand.Parameters[51].Value = ((double)(Original_Area_Level_Seam.Value));
+            }
+            else {
+                this.Adapter.UpdateCommand.Parameters[50].Value = ((object)(1));
+                this.Adapter.UpdateCommand.Parameters[51].Value = global::System.DBNull.Value;
+            }
+            this.Adapter.UpdateCommand.Parameters[52].Value = ((int)(Id_Area));
             global::System.Data.ConnectionState previousConnectionState = this.Adapter.UpdateCommand.Connection.State;
             if (((this.Adapter.UpdateCommand.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
@@ -6909,7 +7138,9 @@ WHERE        (Short_Type = @Original_Short_Type);
                     double Area_Live_Seam_Low18, 
                     double Area_Live_Standart_Seam_More18, 
                     double Area_Live_Strong_Seam_More18, 
-                    double Area_Level, 
+                    global::System.Nullable<double> Area_Level_Combo, 
+                    global::System.Nullable<double> Area_Level_End, 
+                    global::System.Nullable<double> Area_Level_Seam, 
                     int Original_Id_Area, 
                     string Original_Short_Type, 
                     double Original_Area_Total_Low18, 
@@ -6932,8 +7163,10 @@ WHERE        (Short_Type = @Original_Short_Type);
                     double Original_Area_Live_Seam_Low18, 
                     double Original_Area_Live_Standart_Seam_More18, 
                     double Original_Area_Live_Strong_Seam_More18, 
-                    double Original_Area_Level) {
-            return this.Update(Short_Type, Area_Total_Low18, Area_Total_Standart_More18, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Total_Standart_End_More18, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_Low18, Area_Total_Standart_Seam_More18, Area_Total_Strong_Seam_More18, Correction_Low18, Correction_More18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live_Strong_More18, Area_Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_Strong_End_More18, Area_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live_Strong_Seam_More18, Area_Level, Original_Id_Area, Original_Short_Type, Original_Area_Total_Low18, Original_Area_Total_Standart_More18, Original_Area_Total_Strong_More18, Original_Area_Total_End_Low18, Original_Area_Total_Standart_End_More18, Original_Area_Total_Strong_End_More18, Original_Area_Total_Standart_Seam_Low18, Original_Area_Total_Standart_Seam_More18, Original_Area_Total_Strong_Seam_More18, Original_Correction_Low18, Original_Correction_More18, Original_Area_Live_Low18, Original_Area_Live_Standart_More18, Original_Area_Live_Strong_More18, Original_Area_Live_End_Low18, Original_Area_Live_Standart_End_More18, Original_Area_Live_Strong_End_More18, Original_Area_Live_Seam_Low18, Original_Area_Live_Standart_Seam_More18, Original_Area_Live_Strong_Seam_More18, Original_Area_Level, Original_Id_Area);
+                    global::System.Nullable<double> Original_Area_Level_Combo, 
+                    global::System.Nullable<double> Original_Area_Level_End, 
+                    global::System.Nullable<double> Original_Area_Level_Seam) {
+            return this.Update(Short_Type, Area_Total_Low18, Area_Total_Standart_More18, Area_Total_Strong_More18, Area_Total_End_Low18, Area_Total_Standart_End_More18, Area_Total_Strong_End_More18, Area_Total_Standart_Seam_Low18, Area_Total_Standart_Seam_More18, Area_Total_Strong_Seam_More18, Correction_Low18, Correction_More18, Area_Live_Low18, Area_Live_Standart_More18, Area_Live_Strong_More18, Area_Live_End_Low18, Area_Live_Standart_End_More18, Area_Live_Strong_End_More18, Area_Live_Seam_Low18, Area_Live_Standart_Seam_More18, Area_Live_Strong_Seam_More18, Area_Level_Combo, Area_Level_End, Area_Level_Seam, Original_Id_Area, Original_Short_Type, Original_Area_Total_Low18, Original_Area_Total_Standart_More18, Original_Area_Total_Strong_More18, Original_Area_Total_End_Low18, Original_Area_Total_Standart_End_More18, Original_Area_Total_Strong_End_More18, Original_Area_Total_Standart_Seam_Low18, Original_Area_Total_Standart_Seam_More18, Original_Area_Total_Strong_Seam_More18, Original_Correction_Low18, Original_Correction_More18, Original_Area_Live_Low18, Original_Area_Live_Standart_More18, Original_Area_Live_Strong_More18, Original_Area_Live_End_Low18, Original_Area_Live_Standart_End_More18, Original_Area_Live_Strong_End_More18, Original_Area_Live_Seam_Low18, Original_Area_Live_Standart_Seam_More18, Original_Area_Live_Strong_Seam_More18, Original_Area_Level_Combo, Original_Area_Level_End, Original_Area_Level_Seam, Original_Id_Area);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -6961,7 +7194,9 @@ WHERE        (Short_Type = @Original_Short_Type);
                     double Area_Live_Seam_Low18, 
                     double Area_Live_Standart_Seam_More18, 
                     double Area_Live_Strong_Seam_More18, 
-                    double Area_Level, 
+                    global::System.Nullable<double> Area_Level_Combo, 
+                    global::System.Nullable<double> Area_Level_End, 
+                    global::System.Nullable<double> Area_Level_Seam, 
                     string Original_Short_Type) {
             global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[1];
             command.Parameters[0].Value = ((double)(Area_Total_Low18));
@@ -6994,12 +7229,29 @@ WHERE        (Short_Type = @Original_Short_Type);
             command.Parameters[17].Value = ((double)(Area_Live_Seam_Low18));
             command.Parameters[18].Value = ((double)(Area_Live_Standart_Seam_More18));
             command.Parameters[19].Value = ((double)(Area_Live_Strong_Seam_More18));
-            command.Parameters[20].Value = ((double)(Area_Level));
+            if ((Area_Level_Combo.HasValue == true)) {
+                command.Parameters[20].Value = ((double)(Area_Level_Combo.Value));
+            }
+            else {
+                command.Parameters[20].Value = global::System.DBNull.Value;
+            }
+            if ((Area_Level_End.HasValue == true)) {
+                command.Parameters[21].Value = ((double)(Area_Level_End.Value));
+            }
+            else {
+                command.Parameters[21].Value = global::System.DBNull.Value;
+            }
+            if ((Area_Level_Seam.HasValue == true)) {
+                command.Parameters[22].Value = ((double)(Area_Level_Seam.Value));
+            }
+            else {
+                command.Parameters[22].Value = global::System.DBNull.Value;
+            }
             if ((Original_Short_Type == null)) {
                 throw new global::System.ArgumentNullException("Original_Short_Type");
             }
             else {
-                command.Parameters[21].Value = ((string)(Original_Short_Type));
+                command.Parameters[23].Value = ((string)(Original_Short_Type));
             }
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 

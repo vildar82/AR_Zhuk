@@ -11,7 +11,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AR_AreaZhuk.Controller;
 using AR_AreaZhuk.Model;
 using AR_AreaZhuk.PIK1TableAdapters;
 using OfficeOpenXml.Drawing.Chart;
@@ -22,6 +21,7 @@ using System.Security.Cryptography.X509Certificates;
 using AR_Zhuk_Schema;
 using OfficeOpenXml;
 using Zuby.ADGV;
+using AR_AreaZhuk.Controller;
 
 
 namespace AR_AreaZhuk
@@ -34,6 +34,8 @@ namespace AR_AreaZhuk
             InitializeComponent();
         }
 
+
+        public PIK1.C_Flats_PIK1_AreasDataTable flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
         public bool IsRemainingDominants { get; set; }
         public int DominantOffSet { get; set; }
 
@@ -110,470 +112,470 @@ namespace AR_AreaZhuk
         }
 
 
-//        public Section GetInsulationSections(List<FlatInfo> sections, bool isRightOrTopLLu, bool isVertical, int indexRowStart,
-//            int indexColumnStart, Insolation insulation, bool isCorner, int numberSection, SpotInfo sp)
-//        {
-//            // List<FlatInfo> listSections = new List<FlatInfo>();
-//            Section s = new Section();
-//            s.Sections = new List<FlatInfo>();
-//            s.IsCorner = isCorner;
-//            s.IsVertical = isVertical;
-//            s.NumberInSpot = numberSection;
-//            s.SpotOwner = insulation.Name;
-//            s.CountStep = sections[0].CountStep;
-//            s.CountModules = sections[0].CountStep * 4;
-//            s.Floors = sections[0].Floors;
-//            foreach (var sect in sections)
-//            {
+        //        public Section GetInsulationSections(List<FlatInfo> sections, bool isRightOrTopLLu, bool isVertical, int indexRowStart,
+        //            int indexColumnStart, Insolation insulation, bool isCorner, int numberSection, SpotInfo sp)
+        //        {
+        //            // List<FlatInfo> listSections = new List<FlatInfo>();
+        //            Section s = new Section();
+        //            s.Sections = new List<FlatInfo>();
+        //            s.IsCorner = isCorner;
+        //            s.IsVertical = isVertical;
+        //            s.NumberInSpot = numberSection;
+        //            s.SpotOwner = insulation.Name;
+        //            s.CountStep = sections[0].CountStep;
+        //            s.CountModules = sections[0].CountStep * 4;
+        //            s.Floors = sections[0].Floors;
+        //            foreach (var sect in sections)
+        //            {
 
-//                if (sect.Flats.Count < 4)
-//                    continue;
+        //                if (sect.Flats.Count < 4)
+        //                    continue;
 
-//                //bool isBreak = false;
-//                //for (int i = 0; i < 7; i++)
-//                //{
-//                //    if (!section.Flats[i].SubZone.Contains('1')) continue;
-//                //    isBreak = true;
-//                //    break;
-//                //}
-//                //if (isBreak)
-//                //    continue;
+        //                //bool isBreak = false;
+        //                //for (int i = 0; i < 7; i++)
+        //                //{
+        //                //    if (!section.Flats[i].SubZone.Contains('1')) continue;
+        //                //    isBreak = true;
+        //                //    break;
+        //                //}
+        //                //if (isBreak)
+        //                //    continue;
 
-//                //  Section s = new Section();
+        //                //  Section s = new Section();
 
-//                //s.IsCorner = isCorner;
-//                //s.IsVertical = isVertical;
-//                // s.Sections = new List<FlatInfo>();
-//                FlatInfo flats = new FlatInfo();
-//                flats.IdSection = sect.IdSection;
-//                flats.IsInvert = !isRightOrTopLLu;
-//                flats.SpotOwner = insulation.Name;
-//                flats.NumberInSpot = numberSection;
-//                flats.CountStep = sections[0].CountStep;
-//                flats.Flats = sect.Flats;
-//                flats.IsCorner = isCorner;
-//                flats.IsVertical = isVertical;
-//                // flats.CountStep = section.CountStep;
+        //                //s.IsCorner = isCorner;
+        //                //s.IsVertical = isVertical;
+        //                // s.Sections = new List<FlatInfo>();
+        //                FlatInfo flats = new FlatInfo();
+        //                flats.IdSection = sect.IdSection;
+        //                flats.IsInvert = !isRightOrTopLLu;
+        //                flats.SpotOwner = insulation.Name;
+        //                flats.NumberInSpot = numberSection;
+        //                flats.CountStep = sections[0].CountStep;
+        //                flats.Flats = sect.Flats;
+        //                flats.IsCorner = isCorner;
+        //                flats.IsVertical = isVertical;
+        //                // flats.CountStep = section.CountStep;
 
-//                flats.Floors = sect.Floors;
-//                int direction = 1;
-//                int indexColumnLLUTop = 0;
-//                int indexColumnLLUBottom = 0;
-//                if (isRightOrTopLLu)
-//                {
-//                    if (insulation.IsLeftNizSection)
-//                    {
-//                        if (isVertical)
-//                            indexColumnLLUTop = 3;
-//                        else
-//                        {
-//                            indexColumnLLUBottom = 3;
-//                            indexColumnLLUTop = 0;
-//                        }
-//                        direction = -1;
-//                    }
-//                    else if (insulation.IsRightNizSection)
-//                    {
-//                        if (isVertical)
-//                        {
-//                            indexColumnLLUTop = 0;
-//                            indexColumnLLUBottom = -3;
-//                            direction = -1;
-//                        }
-//                        else
-//                        {
-//                            indexColumnLLUBottom = 0;
-//                            indexColumnLLUTop = -3;
-//                            direction = -1;
-//                            if (!isCorner)
-//                            {
-//                                indexColumnLLUBottom = 3;
-//                                indexColumnLLUTop = 0;
-//                                direction = -1;
-//                            }
-//                        }
+        //                flats.Floors = sect.Floors;
+        //                int direction = 1;
+        //                int indexColumnLLUTop = 0;
+        //                int indexColumnLLUBottom = 0;
+        //                if (isRightOrTopLLu)
+        //                {
+        //                    if (insulation.IsLeftNizSection)
+        //                    {
+        //                        if (isVertical)
+        //                            indexColumnLLUTop = 3;
+        //                        else
+        //                        {
+        //                            indexColumnLLUBottom = 3;
+        //                            indexColumnLLUTop = 0;
+        //                        }
+        //                        direction = -1;
+        //                    }
+        //                    else if (insulation.IsRightNizSection)
+        //                    {
+        //                        if (isVertical)
+        //                        {
+        //                            indexColumnLLUTop = 0;
+        //                            indexColumnLLUBottom = -3;
+        //                            direction = -1;
+        //                        }
+        //                        else
+        //                        {
+        //                            indexColumnLLUBottom = 0;
+        //                            indexColumnLLUTop = -3;
+        //                            direction = -1;
+        //                            if (!isCorner)
+        //                            {
+        //                                indexColumnLLUBottom = 3;
+        //                                indexColumnLLUTop = 0;
+        //                                direction = -1;
+        //                            }
+        //                        }
 
-//                    }
+        //                    }
 
-//                }
-//                else
-//                {
-//                    if (insulation.IsRightNizSection)
-//                    {
-//                        direction = -1;
-//                        indexColumnLLUBottom = 0;
-//                        indexColumnLLUTop = -3;
-//                    }
-//                    else
-//                    {
-//                        indexRowStart = insulation.MinLeftXY[1];
-//                        indexColumnLLUBottom = 3;
-//                    }
+        //                }
+        //                else
+        //                {
+        //                    if (insulation.IsRightNizSection)
+        //                    {
+        //                        direction = -1;
+        //                        indexColumnLLUBottom = 0;
+        //                        indexColumnLLUTop = -3;
+        //                    }
+        //                    else
+        //                    {
+        //                        indexRowStart = insulation.MinLeftXY[1];
+        //                        indexColumnLLUBottom = 3;
+        //                    }
 
-//                }
-//                List<RoomInfo> topFlats = new List<RoomInfo>();
-//                List<RoomInfo> bottomFlats = new List<RoomInfo>();
+        //                }
+        //                List<RoomInfo> topFlats = new List<RoomInfo>();
+        //                List<RoomInfo> bottomFlats = new List<RoomInfo>();
 
-//                topFlats = GetTopFlatsInSection(sect.Flats, true, false);
-//                bottomFlats = GetTopFlatsInSection(sect.Flats, false, false);
+        //                topFlats = GetTopFlatsInSection(sect.Flats, true, false);
+        //                bottomFlats = GetTopFlatsInSection(sect.Flats, false, false);
 
-//                int indexRow = indexRowStart;
-//                int indexColumn = indexColumnStart;
-//                bool isValid = false;
-//                for (int i = 0; i < topFlats.Count; i++)
-//                {
-//                    if (isCorner & topFlats.Count - 1 == i & !insulation.IsRightNizSection)
-//                    {
-//                        indexRow--;
-//                        indexRow--;
-//                    }
-//                    var topFlat = topFlats[i];
-//                    var rul = insulation.RoomInsulations.Where(x => x.CountRooms.Equals(Convert.ToInt16(topFlat.SubZone))).ToList();
-//                    if (rul.Count == 0)
-//                    {
-//                        if (isVertical)
-//                            indexRow += topFlat.SelectedIndexTop * direction;
-//                        else indexColumn += topFlat.SelectedIndexTop * direction;
-//                        continue;
-//                    }
-//                    isValid = false;
+        //                int indexRow = indexRowStart;
+        //                int indexColumn = indexColumnStart;
+        //                bool isValid = false;
+        //                for (int i = 0; i < topFlats.Count; i++)
+        //                {
+        //                    if (isCorner & topFlats.Count - 1 == i & !insulation.IsRightNizSection)
+        //                    {
+        //                        indexRow--;
+        //                        indexRow--;
+        //                    }
+        //                    var topFlat = topFlats[i];
+        //                    var rul = insulation.RoomInsulations.Where(x => x.CountRooms.Equals(Convert.ToInt16(topFlat.SubZone))).ToList();
+        //                    if (rul.Count == 0)
+        //                    {
+        //                        if (isVertical)
+        //                            indexRow += topFlat.SelectedIndexTop * direction;
+        //                        else indexColumn += topFlat.SelectedIndexTop * direction;
+        //                        continue;
+        //                    }
+        //                    isValid = false;
 
-//                    //var lightTop = GetLightingPosition(topFlat.LightingTop, topFlat, sect.Flats);
-//                    //var lightNiz = GetLightingPosition(topFlat.LightingNiz, topFlat, sect.Flats);
-//                    var lightTop = LightingStringParser.GetLightings(topFlat.LightingTop);
-//                    var lightNiz = LightingStringParser.GetLightings(topFlat.LightingNiz);
-//                    if (lightTop == null | lightNiz == null)
-//                    {
-//                        break;
-//                    }
-//                    string ins = "";
+        //                    //var lightTop = GetLightingPosition(topFlat.LightingTop, topFlat, sect.Flats);
+        //                    //var lightNiz = GetLightingPosition(topFlat.LightingNiz, topFlat, sect.Flats);
+        //                    var lightTop = LightingStringParser.GetLightings(topFlat.LightingTop);
+        //                    var lightNiz = LightingStringParser.GetLightings(topFlat.LightingNiz);
+        //                    if (lightTop == null | lightNiz == null)
+        //                    {
+        //                        break;
+        //                    }
+        //                    string ins = "";
 
-//                    foreach (var r in rul[0].Rules)
-//                    {
-//                        string[] masRule = r.Split('=', '|');
-//                        int countValidCell = 0;
-//                        if (insulation.IsRightNizSection & isCorner & i == 0)
-//                        {
-//                            indexColumn = insulation.MaxRightXY[0];
-//                            bool isOr = false;
-//                            foreach (var ln in lightNiz)
-//                            {
-//                                if (ln.Equals(0)) break;
-//                                //if (isOr)
-//                                //    continue;
-//                                isOr = ln < 0;
-//                                int v = insulation.MaxRightXY[1] - 5 + topFlat.SelectedIndexBottom - Math.Abs(ln) + 1;
-//                                ins = insulation.Matrix[indexColumn, v];
+        //                    foreach (var r in rul[0].Rules)
+        //                    {
+        //                        string[] masRule = r.Split('=', '|');
+        //                        int countValidCell = 0;
+        //                        if (insulation.IsRightNizSection & isCorner & i == 0)
+        //                        {
+        //                            indexColumn = insulation.MaxRightXY[0];
+        //                            bool isOr = false;
+        //                            foreach (var ln in lightNiz)
+        //                            {
+        //                                if (ln.Equals(0)) break;
+        //                                //if (isOr)
+        //                                //    continue;
+        //                                isOr = ln < 0;
+        //                                int v = insulation.MaxRightXY[1] - 5 + topFlat.SelectedIndexBottom - Math.Abs(ln) + 1;
+        //                                ins = insulation.Matrix[indexColumn, v];
 
-//                                if (string.IsNullOrWhiteSpace(ins)) continue;
-//                                if (!masRule[1].Equals(ins.Split('|')[1]))
-//                                    continue;
-//                                countValidCell++;
+        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
+        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
+        //                                    continue;
+        //                                countValidCell++;
 
-//                            }
-//                            isOr = false;
-//                            foreach (var ln in lightTop)
-//                            {
-//                                if (ln.Equals(0)) break;
-//                                //if (isOr)
-//                                //    continue;
-//                                isOr = ln < 0;
-//                                int v = insulation.MaxRightXY[1] - 5 + Math.Abs(ln);
-//                                ins = insulation.Matrix[insulation.MaxRightXY[0] - 3, v];
-//                                if (string.IsNullOrWhiteSpace(ins)) continue;
+        //                            }
+        //                            isOr = false;
+        //                            foreach (var ln in lightTop)
+        //                            {
+        //                                if (ln.Equals(0)) break;
+        //                                //if (isOr)
+        //                                //    continue;
+        //                                isOr = ln < 0;
+        //                                int v = insulation.MaxRightXY[1] - 5 + Math.Abs(ln);
+        //                                ins = insulation.Matrix[insulation.MaxRightXY[0] - 3, v];
+        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
 
-//                                else if (!masRule[1].Equals(ins.Split('|')[1]))
-//                                    continue;
-//                                countValidCell++;
-//                            }
-//                            indexRow = insulation.MaxRightXY[1];
-//                            indexColumn = insulation.MaxRightXY[0] - 3;
+        //                                else if (!masRule[1].Equals(ins.Split('|')[1]))
+        //                                    continue;
+        //                                countValidCell++;
+        //                            }
+        //                            indexRow = insulation.MaxRightXY[1];
+        //                            indexColumn = insulation.MaxRightXY[0] - 3;
 
-//                        }
-//                        else if ((indexRow == indexRowStart & isVertical) | (indexColumn == indexColumnStart & !isVertical) | topFlat.SelectedIndexBottom == 0)  //первая справа квартира
-//                        {
-//                            bool isOr = false;
-//                            foreach (var ln in lightNiz)
-//                            {
-//                                if (ln.Equals(0)) break;
-//                                //if (isOr)
-//                                //    continue;
-//                                isOr = ln < 0;
-//                                if (isVertical)
-//                                    ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow + Math.Abs(ln) * direction];
-//                                else
-//                                    ins = insulation.Matrix[indexColumn + Math.Abs(ln) * (-direction) + direction * topFlat.SelectedIndexBottom + direction, indexRow + indexColumnLLUBottom];
-//                                if (string.IsNullOrWhiteSpace(ins)) continue;
-//                                if (!masRule[1].Equals(ins.Split('|')[1]))
-//                                    continue;
-//                                countValidCell++;
+        //                        }
+        //                        else if ((indexRow == indexRowStart & isVertical) | (indexColumn == indexColumnStart & !isVertical) | topFlat.SelectedIndexBottom == 0)  //первая справа квартира
+        //                        {
+        //                            bool isOr = false;
+        //                            foreach (var ln in lightNiz)
+        //                            {
+        //                                if (ln.Equals(0)) break;
+        //                                //if (isOr)
+        //                                //    continue;
+        //                                isOr = ln < 0;
+        //                                if (isVertical)
+        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow + Math.Abs(ln) * direction];
+        //                                else
+        //                                    ins = insulation.Matrix[indexColumn + Math.Abs(ln) * (-direction) + direction * topFlat.SelectedIndexBottom + direction, indexRow + indexColumnLLUBottom];
+        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
+        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
+        //                                    continue;
+        //                                countValidCell++;
 
-//                            }
-//                            isOr = false;
-//                            foreach (var ln in lightTop)
-//                            {
+        //                            }
+        //                            isOr = false;
+        //                            foreach (var ln in lightTop)
+        //                            {
 
-//                                if (ln.Equals(0)) break;
-//                                //if (isOr)
-//                                //    continue;
-//                                isOr = ln < 0;
-//                                if (isVertical)
-//                                    ins = insulation.Matrix[indexColumn + indexColumnLLUTop, indexRow + Math.Abs(ln) * direction];
-//                                else ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUTop];
-//                                if (string.IsNullOrWhiteSpace(ins)) continue;
+        //                                if (ln.Equals(0)) break;
+        //                                //if (isOr)
+        //                                //    continue;
+        //                                isOr = ln < 0;
+        //                                if (isVertical)
+        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUTop, indexRow + Math.Abs(ln) * direction];
+        //                                else ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUTop];
+        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
 
-//                                else if (!masRule[1].Equals(ins.Split('|')[1]))
-//                                    continue;
-//                                countValidCell++;
-//                            }
-//                        }
-//                        else if (indexRow != 0 & topFlat.SelectedIndexBottom > 0)               //первая слева квартира
-//                        {
-//                            bool isOr = false;
-//                            foreach (var ln in lightNiz)
-//                            {
-//                                if (ln.Equals(0)) break;
-//                                //if (isOr)
-//                                //    continue;
-//                                isOr = ln < 0;
-//                                if (isCorner)
-//                                {
-//                                    if (insulation.IsLeftNizSection)
-//                                        ins = insulation.Matrix[insulation.MinLeftXY[0], indexRow - Math.Abs(ln) * direction];
-//                                    else if (insulation.IsRightNizSection)
-//                                        // ins = insulation.Matrix[indexColumn - topFlat.SelectedIndexTop - 1 + Math.Abs(ln), indexRow];
-//                                        ins = insulation.Matrix[indexColumn - topFlat.SelectedIndexTop + Math.Abs(ln), indexRow];
-//                                }
-//                                else if (isVertical)
-//                                    ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction];
-//                                else ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow +
+        //                                else if (!masRule[1].Equals(ins.Split('|')[1]))
+        //                                    continue;
+        //                                countValidCell++;
+        //                            }
+        //                        }
+        //                        else if (indexRow != 0 & topFlat.SelectedIndexBottom > 0)               //первая слева квартира
+        //                        {
+        //                            bool isOr = false;
+        //                            foreach (var ln in lightNiz)
+        //                            {
+        //                                if (ln.Equals(0)) break;
+        //                                //if (isOr)
+        //                                //    continue;
+        //                                isOr = ln < 0;
+        //                                if (isCorner)
+        //                                {
+        //                                    if (insulation.IsLeftNizSection)
+        //                                        ins = insulation.Matrix[insulation.MinLeftXY[0], indexRow - Math.Abs(ln) * direction];
+        //                                    else if (insulation.IsRightNizSection)
+        //                                        // ins = insulation.Matrix[indexColumn - topFlat.SelectedIndexTop - 1 + Math.Abs(ln), indexRow];
+        //                                        ins = insulation.Matrix[indexColumn - topFlat.SelectedIndexTop + Math.Abs(ln), indexRow];
+        //                                }
+        //                                else if (isVertical)
+        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction];
+        //                                else ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow +
 
-//indexColumnLLUBottom];
-//                                if (string.IsNullOrWhiteSpace(ins)) continue;
+        //indexColumnLLUBottom];
+        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
 
-//                                if (!masRule[1].Equals(ins.Split('|')[1]))
-//                                    continue;
-//                                countValidCell++;
-//                            }
-//                            isOr = false;
-//                            foreach (var ln in lightTop)
-//                            {
-//                                if (ln.Equals(0)) break;
-//                                //isOr = ln < 0;
-//                                if (isCorner & insulation.IsLeftNizSection)
-//                                {
-//                                    ins = insulation.Matrix[insulation.MinLeftXY[0] + 3, indexRow - Math.Abs(ln) * direction];
-//                                }
-//                                else if (isCorner & insulation.IsRightNizSection)
-//                                {
-//                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln), indexRow - 3];
-//                                }
+        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
+        //                                    continue;
+        //                                countValidCell++;
+        //                            }
+        //                            isOr = false;
+        //                            foreach (var ln in lightTop)
+        //                            {
+        //                                if (ln.Equals(0)) break;
+        //                                //isOr = ln < 0;
+        //                                if (isCorner & insulation.IsLeftNizSection)
+        //                                {
+        //                                    ins = insulation.Matrix[insulation.MinLeftXY[0] + 3, indexRow - Math.Abs(ln) * direction];
+        //                                }
+        //                                else if (isCorner & insulation.IsRightNizSection)
+        //                                {
+        //                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln), indexRow - 3];
+        //                                }
 
-//                                else if (isVertical)
-//                                    ins = insulation.Matrix[indexColumn + indexColumnLLUTop, indexRow + Math.Abs(ln) * direction];
-//                                else ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUTop];
+        //                                else if (isVertical)
+        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUTop, indexRow + Math.Abs(ln) * direction];
+        //                                else ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUTop];
 
-//                                ///////cxdzscs
-//                                if (string.IsNullOrWhiteSpace(ins)) continue;
-//                                if (!masRule[1].Equals(ins.Split('|')[1]))
-//                                    continue;
-//                                countValidCell++;
-//                            }
-//                        }
-//                        if (Convert.ToInt16(masRule[0]) > countValidCell)
-//                            continue;
-//                        isValid = true;
-//                        if (isVertical)
-//                            indexRow += topFlat.SelectedIndexTop * direction;
-//                        else if (i == 0 & isCorner & insulation.IsRightNizSection)
-//                        { }
-//                        else indexColumn += topFlat.SelectedIndexTop * direction;
+        //                                ///////cxdzscs
+        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
+        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
+        //                                    continue;
+        //                                countValidCell++;
+        //                            }
+        //                        }
+        //                        if (Convert.ToInt16(masRule[0]) > countValidCell)
+        //                            continue;
+        //                        isValid = true;
+        //                        if (isVertical)
+        //                            indexRow += topFlat.SelectedIndexTop * direction;
+        //                        else if (i == 0 & isCorner & insulation.IsRightNizSection)
+        //                        { }
+        //                        else indexColumn += topFlat.SelectedIndexTop * direction;
 
-//                        //else if (i >=2  & isCorner & insulation.IsRightNizSection)
-//                        //    indexColumn += topFlat.SelectedIndexTop * indexLLU;
-//                        // counteR++;
-//                        break;
-//                    }
-//                    if (!isValid) break;
-//                }
-//                if (!isValid) continue;
-//                //  indexRow = 0;
-//                bool isFirstEnter = true;
-//                bool isPovorot = false;
-//                if (insulation.IsRightNizSection & isCorner)
-//                {
-//                    direction = 1;
-//                }
-//                if (isVertical)
-//                    indexRowStart = 9;
-//                foreach (var bottomFlat in bottomFlats)
-//                {
-//                    var rul =
-//                        insulation.RoomInsulations.Where(x => x.CountRooms.Equals(Convert.ToInt16(bottomFlat.SubZone)))
-//                            .ToList();
-//                    if (rul.Count == 0)
-//                    {
-//                        if (isVertical)
-//                            indexRow += bottomFlat.SelectedIndexBottom * direction;
-//                        else indexColumn += bottomFlat.SelectedIndexBottom * direction;
+        //                        //else if (i >=2  & isCorner & insulation.IsRightNizSection)
+        //                        //    indexColumn += topFlat.SelectedIndexTop * indexLLU;
+        //                        // counteR++;
+        //                        break;
+        //                    }
+        //                    if (!isValid) break;
+        //                }
+        //                if (!isValid) continue;
+        //                //  indexRow = 0;
+        //                bool isFirstEnter = true;
+        //                bool isPovorot = false;
+        //                if (insulation.IsRightNizSection & isCorner)
+        //                {
+        //                    direction = 1;
+        //                }
+        //                if (isVertical)
+        //                    indexRowStart = 9;
+        //                foreach (var bottomFlat in bottomFlats)
+        //                {
+        //                    var rul =
+        //                        insulation.RoomInsulations.Where(x => x.CountRooms.Equals(Convert.ToInt16(bottomFlat.SubZone)))
+        //                            .ToList();
+        //                    if (rul.Count == 0)
+        //                    {
+        //                        if (isVertical)
+        //                            indexRow += bottomFlat.SelectedIndexBottom * direction;
+        //                        else indexColumn += bottomFlat.SelectedIndexBottom * direction;
 
-//                        continue;
-//                    }
-//                    if (isCorner & isFirstEnter & !insulation.IsRightNizSection)
-//                    {
-//                        indexRow++;
-//                        indexRow++;
-//                        isFirstEnter = false;
+        //                        continue;
+        //                    }
+        //                    if (isCorner & isFirstEnter & !insulation.IsRightNizSection)
+        //                    {
+        //                        indexRow++;
+        //                        indexRow++;
+        //                        isFirstEnter = false;
 
-//                    }
-//                    isValid = false;
-//                    //  string[] lightNizStr = bottomFlat.LightingNiz.Split(';');
-//                    // var lightNiz = GetLightingPosition(bottomFlat.LightingNiz, bottomFlat, sect.Flats);
-//                    var lightNiz = LightingStringParser.GetLightings(bottomFlat.LightingNiz);
-//                    if (lightNiz == null)
-//                        break;
-//                    int tempIndex = indexRow;
-//                    string ins = "";
-//                    foreach (var r in rul[0].Rules)
-//                    {
-//                        indexRow = tempIndex;
-//                        string[] masRule = r.Split('=', '|');
-//                        int countValidCell = 0;
-//                        bool isOr = false;
-//                        foreach (var ln in lightNiz)
-//                        {
-//                            if (ln.Equals(0)) break;
-//                            //if (isOr)
-//                            //    continue;
-//                            isOr = ln < 0;
-//                            if (isCorner)
-//                            {
-//                                if (isPovorot)
-//                                {
-//                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
-//                                }
+        //                    }
+        //                    isValid = false;
+        //                    //  string[] lightNizStr = bottomFlat.LightingNiz.Split(';');
+        //                    // var lightNiz = GetLightingPosition(bottomFlat.LightingNiz, bottomFlat, sect.Flats);
+        //                    var lightNiz = LightingStringParser.GetLightings(bottomFlat.LightingNiz);
+        //                    if (lightNiz == null)
+        //                        break;
+        //                    int tempIndex = indexRow;
+        //                    string ins = "";
+        //                    foreach (var r in rul[0].Rules)
+        //                    {
+        //                        indexRow = tempIndex;
+        //                        string[] masRule = r.Split('=', '|');
+        //                        int countValidCell = 0;
+        //                        bool isOr = false;
+        //                        foreach (var ln in lightNiz)
+        //                        {
+        //                            if (ln.Equals(0)) break;
+        //                            //if (isOr)
+        //                            //    continue;
+        //                            isOr = ln < 0;
+        //                            if (isCorner)
+        //                            {
+        //                                if (isPovorot)
+        //                                {
+        //                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
+        //                                }
 
-//                                else if ((insulation.IsLeftNizSection) && (indexRow - Math.Abs(ln) * direction) - insulation.MaxLeftXY[1] >= 1)
-//                                {
-//                                    // indexRow = 13;
-//                                    indexColumn = insulation.MaxLeftXY[0];
-//                                    if (Math.Abs(ln) >= 3)
-//                                        indexColumn = insulation.MaxLeftXY[0] - 3;
-//                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
-//                                    indexRow = insulation.MaxLeftXY[1];
+        //                                else if ((insulation.IsLeftNizSection) && (indexRow - Math.Abs(ln) * direction) - insulation.MaxLeftXY[1] >= 1)
+        //                                {
+        //                                    // indexRow = 13;
+        //                                    indexColumn = insulation.MaxLeftXY[0];
+        //                                    if (Math.Abs(ln) >= 3)
+        //                                        indexColumn = insulation.MaxLeftXY[0] - 3;
+        //                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
+        //                                    indexRow = insulation.MaxLeftXY[1];
 
-//                                }
-//                                else if ((insulation.IsRightNizSection) && (indexColumn + Math.Abs(ln) - insulation.MaxRightXY[0] >= 1))
-//                                {
-//                                    indexColumn = insulation.MaxRightXY[0];
-//                                    if (Math.Abs(ln) >= 3)
-//                                        indexRow = insulation.MaxRightXY[1] + 3;
-//                                    ins = insulation.Matrix[indexColumn, indexRow + indexColumnLLUBottom - Math.Abs(ln)];
-//                                    indexRow = insulation.MaxRightXY[1] - 3;
-//                                }
-//                                else if (!insulation.IsRightNizSection)
-//                                {
-//                                    ins = insulation.Matrix[insulation.MaxLeftXY[0], indexRow - Math.Abs(ln) * direction];
-//                                }
-//                                else if (insulation.IsRightNizSection)
-//                                {
-//                                    ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
-//                                }
-//                                else
-//                                {
-//                                    ins = insulation.Matrix[insulation.MaxRightXY[0], indexRow + Math.Abs(ln)];
-//                                }
+        //                                }
+        //                                else if ((insulation.IsRightNizSection) && (indexColumn + Math.Abs(ln) - insulation.MaxRightXY[0] >= 1))
+        //                                {
+        //                                    indexColumn = insulation.MaxRightXY[0];
+        //                                    if (Math.Abs(ln) >= 3)
+        //                                        indexRow = insulation.MaxRightXY[1] + 3;
+        //                                    ins = insulation.Matrix[indexColumn, indexRow + indexColumnLLUBottom - Math.Abs(ln)];
+        //                                    indexRow = insulation.MaxRightXY[1] - 3;
+        //                                }
+        //                                else if (!insulation.IsRightNizSection)
+        //                                {
+        //                                    ins = insulation.Matrix[insulation.MaxLeftXY[0], indexRow - Math.Abs(ln) * direction];
+        //                                }
+        //                                else if (insulation.IsRightNizSection)
+        //                                {
+        //                                    ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
+        //                                }
+        //                                else
+        //                                {
+        //                                    ins = insulation.Matrix[insulation.MaxRightXY[0], indexRow + Math.Abs(ln)];
+        //                                }
 
-//                            }
-//                            else if (isVertical)
-//                            {
-//                                // ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction - topFlats[topFlats.Count - 1].SelectedIndexBottom * direction];
-//                                if (indexRow - Math.Abs(ln) * direction >= 0)
-//                                    ins =
-//                                        insulation.Matrix[
-//                                            indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction];
-//                            }
-//                            else
-//                                ins =
-//                                    insulation.Matrix[
-//                                        indexColumn - Math.Abs(ln) * direction -
-//                                        topFlats[topFlats.Count - 1].SelectedIndexBottom * direction,
-//                                        indexRow + indexColumnLLUBottom];
-//                            if (string.IsNullOrWhiteSpace(ins)) continue;
-//                            if (!masRule[1].Equals(ins.Split('|')[1]))
-//                                continue;
-//                            countValidCell++;
-//                        }
-//                        if (Convert.ToInt16(masRule[0]) > countValidCell)
-//                            continue;
-//                        isValid = true;
-//                        if (isCorner & insulation.IsRightNizSection)
-//                        {
-//                            indexColumn += bottomFlat.SelectedIndexBottom * direction;
-//                        }
-//                        else if (isCorner & indexRow - bottomFlat.SelectedIndexBottom * direction < insulation.MaxLeftXY[1] & !isPovorot)
-//                        {
-//                            indexRow -= bottomFlat.SelectedIndexBottom * direction;
+        //                            }
+        //                            else if (isVertical)
+        //                            {
+        //                                // ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction - topFlats[topFlats.Count - 1].SelectedIndexBottom * direction];
+        //                                if (indexRow - Math.Abs(ln) * direction >= 0)
+        //                                    ins =
+        //                                        insulation.Matrix[
+        //                                            indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction];
+        //                            }
+        //                            else
+        //                                ins =
+        //                                    insulation.Matrix[
+        //                                        indexColumn - Math.Abs(ln) * direction -
+        //                                        topFlats[topFlats.Count - 1].SelectedIndexBottom * direction,
+        //                                        indexRow + indexColumnLLUBottom];
+        //                            if (string.IsNullOrWhiteSpace(ins)) continue;
+        //                            if (!masRule[1].Equals(ins.Split('|')[1]))
+        //                                continue;
+        //                            countValidCell++;
+        //                        }
+        //                        if (Convert.ToInt16(masRule[0]) > countValidCell)
+        //                            continue;
+        //                        isValid = true;
+        //                        if (isCorner & insulation.IsRightNizSection)
+        //                        {
+        //                            indexColumn += bottomFlat.SelectedIndexBottom * direction;
+        //                        }
+        //                        else if (isCorner & indexRow - bottomFlat.SelectedIndexBottom * direction < insulation.MaxLeftXY[1] & !isPovorot)
+        //                        {
+        //                            indexRow -= bottomFlat.SelectedIndexBottom * direction;
 
-//                        }
-//                        else if (isCorner & indexRow - bottomFlat.SelectedIndexBottom * direction >= insulation.MaxLeftXY[1] & !isPovorot)
-//                        {
-//                            indexRow = insulation.MaxLeftXY[1] - 3;
-//                            indexColumn = bottomFlat.SelectedIndexBottom - 3;
-//                            isPovorot = true;
-//                            //  indexColumn -= (indexRow - bottomFlat.SelectedIndexBottom * indexLLU - 13) * indexLLU;
-//                        }
-//                        else if (isPovorot)
-//                        {
-//                            indexColumn -= bottomFlat.SelectedIndexBottom * direction;
-//                        }
-//                        else if (isVertical)
-//                            indexRow -= bottomFlat.SelectedIndexBottom * direction;
-//                        else indexColumn -= bottomFlat.SelectedIndexBottom * direction;
-//                        break;
-//                    }
-//                    if (!isValid) break;
-//                }
-//                if (!isValid) continue;
-//                bool isAdd = true;
-//                //проверка на однотипность
-//                foreach (var sectionGeneral in s.Sections)
-//                {
-//                    if (!IsEqualSections(sectionGeneral.Flats, flats.Flats))
-//                        continue;
-//                    isAdd = false;
-//                    break;
+        //                        }
+        //                        else if (isCorner & indexRow - bottomFlat.SelectedIndexBottom * direction >= insulation.MaxLeftXY[1] & !isPovorot)
+        //                        {
+        //                            indexRow = insulation.MaxLeftXY[1] - 3;
+        //                            indexColumn = bottomFlat.SelectedIndexBottom - 3;
+        //                            isPovorot = true;
+        //                            //  indexColumn -= (indexRow - bottomFlat.SelectedIndexBottom * indexLLU - 13) * indexLLU;
+        //                        }
+        //                        else if (isPovorot)
+        //                        {
+        //                            indexColumn -= bottomFlat.SelectedIndexBottom * direction;
+        //                        }
+        //                        else if (isVertical)
+        //                            indexRow -= bottomFlat.SelectedIndexBottom * direction;
+        //                        else indexColumn -= bottomFlat.SelectedIndexBottom * direction;
+        //                        break;
+        //                    }
+        //                    if (!isValid) break;
+        //                }
+        //                if (!isValid) continue;
+        //                bool isAdd = true;
+        //                //проверка на однотипность
+        //                foreach (var sectionGeneral in s.Sections)
+        //                {
+        //                    if (!IsEqualSections(sectionGeneral.Flats, flats.Flats))
+        //                        continue;
+        //                    isAdd = false;
+        //                    break;
 
-//                }
-//                if (isAdd)
-//                {
-//                    SpotInfo sp1 = new SpotInfo();
-//                    sp1 = sp1.CopySpotInfo(spotInfo);
-//                    for (int l = 0; l < flats.Flats.Count; l++) //Квартиры
-//                    {
-//                        if (flats.Flats[l].SubZone.Equals("0")) continue;
-//                        var reqs =
-//                            sp1.requirments.Where(
-//                                x => x.CodeZone.Equals(flats.Flats[l].SubZone))
-//                                .Where(
-//                                    x =>
-//                                        x.MaxArea + 5 >= flats.Flats[l].AreaTotal &
-//                                        x.MinArea - 5 <= flats.Flats[l].AreaTotal)
-//                                .ToList();
-//                        if (reqs.Count == 0) continue;
-//                        reqs[0].RealCountFlats++;
-//                    }
-//                    string code = "";
-//                    foreach (var r in sp1.requirments)
-//                    {
-//                        code += r.RealCountFlats.ToString();
-//                    }
-//                    flats.Code = code;
-//                    s.Sections.Add(flats);
-//                }
-//            }
-//            return s;
-//        }
+        //                }
+        //                if (isAdd)
+        //                {
+        //                    SpotInfo sp1 = new SpotInfo();
+        //                    sp1 = sp1.CopySpotInfo(spotInfo);
+        //                    for (int l = 0; l < flats.Flats.Count; l++) //Квартиры
+        //                    {
+        //                        if (flats.Flats[l].SubZone.Equals("0")) continue;
+        //                        var reqs =
+        //                            sp1.requirments.Where(
+        //                                x => x.CodeZone.Equals(flats.Flats[l].SubZone))
+        //                                .Where(
+        //                                    x =>
+        //                                        x.MaxArea + 5 >= flats.Flats[l].AreaTotal &
+        //                                        x.MinArea - 5 <= flats.Flats[l].AreaTotal)
+        //                                .ToList();
+        //                        if (reqs.Count == 0) continue;
+        //                        reqs[0].RealCountFlats++;
+        //                    }
+        //                    string code = "";
+        //                    foreach (var r in sp1.requirments)
+        //                    {
+        //                        code += r.RealCountFlats.ToString();
+        //                    }
+        //                    flats.Code = code;
+        //                    s.Sections.Add(flats);
+        //                }
+        //            }
+        //            return s;
+        //        }
 
         //List<RoomInfo> GetTopFlatsInSection(List<RoomInfo> section, bool isTop, bool isRight)
         //{
@@ -826,15 +828,6 @@ namespace AR_AreaZhuk
             for (int j = 0; j < houses[1].Count; j++)
             {
                 var house2 = houses[1][j];
-                if (IsRemainingDominants)
-                {
-                    int offsetDom = DominantOffSet;
-                    int remaining =
-                        Math.Abs(house1.Sections[house1.Sections.Count - 1].CountStep -
-                                 house2.Sections[house2.Sections.Count - 1].CountStep);
-                    if (remaining > offsetDom)
-                        continue;
-                }
                 bool isValid = false;
 
                 var spot2 = house2.SpotInf;
@@ -902,7 +895,7 @@ namespace AR_AreaZhuk
                 area += GetTotalArea(house2);
                 go.Houses.Add(house1);
                 go.Houses.Add(house2);
-                go.SpotInf.RealArea = area;
+                go.SpotInf.TotalStandartArea = area;
                 //go.GUID = guid;
                 ob.Add(go);
             }
@@ -1295,7 +1288,7 @@ namespace AR_AreaZhuk
                     var reqs =
                         sp1.requirments.Where(
                             x => x.CodeZone.Equals(section.Flats[l].SubZone))
-                            .Where(x => x.MaxArea + 5 >= section.Flats[l].AreaTotal & x.MinArea - 5 <= section.Flats[l].AreaTotal)
+                            .Where(x => x.MaxArea > section.Flats[l].AreaTotal & x.MinArea <= section.Flats[l].AreaTotal)
                             .ToList();
                     if (reqs.Count == 0) continue;
                     reqs[0].RealCountFlats += section.Floors - 1;
@@ -1413,7 +1406,7 @@ namespace AR_AreaZhuk
                 GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
                 if (go == null) break;
                 Serializer ser = new Serializer();
-                ser.SerializeList(go, go.SpotInf.RealArea + "m2 (" + go.SpotInf.TotalFlats.ToString() + ")");
+                ser.SerializeList(go, go.SpotInf.TotalStandartArea + "m2 (" + go.SpotInf.TotalFlats.ToString() + ")");
 
             }
 
@@ -1452,6 +1445,8 @@ namespace AR_AreaZhuk
 
         private void btnStartScan_Click(object sender, EventArgs e)
         {
+            C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
+            flatsAreas = pikFlats.GetData();
             isEvent = false;
             btnStartScan.Enabled = false;
             btnViewPercentsge.Enabled = true;
@@ -1477,7 +1472,8 @@ namespace AR_AreaZhuk
             profectShema.ReadScheme(PathToFileInsulation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(1000);
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
+            // totalObject[0].Reverse();
 
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -1487,7 +1483,7 @@ namespace AR_AreaZhuk
             while (isContinue)
             {
                 List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
-                //Получение мекций из домов
+                //Получение cекций из домов
                 if (GetHouseSections(selectedHouse, totalObject, sections)) continue;
                 if (!isContinue)
                     break;
@@ -1532,7 +1528,7 @@ namespace AR_AreaZhuk
                 int[] selectedSectSize = new int[40];
                 int[] selectedSectCode = new int[40];
                 isContinue2 = true;
-                //Обход сформированных секций с уникальными кодами на объект
+
 
                 double totalCountFlats = 0;
                 //Общее кол-во квартир в объекте
@@ -1540,7 +1536,7 @@ namespace AR_AreaZhuk
                 {
                     totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
                 }
-
+                //Обход сформированных секций с уникальными кодами на объект
                 while (isContinue2)
                 {
 
@@ -1607,14 +1603,13 @@ namespace AR_AreaZhuk
                     }
                     //if (isOverFlow)
                     //    continue;
-                    if (counterGood > 5)
-                    {
-
-                        break;
-                    }
+                    //if (counterGood > 5)
+                    //{
+                    //    break;
+                    //}
                     if (isValidPercentage)
                     {
-                      
+
                         counterGood++;
                         for (int i = 0; i < sections.Count; i++)
                         {
@@ -1623,84 +1618,102 @@ namespace AR_AreaZhuk
                                     selectedSectCode[i]]);
                         }
                         listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
-                        var houses11 = listCodes.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
-                        GeneralObject go = new GeneralObject();
-                        List<List<HouseInfo>> housesPercentage = new List<List<HouseInfo>>();
-                        for (int i = 0; i < houses11.Count; i++)
-                        {
 
                             List<HouseInfo> hoyses = new List<HouseInfo>();
-                            int[] indexSelectedId = new int[10];
+                            int[] indexSelectedId = new int[listCodes.Count];
 
                             isContinue = true;
-                            int countSections = houses11[i].Count - 1;
+                            int countSections = listCodes.Count - 1;
 
                             while (isContinue)
                             {
+                                GeneralObject go = new GeneralObject();
                                 HouseInfo hi1 = new HouseInfo();
                                 hi1.Sections = new List<FlatInfo>();
+                                int countFlats = 0;
+                                int[] idSections = new int[listCodes.Count];
+                                double totalArea = 0;
+                                double liveArea = 0;
                                 for (int j = 0; j <= countSections; j++)
                                 {
-                                    Code currentCode = houses11[i][j];
                                     foreach (var secByPosition in sections)
                                     {
-                                        if (!(secByPosition[0].SpotOwner.Equals(currentCode.SpotOwner) &
-                                              secByPosition[0].NumberInSpot.Equals(currentCode.NumberSection)))
+                                        if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
+                                              secByPosition[0].NumberInSpot.Equals(listCodes[j].NumberSection)))
                                             continue;
-                                        var sec =
-                                            secByPosition.Where(
-                                                x =>
-                                                    x.IdSection.Equals(
-                                                        currentCode.IdSections[indexSelectedId[j]])).ToList();
+                                        var sec = secByPosition.Where(x => x.IdSection.Equals(
+                                                        listCodes[j].IdSections[indexSelectedId[j]])).ToList();
                                         if (sec.Count == 0) continue;
+                                        idSections[j] = sec[0].IdSection;
                                         hi1.Sections.Add(sec[0]);
+                                        foreach (var flat in sec[0].Flats)
+                                        {
+                                            if (flat.SubZone.Equals("0"))
+                                                continue;
+                                            var currentFlatAreas =
+                                                flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
+                                            var areas = Calculate.GetAreaFlat(sec[0].Floors,flat, currentFlatAreas);
+                                            totalArea += areas[0];
+                                            liveArea += areas[1];
+
+                                        }
                                         break;
                                     }
+
+                                    countFlats += listCodes[j].CountFlats;
                                 }
-                                hoyses.Add(hi1);
-                                GetHousePercentage(ref hi1, spotInfo);
+                                var objectByHouses =
+                                    hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
+                                List<HouseInfo> housesInSpot = new List<HouseInfo>();
+                                foreach (var house in objectByHouses)
+                                {
+                                    HouseInfo h = new HouseInfo();
+                                    foreach (var section in house.OrderBy(x => x.NumberInSpot).ToList())
+                                    {
+                                        h.Sections.Add(section);
+                                    }
+                                    housesInSpot.Add(h);
+                                }
+                                var typicalSect = GetCountTypicalSections(idSections);
+                                SpotInfo spGo = new SpotInfo();
+                                spGo = spotInfo.CopySpotInfo(spotInfo);
+                                spGo.TotalStandartArea = totalArea;
+                                spGo.TotalLiveArea = liveArea;
+                                spGo.TotalFlats = countFlats;
+                                spGo.TypicalSections = typicalSect;
+                                spGo.TotalSections = countSections + 1;
+                                string[] strPercent = str.Split(';');
+                                for (int k = 0; k < spotInfo.requirments.Count; k++)
+                                    spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
+                                go.Houses = housesInSpot;
+                                go.SpotInf = spGo;
+                                ob.Add(go);
+
+
                                 indexSelectedId[countSections]++;
-                                if (houses11[i][countSections].IdSections.Count <=
+                                if (listCodes[countSections].IdSections.Count <=
                                     indexSelectedId[countSections])
                                 {
-                                    IncrementIdSection(countSections - 1, indexSelectedId, houses11[i]);
+                                    IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
                                 }
-                                if (houses11[i][0].IdSections.Count == indexSelectedId[0])
+                                if (listCodes[0].IdSections.Count == indexSelectedId[0])
                                 {
                                     isContinue = false;
                                     break;
                                 }
-
-                            }
+                           // }
                             isContinue = true;
-                            housesPercentage.Add(hoyses);
 
                         }
-                        GetAllSectionPercentage(housesPercentage, requirment);
                         counterGood++;
                     }
 
                     selectedSectCode[sections.Count - 1]++;
-                    if (selectedSectCode[sections.Count - 1] >=
-                        codeSections[codeSections.Count - 1].SectionsByCountFlats[
-                            selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
-                        IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1,
-                            codeSections, ref totalCountFlats);
+                    if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].
+                        SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
+                        IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
                 }
             }
-            // list11.Sort();
-
-            // totalObject.Clear();
-            //List<HouseInfo> hhh1 = ob.Select(obb => obb.Houses[0]).ToList();
-            //totalObject.Add(hhh1);
-
-            //List<HouseInfo> hhh2 = ob.Select(obb => obb.Houses[1]).ToList();
-            //totalObject.Add(hhh2);
-
-            //ob.Clear();
-
-            //GetAllSectionPercentage(totalObject, requirment);
-            ////   MessageBox.Show((sw.ElapsedMilliseconds / 1000.0).ToString());
             FormManager.ViewDataProcentage(dg2, ob, spotInfo);
             th.Abort();
             lblCountObjects.Text = ob.Count.ToString();
@@ -1709,6 +1722,33 @@ namespace AR_AreaZhuk
             MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
+        }
+
+      
+
+        private static string GetCountTypicalSections(int[] idSections)
+        {
+            string typicalSect = "";
+            for (int k = 0; k < idSections.Length; k++)
+            {
+                int v = idSections[k];
+                if (v == 0)
+                    continue;
+                int t = 1;
+
+                for (int m = k + 1; m < idSections.Length; m++)
+                {
+                    if (v != idSections[m]) continue;
+                    t++;
+                    idSections[m] = 0;
+                }
+                if (t == 1) continue;
+                typicalSect += t + ";";
+            }
+            if (!string.IsNullOrEmpty(typicalSect))
+                typicalSect = typicalSect.Remove(typicalSect.Length - 1, 1);
+            else typicalSect = "0";
+            return typicalSect;
         }
 
         private bool GetHouseSections(int[] selectedHouse, List<List<HouseInfo>> totalObject, List<List<FlatInfo>> sections)
@@ -1720,16 +1760,21 @@ namespace AR_AreaZhuk
             if (IsRemainingDominants)
             {
                 int offsetDom = DominantOffSet;
-
-                //int remaining =Math.Abs(totalObject[0][selectedHouse[0]].SectionsBySize[4].CountStep -
-                //        totalObject[1][selectedHouse[1]].SectionsBySize[0].CountStep);
-                //if (remaining > offsetDom)
-                //{
-                //    selectedHouse[selectedHouse.Length - 1]++;
-                //    if (selectedHouse[selectedHouse.Length - 1] >= totalObject[selectedHouse.Length - 1].Count)
-                //        IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject);
-                //    return true;
-                //}
+                List<FlatInfo> dominants = new List<FlatInfo>();
+                foreach (var s in sections)
+                {
+                    if (!s[0].IsDominant)
+                        continue;
+                    dominants.Add(s[0]);
+                }
+                int remaining = Math.Abs(dominants[0].CountStep - dominants[dominants.Count - 1].CountStep);
+                if (remaining > offsetDom)
+                {
+                    selectedHouse[selectedHouse.Length - 1]++;
+                    if (selectedHouse[selectedHouse.Length - 1] >= totalObject[selectedHouse.Length - 1].Count)
+                        IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject);
+                    return true;
+                }
             }
             selectedHouse[selectedHouse.Length - 1]++;
 
@@ -1943,21 +1988,22 @@ namespace AR_AreaZhuk
             GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
             //    GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
             if (go == null) return;
+            Serializer ser = new Serializer();
+            ser.SerializeList(go, Guid.NewGuid().ToString());
             //go.Houses[0].Sections.Reverse();
             //for (int i = 0; i < go.Houses[0].Sections.Count; i++)
             //{
             //    go.Houses[0].Sections[i].NumberInSpot = go.Houses[0].Sections.Count - i;
             //}
 
-            string imagePath = @"\\ab4\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
+            string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
 
-            string ExcelDataPath = @"\\ab4\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1 -Не трогать.xlsx";
+            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1 -Не трогать.xlsx";
 
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
             var im = imgComb.generateGeneralObject();
             pb.Image = im;
-            Serializer ser = new Serializer();
-            ser.SerializeList(go, Guid.NewGuid().ToString());
+            
             //  break;
 
             //   }
