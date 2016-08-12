@@ -115,12 +115,7 @@ namespace AR_Zhuk_Schema.Scheme
                 if (section.CountStep < HouseSpot.CornerSectionMinStep)
                 {
                     return null;
-                }
-
-                //if (segment.EndType == SegmentEnd.CornerLeft)
-                //    section.SectionType = SectionType.CornerLeft;
-                //else
-                //    section.SectionType = SectionType.CornerRight;                
+                }                             
 
                 var nextSegment = Segments[segment.Number];
 
@@ -276,7 +271,7 @@ namespace AR_Zhuk_Schema.Scheme
                             if (section.IsVertical)
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
-                                section.ImageStart = startCell.Offset(segment.Direction * (WidthOrdinary));
+                                section.ImageStart = startCell.Offset(segment.Direction * WidthOrdinary);
                                 section.ImageAngle = 90;
                             }
                             else
@@ -296,7 +291,7 @@ namespace AR_Zhuk_Schema.Scheme
                             else
                             {
                                 var startCell = segment.GetSectionStartCell(segment.CellStartLeft, startStepInSeg, true);
-                                section.ImageStart = startCell.Offset(segment.Direction * (WidthOrdinary));                                
+                                section.ImageStart = startCell.Offset(segment.Direction * WidthOrdinary);                                
                                 section.ImageAngle = 180;
                             }
                         }
@@ -313,9 +308,11 @@ namespace AR_Zhuk_Schema.Scheme
                                 section.ImageAngle = 270;
                             }
                             else
-                            {                                
-                                section.ImageStart = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
-                                section.ImageAngle = 0;
+                            {
+                                var startCell = segment.GetSectionStartCell(segment.CellStartRight, startStepInSeg, false);
+                                startCell = startCell.Offset(segment.Direction * WidthOrdinary);
+                                section.ImageStart = startCell.Offset(nextSegment.Direction * (section.CountStep - 2));
+                                section.ImageAngle = 180;                                
                             }
                         }
                         // Правая - вверх или влево
