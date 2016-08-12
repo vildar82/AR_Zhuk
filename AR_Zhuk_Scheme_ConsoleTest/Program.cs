@@ -8,7 +8,7 @@ using AR_Zhuk_Scheme_ConsoleTest.Scheme;
 
 namespace AR_Zhuk_Scheme_ConsoleTest
 {
-    class Program
+    class Program 
     {
         static void Main (string[] args)
         {

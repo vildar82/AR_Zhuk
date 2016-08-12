@@ -18,27 +18,22 @@ namespace AR_Zhuk_Schema.Insolation
 
         readonly string[] insTopStandart;
         readonly string[] insBotStandart;
+        readonly string[] insBotStandartReverse;        
         readonly string[] insTopInvert;
-        readonly string[] insBotInvert;        
+        readonly string[] insBotInvert;
+        readonly string[] insBotInvertReverse;
 
         Lighting lightingCurSide;
         Lighting lightingOtherSide;
         
         string[] insCurSide;
-        string[] insOtherSide;
-
-        string insSideCurTopLeft;
-        string insSideCurBotLeft;
-        string insSideCurTopRight;
-        string insSideCurBotRight;
+        string[] insOtherSide;        
 
         Joint jointCurLeft;
         Joint jointCurRight;
 
         bool isFirstFlatInSide;
-        bool isLastFlatInSide;
-
-        
+        bool isLastFlatInSide;        
 
         public InsCheckOrdinary (IInsolation insService, Section section) 
             : base(insService, section)
@@ -46,7 +41,9 @@ namespace AR_Zhuk_Schema.Insolation
             insTopStandart = section.InsTop.Select(m => m.InsValue).ToArray();
             insBotStandart = section.InsBot.Select(m => m.InsValue).ToArray();            
             insTopInvert = insBotStandart;
-            insBotInvert = insTopStandart;            
+            insBotInvert = insTopStandart;
+            insBotStandartReverse = insBotStandart.Reverse().ToArray();
+            insBotInvertReverse = insBotInvert.Reverse().ToArray();
         }
 
         public override List<FlatInfo> CheckSections (Section section)
@@ -137,12 +134,12 @@ namespace AR_Zhuk_Schema.Insolation
                 if (isTop)
                 {
                     insCurSide = insTopStandart;
-                    insOtherSide = insBotStandart;                    
+                    insOtherSide = insBotStandartReverse;
                 }
                 else
                 {
                     insCurSide = insBotStandart;
-                    insOtherSide = insTopStandart;
+                    insOtherSide = null;
                 }
                 jointCurLeft = section.JointLeft;
                 jointCurRight = section.JointRight;            
@@ -152,12 +149,12 @@ namespace AR_Zhuk_Schema.Insolation
                 if (isTop)
                 {
                     insCurSide = insTopInvert;
-                    insOtherSide = insBotInvert;
+                    insOtherSide = insBotInvertReverse;
                 }
                 else
                 {
                     insCurSide = insBotInvert;
-                    insOtherSide = insTopInvert;
+                    insOtherSide = null;
                 }
                 jointCurLeft = section.JointRight;
                 jointCurRight = section.JointLeft;

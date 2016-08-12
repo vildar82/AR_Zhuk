@@ -183,7 +183,8 @@ namespace AR_Zhuk_Schema.Insolation
             bool isFirstFlatInSide, bool isLastFlatInSide)
         {
             // Если это не боковая квартра по типу (не заданы боковые индексы инсоляции), то у такой квартиры не нужно проверять боковую инсоляцию
-            bool flatHasSide = lightingCurSide.Side != Side.None; //flatLightIndexSideCurSide.Count != 0 || flatLightIndexSideOtherSide.Count != 0;
+            bool flatHasSide = (lightingCurSide.Side != Side.None ||
+                                (lightingOtherSide != null && lightingOtherSide.Side != Side.None));
             if (!flatHasSide)
             {
                 return;

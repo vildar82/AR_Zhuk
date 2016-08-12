@@ -35,7 +35,7 @@
   <ItemGroup>
     <Reference Include="BeetlyVisualisation, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>\\picompany.ru\root\dep_ort\8.САПР\технические данные\source\Dll\ЖУКИ\BeetlyVisualisation.dll</HintPath>
+      <HintPath>..\..\BeetlyVisualisation\bin\Debug\BeetlyVisualisation.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

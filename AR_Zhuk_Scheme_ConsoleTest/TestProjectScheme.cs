@@ -33,7 +33,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            var totalHouses = projectSpot.GetTotalHouses(1000);
+            var totalHouses = projectSpot.GetTotalHouses(1000, 100);
 
             timer.Stop();
             Console.WriteLine("Получение всех домов = " + timer.Elapsed.TotalSeconds);
