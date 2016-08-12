@@ -77,8 +77,10 @@ namespace AR_AreaZhuk
           BindingSource bs = new BindingSource();
           bs.DataSource = dataSet;
           DataTable dt = new DataTable();
-          dt.Columns.Add("Общая площадь (м2.)", typeof(Double));
+          dt.Columns.Add("Продаваемая площадь (м2.)", typeof(Double));
           dt.Columns.Add("Жилая площадь (м2.)", typeof(Double));
+          dt.Columns.Add("K1", typeof(Double));
+          dt.Columns.Add("K2", typeof(Double));
           dt.Columns.Add("Общее кол-во секций (шт.)", typeof(Int16));
           dt.Columns.Add("Кол-во одинаковых секций (шт.)", typeof(string));
           dt.Columns.Add("Кол-во квартир (шт.)", typeof(Int16));
@@ -98,18 +100,20 @@ namespace AR_AreaZhuk
               {
                   percent.Add(Math.Round(s.RealPercentage, 1));
               }
-              object[] newrow = new object[6 + percent.Count];
+              object[] newrow = new object[8 + percent.Count];
               newrow[0] = Math.Round(ss.SpotInf.TotalStandartArea, 1);
               newrow[1] = Math.Round(ss.SpotInf.TotalLiveArea, 1);
-              newrow[2] = ss.SpotInf.TotalSections;
-              newrow[3] = ss.SpotInf.TypicalSections;
-              newrow[4] = ss.SpotInf.TotalFlats;
+              newrow[2] = Math.Round(ss.SpotInf.K1,2);
+              newrow[3] =  Math.Round(ss.SpotInf.K2,2);
+              newrow[4] = ss.SpotInf.TotalSections;
+              newrow[5] = ss.SpotInf.TypicalSections;
+              newrow[6] = ss.SpotInf.TotalFlats;
 
               for (int i = 0; i < percent.Count; i++)
               {
-                  newrow[5 + i] = percent[i];
+                  newrow[7 + i] = percent[i];
               }
-              newrow[5 + percent.Count] = ss;
+              newrow[7 + percent.Count] = ss;
 
               dt.Rows.Add(newrow);
               counter++;
