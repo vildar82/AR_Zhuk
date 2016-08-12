@@ -38,7 +38,7 @@ namespace AR_AreaZhuk
         public PIK1.C_Flats_PIK1_AreasDataTable flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
         public bool IsRemainingDominants { get; set; }
         public int DominantOffSet { get; set; }
-
+        BindingSource bs = new BindingSource();
         public static List<SpotInfo> spinfos = new List<SpotInfo>();
         public string PathToFileInsulation { get; set; }
         public static double offset = 5;
@@ -1472,7 +1472,7 @@ namespace AR_AreaZhuk
             profectShema.ReadScheme(PathToFileInsulation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(1000);
             // totalObject[0].Reverse();
 
             System.Diagnostics.Stopwatch sw = new Stopwatch();
@@ -1603,10 +1603,10 @@ namespace AR_AreaZhuk
                     }
                     //if (isOverFlow)
                     //    continue;
-                    //if (counterGood > 5)
-                    //{
-                    //    break;
-                    //}
+                    if (counterGood > 5)
+                    {
+                        break;
+                    }
                     if (isValidPercentage)
                     {
 
@@ -1619,89 +1619,100 @@ namespace AR_AreaZhuk
                         }
                         listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
 
-                            List<HouseInfo> hoyses = new List<HouseInfo>();
-                            int[] indexSelectedId = new int[listCodes.Count];
+                        List<HouseInfo> hoyses = new List<HouseInfo>();
+                        int[] indexSelectedId = new int[listCodes.Count];
 
-                            isContinue = true;
-                            int countSections = listCodes.Count - 1;
+                        isContinue = true;
+                        int countSections = listCodes.Count - 1;
 
-                            while (isContinue)
+                        while (isContinue)
+                        {
+                            GeneralObject go = new GeneralObject();
+                            HouseInfo hi1 = new HouseInfo();
+                            hi1.Sections = new List<FlatInfo>();
+                            int countFlats = 0;
+                            int[] idSections = new int[listCodes.Count];
+                            double totalArea = 0;
+                            double liveArea = 0;
+                            double levelArea = 0;
+                            double levelAreaOffLLU = 0;
+                            double levelAreaOnLLU = 0;
+                            for (int j = 0; j <= countSections; j++)
                             {
-                                GeneralObject go = new GeneralObject();
-                                HouseInfo hi1 = new HouseInfo();
-                                hi1.Sections = new List<FlatInfo>();
-                                int countFlats = 0;
-                                int[] idSections = new int[listCodes.Count];
-                                double totalArea = 0;
-                                double liveArea = 0;
-                                for (int j = 0; j <= countSections; j++)
+                                foreach (var secByPosition in sections)
                                 {
-                                    foreach (var secByPosition in sections)
+                                    if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
+                                          secByPosition[0].NumberInSpot.Equals(listCodes[j].NumberSection)))
+                                        continue;
+                                    var sec = secByPosition.Where(x => x.IdSection.Equals(
+                                                    listCodes[j].IdSections[indexSelectedId[j]])).ToList();
+                                    if (sec.Count == 0) continue;
+                                    idSections[j] = sec[0].IdSection;
+                                    hi1.Sections.Add(sec[0]);
+                                    foreach (var flat in sec[0].Flats)
                                     {
-                                        if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
-                                              secByPosition[0].NumberInSpot.Equals(listCodes[j].NumberSection)))
-                                            continue;
-                                        var sec = secByPosition.Where(x => x.IdSection.Equals(
-                                                        listCodes[j].IdSections[indexSelectedId[j]])).ToList();
-                                        if (sec.Count == 0) continue;
-                                        idSections[j] = sec[0].IdSection;
-                                        hi1.Sections.Add(sec[0]);
-                                        foreach (var flat in sec[0].Flats)
-                                        {
-                                            if (flat.SubZone.Equals("0"))
-                                                continue;
-                                            var currentFlatAreas =
-                                                flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
-                                            var areas = Calculate.GetAreaFlat(sec[0].Floors,flat, currentFlatAreas);
-                                            totalArea += areas[0];
-                                            liveArea += areas[1];
+                                        //if (flat.SubZone.Equals("0"))
+                                        //    continue;
+                                        var currentFlatAreas =
+                                            flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
+                                        var areas = Calculate.GetAreaFlat(sec[0].Floors, flat, currentFlatAreas);
+                                        totalArea += areas[0];
+                                        liveArea += areas[1];
+                                        levelArea += areas[2];
+                                        levelAreaOffLLU += areas[3];
+                                        levelAreaOnLLU += areas[4];
 
-                                        }
-                                        break;
                                     }
-
-                                    countFlats += listCodes[j].CountFlats;
-                                }
-                                var objectByHouses =
-                                    hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
-                                List<HouseInfo> housesInSpot = new List<HouseInfo>();
-                                foreach (var house in objectByHouses)
-                                {
-                                    HouseInfo h = new HouseInfo();
-                                    foreach (var section in house.OrderBy(x => x.NumberInSpot).ToList())
-                                    {
-                                        h.Sections.Add(section);
-                                    }
-                                    housesInSpot.Add(h);
-                                }
-                                var typicalSect = GetCountTypicalSections(idSections);
-                                SpotInfo spGo = new SpotInfo();
-                                spGo = spotInfo.CopySpotInfo(spotInfo);
-                                spGo.TotalStandartArea = totalArea;
-                                spGo.TotalLiveArea = liveArea;
-                                spGo.TotalFlats = countFlats;
-                                spGo.TypicalSections = typicalSect;
-                                spGo.TotalSections = countSections + 1;
-                                string[] strPercent = str.Split(';');
-                                for (int k = 0; k < spotInfo.requirments.Count; k++)
-                                    spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
-                                go.Houses = housesInSpot;
-                                go.SpotInf = spGo;
-                                ob.Add(go);
-
-
-                                indexSelectedId[countSections]++;
-                                if (listCodes[countSections].IdSections.Count <=
-                                    indexSelectedId[countSections])
-                                {
-                                    IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
-                                }
-                                if (listCodes[0].IdSections.Count == indexSelectedId[0])
-                                {
-                                    isContinue = false;
                                     break;
                                 }
-                           // }
+
+                                countFlats += listCodes[j].CountFlats;
+                            }
+                            double k1 = levelAreaOffLLU / levelArea;
+                            double k2 = levelAreaOffLLU / levelAreaOnLLU;
+
+                            var objectByHouses =
+                                hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
+                            List<HouseInfo> housesInSpot = new List<HouseInfo>();
+                            foreach (var house in objectByHouses)
+                            {
+                                HouseInfo h = new HouseInfo();
+                                foreach (var section in house.OrderBy(x => x.NumberInSpot).ToList())
+                                {
+                                    h.Sections.Add(section);
+                                }
+                                housesInSpot.Add(h);
+                            }
+                            var typicalSect = GetCountTypicalSections(idSections);
+                            SpotInfo spGo = new SpotInfo();
+                            spGo = spotInfo.CopySpotInfo(spotInfo);
+                            spGo.K1 = k1;
+                            spGo.K2 = k2;
+                            spGo.TotalStandartArea = totalArea;
+                            spGo.TotalLiveArea = liveArea;
+                            spGo.TotalFlats = countFlats;
+                            spGo.TypicalSections = typicalSect;
+                            spGo.TotalSections = countSections + 1;
+                            string[] strPercent = str.Split(';');
+                            for (int k = 0; k < spotInfo.requirments.Count; k++)
+                                spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
+                            go.Houses = housesInSpot;
+                            go.SpotInf = spGo;
+                            ob.Add(go);
+
+
+                            indexSelectedId[countSections]++;
+                            if (listCodes[countSections].IdSections.Count <=
+                                indexSelectedId[countSections])
+                            {
+                                IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
+                            }
+                            if (listCodes[0].IdSections.Count == indexSelectedId[0])
+                            {
+                                isContinue = false;
+                                break;
+                            }
+                            // }
                             isContinue = true;
 
                         }
@@ -1720,11 +1731,300 @@ namespace AR_AreaZhuk
             isEvent = true;
             sw.Stop();
             MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
+             bs.DataSource = dg2.DataSource;
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
+            //ob = new List<GeneralObject>();
+            //C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
+            //flatsAreas = pikFlats.GetData();
+            //isEvent = false;
+            //btnStartScan.Enabled = false;
+            //btnViewPercentsge.Enabled = true;
+            //Requirment requirment = new Requirment();
+            //FrameWork fw = new FrameWork();
+            //spotInfo = fw.GetSpotInformation();
+            //FormManager.GetSpotTaskFromDG(spotInfo, dg);                          //Условия квартирографии 
+            //string insolationFile = PathToFileInsulation;
+            //List<HouseOptions> options = new List<HouseOptions>();
+            //for (int i = 1; i < 5; i++)
+            //{
+            //    List<bool> dominantsPositions = new List<bool>();
+
+            //    for (int j = 0; j < 5; j++)
+            //    {
+            //        dominantsPositions.Add(
+            //            ((CheckedListBox)this.Controls.Find("chkListP" + i.ToString(), true)[0]).GetItemChecked(j));
+            //    }
+            //    HouseOptions houseOption = new HouseOptions("P" + i.ToString(), Convert.ToInt16(numMainCountFloor.Value), Convert.ToInt16(numDomCountFloor.Value), dominantsPositions);
+            //    options.Add(houseOption);
+            //}
+            //ProjectScheme profectShema = new ProjectScheme(options, spotInfo);
+            //profectShema.ReadScheme(PathToFileInsulation);
+            //Thread th = new Thread(ViewProgress);
+            //th.Start();
+            //List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
+            //// totalObject[0].Reverse();
+
+            //System.Diagnostics.Stopwatch sw = new Stopwatch();
+            //sw.Start();
+            //int megacounter = 0;
+            //int counterGood = 0;
+            //int[] selectedHouse = new int[totalObject.Count];
+            //while (isContinue)
+            //{
+            //    List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
+            //    //Получение cекций из домов
+            //    if (GetHouseSections(selectedHouse, totalObject, sections)) continue;
+            //    if (!isContinue)
+            //        break;
+            //    List<CodeSection> codeSections = new List<CodeSection>();
+            //    int counter = 0;
+            //    //Группировка и сортировка секций
+            //    foreach (var ss in sections.OrderBy(x => x.Count))
+            //    {
+            //        List<Code> codes = new List<Code>();
+            //        CodeSection codeSection = new CodeSection();
+            //        codeSection.CountFloors = ss[0].Floors;
+
+            //        //Группировка по коду
+            //        foreach (var s in ss.OrderByDescending(x => x.CountFlats))
+            //        {
+            //            if (codes.Any(x => x.CodeStr.Equals(s.Code)))
+            //                codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
+            //            else
+            //            {
+            //                codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1) * (s.CountFlats - 1),
+            //                    s.NumberInSpot, s.SpotOwner));
+            //            }
+            //        }
+            //        //Группировка  по кол-ву квартир в секции
+            //        foreach (
+            //            var c in codes.OrderBy(x => x.CountFlats).OrderByDescending(x => x.CodeStr).ToList())
+            //        {
+            //            FlatsInSection flatsInSection = new FlatsInSection();
+            //            flatsInSection.Count = c.CountFlats;
+            //            flatsInSection.SectionsByCode.Add(c);
+            //            if (codeSection.SectionsByCountFlats.Any(x => x.Count.Equals(c.CountFlats)))
+            //                codeSection.SectionsByCountFlats.First(x => x.Count.Equals(c.CountFlats))
+            //                    .SectionsByCode.Add(c);
+            //            else codeSection.SectionsByCountFlats.Add(flatsInSection);
+            //        }
+            //        //Сортировка по кол-ву квартир
+            //        codeSection.SectionsByCountFlats =
+            //            codeSection.SectionsByCountFlats.OrderByDescending(x => x.Count).ToList();
+            //        codeSections.Add(codeSection);
+            //        counter++;
+            //    }
+            //    int[] selectedSectSize = new int[40];
+            //    int[] selectedSectCode = new int[40];
+            //    isContinue2 = true;
+
+
+            //    double totalCountFlats = 0;
+            //    //Общее кол-во квартир в объекте
+            //    for (int i = 0; i < sections.Count; i++)
+            //    {
+            //        totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
+            //    }
+            //    //Обход сформированных секций с уникальными кодами на объект
+            //    while (isContinue2)
+            //    {
+
+            //        List<Code> listCodes = new List<Code>();
+
+            //        megacounter++; //общее кол-во обходов(для информации)
+            //        string codeHouse = "";
+            //        if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0])
+            //        {
+            //            isContinue2 = false;
+            //            break;
+            //        }
+            //        bool isValidPercentage = true;
+            //        string str = "";
+            //        string strCount = "";
+            //        bool isOverFlow = false;
+            //        for (int q = 0; q < spotInfo.requirments.Count; q++)
+            //        {
+            //            var rr = spotInfo.requirments[q];
+            //            int countFlats = 0;
+            //            isOverFlow = false;
+            //            for (int i = 0; i < codeSections.Count; i++)
+            //            {
+            //                countFlats +=
+            //                    Convert.ToInt16(
+            //                        codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
+            //                            selectedSectCode[i]].CodeStr[q].ToString()) *
+            //                    (codeSections[i].CountFloors - 1);
+            //                double percentage1 = countFlats * 100 / totalCountFlats;
+
+            //                if (rr.Percentage + rr.OffSet < percentage1)
+            //                {
+            //                    //selectedSectCode[sections.Count - 1]++;
+            //                    //if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
+            //                    //    IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
+            //                    //selectedSectCode[i]++;
+            //                    //if (selectedSectCode[i] >= codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode.Count)
+            //                    //    IncrementSectionCode(selectedSectCode, selectedSectSize, i, codeSections, ref totalCountFlats);
+            //                    isOverFlow = true;
+            //                    break;
+            //                }
+            //            }
+            //            if (isOverFlow)
+            //            {
+            //                isValidPercentage = false;
+            //                break;
+            //            }
+            //            //Кол-во квартир определенного типа в объекте
+            //            //  currentTotal += countFlats;
+            //            // strCount += countFlats.ToString() + "; ";
+
+            //            //Процентаж определенного типа квартир в объекте
+            //            double percentage = countFlats * 100 / totalCountFlats;
+            //            str += (Math.Round(percentage, 0)).ToString() + ";";
+
+
+            //            if (rr.Percentage - rr.OffSet <= percentage & rr.Percentage + rr.OffSet >= percentage)
+            //                isValidPercentage = true;
+            //            else
+            //            {
+            //                isValidPercentage = false;
+            //                break;
+            //            }
+            //        }
+            //        //if (isOverFlow)
+            //        //    continue;
+            //        //if (counterGood > 5)
+            //        //{
+            //        //    break;
+            //        //}
+            //        if (isValidPercentage)
+            //        {
+
+            //            counterGood++;
+            //            for (int i = 0; i < sections.Count; i++)
+            //            {
+            //                listCodes.Add(
+            //                    codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
+            //                        selectedSectCode[i]]);
+            //            }
+            //            listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
+
+            //                List<HouseInfo> hoyses = new List<HouseInfo>();
+            //                int[] indexSelectedId = new int[listCodes.Count];
+
+            //               // isContinue = true;
+            //                int countSections = listCodes.Count - 1;
+
+            //                while (isContinue)
+            //                {
+            //                    GeneralObject go = new GeneralObject();
+            //                    HouseInfo hi1 = new HouseInfo();
+            //                    hi1.Sections = new List<FlatInfo>();
+            //                    int countFlats = 0;
+            //                    int[] idSections = new int[listCodes.Count];
+            //                    double totalArea = 0;
+            //                    double liveArea = 0;
+            //                    double levelArea = 0;
+            //                    double levelAreaOffLLU = 0;
+            //                    double levelAreaOnLLU = 0;
+            //                    for (int j = 0; j <= countSections; j++)
+            //                    {
+            //                        foreach (var secByPosition in sections)
+            //                        {
+            //                            if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
+            //                                  secByPosition[0].NumberInSpot.Equals(listCodes[j].NumberSection)))
+            //                                continue;
+            //                            var sec = secByPosition.Where(x => x.IdSection.Equals(
+            //                                            listCodes[j].IdSections[indexSelectedId[j]])).ToList();
+            //                            if (sec.Count == 0) continue;
+            //                            idSections[j] = sec[0].IdSection;
+            //                            hi1.Sections.Add(sec[0]);
+            //                            foreach (var flat in sec[0].Flats)
+            //                            {
+            //                                //if (flat.SubZone.Equals("0"))
+            //                                //    continue;
+            //                                var currentFlatAreas =
+            //                                    flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
+            //                                var areas = Calculate.GetAreaFlat(sec[0].Floors,flat, currentFlatAreas);
+            //                                totalArea += areas[0];
+            //                                liveArea += areas[1];
+            //                                levelArea += areas[2];
+            //                                levelAreaOffLLU += areas[3];
+            //                                levelAreaOnLLU += areas[4];
+
+            //                            }
+            //                            break;
+            //                        }
+
+            //                        countFlats += listCodes[j].CountFlats;
+            //                    }
+            //                    double k1 = levelAreaOffLLU/levelArea;
+            //                    double k2 = levelAreaOffLLU / levelAreaOnLLU;
+
+            //                    var objectByHouses =
+            //                        hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
+            //                    List<HouseInfo> housesInSpot = new List<HouseInfo>();
+            //                    foreach (var house in objectByHouses)
+            //                    {
+            //                        HouseInfo h = new HouseInfo();
+            //                        foreach (var section in house.OrderBy(x => x.NumberInSpot).ToList())
+            //                        {
+            //                            h.Sections.Add(section);
+            //                        }
+            //                        housesInSpot.Add(h);
+            //                    }
+            //                    var typicalSect = GetCountTypicalSections(idSections);
+            //                    SpotInfo spGo = new SpotInfo();
+            //                    spGo = spotInfo.CopySpotInfo(spotInfo);
+            //                    spGo.K1 = k1;
+            //                    spGo.K2 = k2;
+            //                    spGo.TotalStandartArea = totalArea;
+            //                    spGo.TotalLiveArea = liveArea;
+            //                    spGo.TotalFlats = countFlats;
+            //                    spGo.TypicalSections = typicalSect;
+            //                    spGo.TotalSections = countSections + 1;
+            //                    string[] strPercent = str.Split(';');
+            //                    for (int k = 0; k < spotInfo.requirments.Count; k++)
+            //                        spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
+            //                    go.Houses = housesInSpot;
+            //                    go.SpotInf = spGo;
+            //                    ob.Add(go);
+
+
+            //                    indexSelectedId[countSections]++;
+            //                    if (listCodes[countSections].IdSections.Count <=
+            //                        indexSelectedId[countSections])
+            //                    {
+            //                        IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
+            //                    }
+            //                    if (listCodes[0].IdSections.Count == indexSelectedId[0])
+            //                    {
+            //                       // isContinue = false;
+            //                        break;
+            //                    }
+            //               // }
+            //                //isContinue = true;
+
+            //            }
+            //            counterGood++;
+            //        }
+
+            //        selectedSectCode[sections.Count - 1]++;
+            //        if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].
+            //            SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
+            //            IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
+            //    }
+            //}
+            //FormManager.ViewDataProcentage(dg2, ob, spotInfo);
+            //th.Abort();
+            //lblCountObjects.Text = ob.Count.ToString();
+            //isEvent = true;
+            //sw.Stop();
+            //MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
+            ////  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
         }
 
-      
+
 
         private static string GetCountTypicalSections(int[] idSections)
         {
@@ -1803,7 +2103,7 @@ namespace AR_AreaZhuk
         {
             if (index == 0)
             {
-                MainForm.isContinue = false;
+                isContinue = false;
                 return;
             }
             houses[index] = 0;
@@ -1951,8 +2251,7 @@ namespace AR_AreaZhuk
         private void dg2_FilterStringChanged(object sender, EventArgs e)
         {
             isEvent = false;
-            BindingSource bs = new BindingSource();
-            bs.DataSource = dg2.DataSource;
+           
             bs.Filter = dg2.FilterString;
             dg2.DataSource = bs;
             lblCountObjects.Text = dg2.RowCount.ToString();
@@ -1988,8 +2287,8 @@ namespace AR_AreaZhuk
             GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
             //    GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
             if (go == null) return;
-            Serializer ser = new Serializer();
-            ser.SerializeList(go, Guid.NewGuid().ToString());
+          //  Serializer ser = new Serializer();
+           // ser.SerializeList(go, Guid.NewGuid().ToString());
             //go.Houses[0].Sections.Reverse();
             //for (int i = 0; i < go.Houses[0].Sections.Count; i++)
             //{
@@ -2003,7 +2302,7 @@ namespace AR_AreaZhuk
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
             var im = imgComb.generateGeneralObject();
             pb.Image = im;
-            
+
             //  break;
 
             //   }
