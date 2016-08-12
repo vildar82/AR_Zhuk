@@ -36,7 +36,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             var totalHouses = projectSpot.GetTotalHouses(1000);
 
             timer.Stop();
-            Console.WriteLine("Получение всех домов = " + timer.Elapsed.Seconds);
+            Console.WriteLine("Получение всех домов = " + timer.Elapsed.TotalSeconds);
 
             Console.WriteLine($"Пятен = {totalHouses.Count}; Домов = {totalHouses.Sum(s => s.Count)} - {string.Join(",", totalHouses.Select(t => t.Count))}");
             
