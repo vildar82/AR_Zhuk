@@ -42,6 +42,12 @@ namespace AR_Zhuk_Schema.Insolation
                     {
                         resInsFlats.Add(flats);
                     }
+#if TEST
+                    else
+                    {
+                        resInsFlats.Add(flats);
+                    }
+#endif
                 }
             }
             return resInsFlats;

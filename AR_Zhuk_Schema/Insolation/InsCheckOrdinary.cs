@@ -78,6 +78,12 @@ namespace AR_Zhuk_Schema.Insolation
                                 // Прошла инсоляция с неприоритетной стороны.
                                 resFlats.Add(flats);
                             }
+#if TEST
+                            else
+                            {
+                                resFlats.Add(flats);
+                            }
+#endif
                         }
                     }
                 }
