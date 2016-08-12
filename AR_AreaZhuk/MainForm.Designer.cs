@@ -91,6 +91,7 @@ namespace AR_AreaZhuk
             this.GetFile = new System.Windows.Forms.Button();
             this.UpdateDbFlats = new System.Windows.Forms.Button();
             this.chkUpdateSections = new System.Windows.Forms.CheckBox();
+            this.btnStop = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -132,7 +133,6 @@ namespace AR_AreaZhuk
             this.dg.TabIndex = 0;
             this.dg.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellEndEdit);
             this.dg.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellValueChanged);
-          //  this.dg.SelectionChanged += new System.EventHandler(this.dg_SelectionChanged);
             // 
             // Column1
             // 
@@ -218,7 +218,6 @@ namespace AR_AreaZhuk
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Подробная информация";
-           // this.groupBox2.Enter += new System.EventHandler(this.groupBox2_Enter);
             // 
             // dg2
             // 
@@ -310,7 +309,6 @@ namespace AR_AreaZhuk
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(336, 117);
             this.tabControl1.TabIndex = 2;
-            //this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -552,7 +550,6 @@ namespace AR_AreaZhuk
             this.pb.TabIndex = 13;
             this.pb.TabStop = false;
             this.pb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pb_MouseClick);
-            this.pb.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pb_MouseDoubleClick);
             // 
             // contextMenuStripImage
             // 
@@ -678,6 +675,7 @@ namespace AR_AreaZhuk
             this.UpdateDbFlats.TabIndex = 23;
             this.UpdateDbFlats.Text = "Обновить базу квартир";
             this.UpdateDbFlats.UseVisualStyleBackColor = true;
+            this.UpdateDbFlats.Visible = false;
             this.UpdateDbFlats.Click += new System.EventHandler(this.UpdateDbFlats_Click);
             // 
             // chkUpdateSections
@@ -690,6 +688,19 @@ namespace AR_AreaZhuk
             this.chkUpdateSections.TabIndex = 24;
             this.chkUpdateSections.Text = "Обновить банк секций";
             this.chkUpdateSections.UseVisualStyleBackColor = true;
+            this.chkUpdateSections.Visible = false;
+            // 
+            // btnStop
+            // 
+            this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStop.Location = new System.Drawing.Point(422, 817);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(75, 23);
+            this.btnStop.TabIndex = 25;
+            this.btnStop.Text = "Стоп";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
             // MainForm
             // 
@@ -697,6 +708,7 @@ namespace AR_AreaZhuk
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1050, 856);
+            this.Controls.Add(this.btnStop);
             this.Controls.Add(this.chkUpdateSections);
             this.Controls.Add(this.UpdateDbFlats);
             this.Controls.Add(this.GetFile);
@@ -788,6 +800,7 @@ namespace AR_AreaZhuk
         private Button UpdateDbFlats;
         private CheckBox chkUpdateSections;
         private AdvancedDataGridView dg2;
+        private Button btnStop;
     }
 }
 

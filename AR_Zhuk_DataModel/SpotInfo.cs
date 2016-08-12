@@ -8,7 +8,9 @@ namespace AR_Zhuk_DataModel
 {
 
     public class SpotInfo
-    {        
+    {
+        public string PathInsolation { get; set; }
+
         public double SpotArea = 2280.96 - 1.152;
         public string GUID { get; set; }
         public int TotalFlats { get; set; }
