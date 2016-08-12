@@ -135,8 +135,8 @@ namespace AR_Zhuk_Schema.Scheme
             {
                 // Для дома из одного прямого сегмента, приоритетная сторона, та котрая ближе к центру застройки
                 var center = new Cell(size.Row / 2, size.Col / 2);
-                var countLeft = (center.Row - CellStartLeft.Row) + (center.Col - CellStartLeft.Col);
-                var countRight = (center.Row - CellStartRight.Row) + (center.Col - CellStartRight.Col);
+                var countLeft = Math.Abs(center.Row - CellStartLeft.Row) + Math.Abs(center.Col - CellStartLeft.Col);
+                var countRight = Math.Abs(center.Row - CellStartRight.Row) + Math.Abs(center.Col - CellStartRight.Col);
                 resPriorLluSide = countLeft < countRight ? Side.Left : Side.Right;
             }
             return resPriorLluSide;

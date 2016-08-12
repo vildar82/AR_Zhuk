@@ -75,9 +75,7 @@ namespace AR_Zhuk_Schema
             }
 
             // Инсоляция - все ячейки            
-            sp.InsModulesAll = insModulesAll;
-
-                        
+            sp.InsModulesAll = insModulesAll;                        
         }        
 
         /// <summary>
