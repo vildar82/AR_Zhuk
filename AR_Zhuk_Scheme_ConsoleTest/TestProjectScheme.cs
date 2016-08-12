@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,8 +28,15 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             ProjectScheme projectSpot = new ProjectScheme(options, sp);
             // Чтение файла схемы объекта
             projectSpot.ReadScheme(insolationFile);
+
             // Получение всех домов
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             var totalHouses = projectSpot.GetTotalHouses(1000);
+
+            timer.Stop();
+            Console.WriteLine("Получение всех домов = " + timer.Elapsed.Seconds);
 
             Console.WriteLine($"Пятен = {totalHouses.Count}; Домов = {totalHouses.Sum(s => s.Count)} - {string.Join(",", totalHouses.Select(t => t.Count))}");
             
