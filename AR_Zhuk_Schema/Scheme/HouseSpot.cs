@@ -259,7 +259,7 @@ namespace AR_Zhuk_Schema.Scheme
                         // Нижняя инсоляция
                         int skipModules = segment.ModulesLeft.Count - (WidthOrdinary + 1); // кол модулей до последних 5
                         section.InsBot = segment.ModulesLeft.Skip(skipModules).ToList();
-                        section.InsBot.AddRange(nextSegment.ModulesRight.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)                        
+                        section.InsBot.AddRange(nextSegment.ModulesLeft.Take(section.CountStep - 2)); // -1 шаг загиба, -1 - первый шаг на текущем сегменте (последний в сегменте)                        
                         section.InsBot.Reverse();
                     }
 

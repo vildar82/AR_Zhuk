@@ -236,7 +236,7 @@ namespace AR_Zhuk_Schema.Insolation
     /// <summary>
     /// Инсоляционное требование - один индекс и кол инсолируемых комнат(окон)
     /// </summary>
-    public struct InsRequired
+    public class InsRequired
     {
         /// <summary>
         /// Требуемое кол инсолиуемых окон
@@ -247,7 +247,17 @@ namespace AR_Zhuk_Schema.Insolation
         /// </summary>
         public string InsIndex { get; private set; }
 
-        public InsRequired (string item) : this()
+        public InsRequired (string insValue, int count)        
+        {
+            InsIndex = insValue;
+            CountLighting = count;
+        }
+
+        /// <summary>
+        /// item - требование инсоляции - 2C
+        /// </summary>
+        /// <param name="item"></param>
+        public InsRequired (string item)
         {
             string insIndex;
             CountLighting = 0;
