@@ -163,13 +163,6 @@ namespace AR_AreaZhuk.Controller
                area[1] += (4) * areaLiveStrong; //2-5 этаж жилая плоащдь
                area[1] += (floors - 6) * areaLiveStandart; //6-... этаж жилая плоащь
            }
-           //if (area[1] < 2)
-           //{
-           //    if (area[1] == 0)
-           //    {
-
-           //    }
-           //}
            return area;
        }
     }

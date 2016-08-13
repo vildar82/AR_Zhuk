@@ -31,7 +31,7 @@ namespace AR_AreaZhuk
                Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q*4, "Рядовая", 18,false,false,roomInfo)); //Рядовая 10-18
                Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Рядовая", 25, false, false, roomInfo)); //Рядовая 19-25
                Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Угловая лево", 18, true, false, roomInfo)); //Угловая лево 10-18
-               Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Угловая право", 18, false, true, roomInfo)); //Угловая право
+               Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Угловая право", 18, false, true, roomInfo)); //Угловая право 10-18
 
            }
        }

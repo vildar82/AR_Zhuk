@@ -34,13 +34,13 @@ namespace AR_AreaZhuk
             InitializeComponent();
         }
 
-
+        private bool isStop = false;
         public PIK1.C_Flats_PIK1_AreasDataTable flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
         public bool IsRemainingDominants { get; set; }
         public int DominantOffSet { get; set; }
         BindingSource bs = new BindingSource();
         public static List<SpotInfo> spinfos = new List<SpotInfo>();
-        public string PathToFileInsulation { get; set; }
+        public string PathToFileInsolation { get; set; }
         public static double offset = 5;
         public static bool isSave = false;
         public static int countGood = 0;
@@ -58,6 +58,12 @@ namespace AR_AreaZhuk
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
+            if (Environment.UserName.Equals("khisyametdinovvt") | Environment.UserName.Equals("ostaninam") | Environment.UserName.Equals("inkinli"))
+            {
+                UpdateDbFlats.Visible = true;
+                chkUpdateSections.Visible = true;
+            }
+           
             DominantOffSet = 5;
             chkListP1.SetItemChecked(chkListP1.Items.Count - 1, true);
             chkListP2.SetItemChecked(chkListP2.Items.Count - 1, true);
@@ -85,6 +91,11 @@ namespace AR_AreaZhuk
             FrameWork fw = new FrameWork();
             //var roomInfo = fw.GetRoomData("");
             spotInfo = fw.GetSpotInformation();
+            Serializer s = new Serializer();
+            var newSpotInfo = s.GetLastSpot();
+            if (newSpotInfo.requirments.Count != 0)
+                spotInfo = newSpotInfo;
+          //  spotInfo = s.GetLastSpot() ?? new SpotInfo();
             foreach (var r in spotInfo.requirments)
             {
                 dg.Rows.Add();
@@ -112,714 +123,16 @@ namespace AR_AreaZhuk
         }
 
 
-        //        public Section GetInsulationSections(List<FlatInfo> sections, bool isRightOrTopLLu, bool isVertical, int indexRowStart,
-        //            int indexColumnStart, Insolation insulation, bool isCorner, int numberSection, SpotInfo sp)
-        //        {
-        //            // List<FlatInfo> listSections = new List<FlatInfo>();
-        //            Section s = new Section();
-        //            s.Sections = new List<FlatInfo>();
-        //            s.IsCorner = isCorner;
-        //            s.IsVertical = isVertical;
-        //            s.NumberInSpot = numberSection;
-        //            s.SpotOwner = insulation.Name;
-        //            s.CountStep = sections[0].CountStep;
-        //            s.CountModules = sections[0].CountStep * 4;
-        //            s.Floors = sections[0].Floors;
-        //            foreach (var sect in sections)
-        //            {
-
-        //                if (sect.Flats.Count < 4)
-        //                    continue;
-
-        //                //bool isBreak = false;
-        //                //for (int i = 0; i < 7; i++)
-        //                //{
-        //                //    if (!section.Flats[i].SubZone.Contains('1')) continue;
-        //                //    isBreak = true;
-        //                //    break;
-        //                //}
-        //                //if (isBreak)
-        //                //    continue;
-
-        //                //  Section s = new Section();
-
-        //                //s.IsCorner = isCorner;
-        //                //s.IsVertical = isVertical;
-        //                // s.Sections = new List<FlatInfo>();
-        //                FlatInfo flats = new FlatInfo();
-        //                flats.IdSection = sect.IdSection;
-        //                flats.IsInvert = !isRightOrTopLLu;
-        //                flats.SpotOwner = insulation.Name;
-        //                flats.NumberInSpot = numberSection;
-        //                flats.CountStep = sections[0].CountStep;
-        //                flats.Flats = sect.Flats;
-        //                flats.IsCorner = isCorner;
-        //                flats.IsVertical = isVertical;
-        //                // flats.CountStep = section.CountStep;
-
-        //                flats.Floors = sect.Floors;
-        //                int direction = 1;
-        //                int indexColumnLLUTop = 0;
-        //                int indexColumnLLUBottom = 0;
-        //                if (isRightOrTopLLu)
-        //                {
-        //                    if (insulation.IsLeftNizSection)
-        //                    {
-        //                        if (isVertical)
-        //                            indexColumnLLUTop = 3;
-        //                        else
-        //                        {
-        //                            indexColumnLLUBottom = 3;
-        //                            indexColumnLLUTop = 0;
-        //                        }
-        //                        direction = -1;
-        //                    }
-        //                    else if (insulation.IsRightNizSection)
-        //                    {
-        //                        if (isVertical)
-        //                        {
-        //                            indexColumnLLUTop = 0;
-        //                            indexColumnLLUBottom = -3;
-        //                            direction = -1;
-        //                        }
-        //                        else
-        //                        {
-        //                            indexColumnLLUBottom = 0;
-        //                            indexColumnLLUTop = -3;
-        //                            direction = -1;
-        //                            if (!isCorner)
-        //                            {
-        //                                indexColumnLLUBottom = 3;
-        //                                indexColumnLLUTop = 0;
-        //                                direction = -1;
-        //                            }
-        //                        }
-
-        //                    }
-
-        //                }
-        //                else
-        //                {
-        //                    if (insulation.IsRightNizSection)
-        //                    {
-        //                        direction = -1;
-        //                        indexColumnLLUBottom = 0;
-        //                        indexColumnLLUTop = -3;
-        //                    }
-        //                    else
-        //                    {
-        //                        indexRowStart = insulation.MinLeftXY[1];
-        //                        indexColumnLLUBottom = 3;
-        //                    }
-
-        //                }
-        //                List<RoomInfo> topFlats = new List<RoomInfo>();
-        //                List<RoomInfo> bottomFlats = new List<RoomInfo>();
-
-        //                topFlats = GetTopFlatsInSection(sect.Flats, true, false);
-        //                bottomFlats = GetTopFlatsInSection(sect.Flats, false, false);
-
-        //                int indexRow = indexRowStart;
-        //                int indexColumn = indexColumnStart;
-        //                bool isValid = false;
-        //                for (int i = 0; i < topFlats.Count; i++)
-        //                {
-        //                    if (isCorner & topFlats.Count - 1 == i & !insulation.IsRightNizSection)
-        //                    {
-        //                        indexRow--;
-        //                        indexRow--;
-        //                    }
-        //                    var topFlat = topFlats[i];
-        //                    var rul = insulation.RoomInsulations.Where(x => x.CountRooms.Equals(Convert.ToInt16(topFlat.SubZone))).ToList();
-        //                    if (rul.Count == 0)
-        //                    {
-        //                        if (isVertical)
-        //                            indexRow += topFlat.SelectedIndexTop * direction;
-        //                        else indexColumn += topFlat.SelectedIndexTop * direction;
-        //                        continue;
-        //                    }
-        //                    isValid = false;
-
-        //                    //var lightTop = GetLightingPosition(topFlat.LightingTop, topFlat, sect.Flats);
-        //                    //var lightNiz = GetLightingPosition(topFlat.LightingNiz, topFlat, sect.Flats);
-        //                    var lightTop = LightingStringParser.GetLightings(topFlat.LightingTop);
-        //                    var lightNiz = LightingStringParser.GetLightings(topFlat.LightingNiz);
-        //                    if (lightTop == null | lightNiz == null)
-        //                    {
-        //                        break;
-        //                    }
-        //                    string ins = "";
-
-        //                    foreach (var r in rul[0].Rules)
-        //                    {
-        //                        string[] masRule = r.Split('=', '|');
-        //                        int countValidCell = 0;
-        //                        if (insulation.IsRightNizSection & isCorner & i == 0)
-        //                        {
-        //                            indexColumn = insulation.MaxRightXY[0];
-        //                            bool isOr = false;
-        //                            foreach (var ln in lightNiz)
-        //                            {
-        //                                if (ln.Equals(0)) break;
-        //                                //if (isOr)
-        //                                //    continue;
-        //                                isOr = ln < 0;
-        //                                int v = insulation.MaxRightXY[1] - 5 + topFlat.SelectedIndexBottom - Math.Abs(ln) + 1;
-        //                                ins = insulation.Matrix[indexColumn, v];
-
-        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
-        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
-        //                                    continue;
-        //                                countValidCell++;
-
-        //                            }
-        //                            isOr = false;
-        //                            foreach (var ln in lightTop)
-        //                            {
-        //                                if (ln.Equals(0)) break;
-        //                                //if (isOr)
-        //                                //    continue;
-        //                                isOr = ln < 0;
-        //                                int v = insulation.MaxRightXY[1] - 5 + Math.Abs(ln);
-        //                                ins = insulation.Matrix[insulation.MaxRightXY[0] - 3, v];
-        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
-
-        //                                else if (!masRule[1].Equals(ins.Split('|')[1]))
-        //                                    continue;
-        //                                countValidCell++;
-        //                            }
-        //                            indexRow = insulation.MaxRightXY[1];
-        //                            indexColumn = insulation.MaxRightXY[0] - 3;
-
-        //                        }
-        //                        else if ((indexRow == indexRowStart & isVertical) | (indexColumn == indexColumnStart & !isVertical) | topFlat.SelectedIndexBottom == 0)  //первая справа квартира
-        //                        {
-        //                            bool isOr = false;
-        //                            foreach (var ln in lightNiz)
-        //                            {
-        //                                if (ln.Equals(0)) break;
-        //                                //if (isOr)
-        //                                //    continue;
-        //                                isOr = ln < 0;
-        //                                if (isVertical)
-        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow + Math.Abs(ln) * direction];
-        //                                else
-        //                                    ins = insulation.Matrix[indexColumn + Math.Abs(ln) * (-direction) + direction * topFlat.SelectedIndexBottom + direction, indexRow + indexColumnLLUBottom];
-        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
-        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
-        //                                    continue;
-        //                                countValidCell++;
-
-        //                            }
-        //                            isOr = false;
-        //                            foreach (var ln in lightTop)
-        //                            {
-
-        //                                if (ln.Equals(0)) break;
-        //                                //if (isOr)
-        //                                //    continue;
-        //                                isOr = ln < 0;
-        //                                if (isVertical)
-        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUTop, indexRow + Math.Abs(ln) * direction];
-        //                                else ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUTop];
-        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
-
-        //                                else if (!masRule[1].Equals(ins.Split('|')[1]))
-        //                                    continue;
-        //                                countValidCell++;
-        //                            }
-        //                        }
-        //                        else if (indexRow != 0 & topFlat.SelectedIndexBottom > 0)               //первая слева квартира
-        //                        {
-        //                            bool isOr = false;
-        //                            foreach (var ln in lightNiz)
-        //                            {
-        //                                if (ln.Equals(0)) break;
-        //                                //if (isOr)
-        //                                //    continue;
-        //                                isOr = ln < 0;
-        //                                if (isCorner)
-        //                                {
-        //                                    if (insulation.IsLeftNizSection)
-        //                                        ins = insulation.Matrix[insulation.MinLeftXY[0], indexRow - Math.Abs(ln) * direction];
-        //                                    else if (insulation.IsRightNizSection)
-        //                                        // ins = insulation.Matrix[indexColumn - topFlat.SelectedIndexTop - 1 + Math.Abs(ln), indexRow];
-        //                                        ins = insulation.Matrix[indexColumn - topFlat.SelectedIndexTop + Math.Abs(ln), indexRow];
-        //                                }
-        //                                else if (isVertical)
-        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction];
-        //                                else ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow +
-
-        //indexColumnLLUBottom];
-        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
-
-        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
-        //                                    continue;
-        //                                countValidCell++;
-        //                            }
-        //                            isOr = false;
-        //                            foreach (var ln in lightTop)
-        //                            {
-        //                                if (ln.Equals(0)) break;
-        //                                //isOr = ln < 0;
-        //                                if (isCorner & insulation.IsLeftNizSection)
-        //                                {
-        //                                    ins = insulation.Matrix[insulation.MinLeftXY[0] + 3, indexRow - Math.Abs(ln) * direction];
-        //                                }
-        //                                else if (isCorner & insulation.IsRightNizSection)
-        //                                {
-        //                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln), indexRow - 3];
-        //                                }
-
-        //                                else if (isVertical)
-        //                                    ins = insulation.Matrix[indexColumn + indexColumnLLUTop, indexRow + Math.Abs(ln) * direction];
-        //                                else ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUTop];
-
-        //                                ///////cxdzscs
-        //                                if (string.IsNullOrWhiteSpace(ins)) continue;
-        //                                if (!masRule[1].Equals(ins.Split('|')[1]))
-        //                                    continue;
-        //                                countValidCell++;
-        //                            }
-        //                        }
-        //                        if (Convert.ToInt16(masRule[0]) > countValidCell)
-        //                            continue;
-        //                        isValid = true;
-        //                        if (isVertical)
-        //                            indexRow += topFlat.SelectedIndexTop * direction;
-        //                        else if (i == 0 & isCorner & insulation.IsRightNizSection)
-        //                        { }
-        //                        else indexColumn += topFlat.SelectedIndexTop * direction;
-
-        //                        //else if (i >=2  & isCorner & insulation.IsRightNizSection)
-        //                        //    indexColumn += topFlat.SelectedIndexTop * indexLLU;
-        //                        // counteR++;
-        //                        break;
-        //                    }
-        //                    if (!isValid) break;
-        //                }
-        //                if (!isValid) continue;
-        //                //  indexRow = 0;
-        //                bool isFirstEnter = true;
-        //                bool isPovorot = false;
-        //                if (insulation.IsRightNizSection & isCorner)
-        //                {
-        //                    direction = 1;
-        //                }
-        //                if (isVertical)
-        //                    indexRowStart = 9;
-        //                foreach (var bottomFlat in bottomFlats)
-        //                {
-        //                    var rul =
-        //                        insulation.RoomInsulations.Where(x => x.CountRooms.Equals(Convert.ToInt16(bottomFlat.SubZone)))
-        //                            .ToList();
-        //                    if (rul.Count == 0)
-        //                    {
-        //                        if (isVertical)
-        //                            indexRow += bottomFlat.SelectedIndexBottom * direction;
-        //                        else indexColumn += bottomFlat.SelectedIndexBottom * direction;
-
-        //                        continue;
-        //                    }
-        //                    if (isCorner & isFirstEnter & !insulation.IsRightNizSection)
-        //                    {
-        //                        indexRow++;
-        //                        indexRow++;
-        //                        isFirstEnter = false;
-
-        //                    }
-        //                    isValid = false;
-        //                    //  string[] lightNizStr = bottomFlat.LightingNiz.Split(';');
-        //                    // var lightNiz = GetLightingPosition(bottomFlat.LightingNiz, bottomFlat, sect.Flats);
-        //                    var lightNiz = LightingStringParser.GetLightings(bottomFlat.LightingNiz);
-        //                    if (lightNiz == null)
-        //                        break;
-        //                    int tempIndex = indexRow;
-        //                    string ins = "";
-        //                    foreach (var r in rul[0].Rules)
-        //                    {
-        //                        indexRow = tempIndex;
-        //                        string[] masRule = r.Split('=', '|');
-        //                        int countValidCell = 0;
-        //                        bool isOr = false;
-        //                        foreach (var ln in lightNiz)
-        //                        {
-        //                            if (ln.Equals(0)) break;
-        //                            //if (isOr)
-        //                            //    continue;
-        //                            isOr = ln < 0;
-        //                            if (isCorner)
-        //                            {
-        //                                if (isPovorot)
-        //                                {
-        //                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
-        //                                }
-
-        //                                else if ((insulation.IsLeftNizSection) && (indexRow - Math.Abs(ln) * direction) - insulation.MaxLeftXY[1] >= 1)
-        //                                {
-        //                                    // indexRow = 13;
-        //                                    indexColumn = insulation.MaxLeftXY[0];
-        //                                    if (Math.Abs(ln) >= 3)
-        //                                        indexColumn = insulation.MaxLeftXY[0] - 3;
-        //                                    ins = insulation.Matrix[indexColumn - Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
-        //                                    indexRow = insulation.MaxLeftXY[1];
-
-        //                                }
-        //                                else if ((insulation.IsRightNizSection) && (indexColumn + Math.Abs(ln) - insulation.MaxRightXY[0] >= 1))
-        //                                {
-        //                                    indexColumn = insulation.MaxRightXY[0];
-        //                                    if (Math.Abs(ln) >= 3)
-        //                                        indexRow = insulation.MaxRightXY[1] + 3;
-        //                                    ins = insulation.Matrix[indexColumn, indexRow + indexColumnLLUBottom - Math.Abs(ln)];
-        //                                    indexRow = insulation.MaxRightXY[1] - 3;
-        //                                }
-        //                                else if (!insulation.IsRightNizSection)
-        //                                {
-        //                                    ins = insulation.Matrix[insulation.MaxLeftXY[0], indexRow - Math.Abs(ln) * direction];
-        //                                }
-        //                                else if (insulation.IsRightNizSection)
-        //                                {
-        //                                    ins = insulation.Matrix[indexColumn + Math.Abs(ln) * direction, indexRow + indexColumnLLUBottom];
-        //                                }
-        //                                else
-        //                                {
-        //                                    ins = insulation.Matrix[insulation.MaxRightXY[0], indexRow + Math.Abs(ln)];
-        //                                }
-
-        //                            }
-        //                            else if (isVertical)
-        //                            {
-        //                                // ins = insulation.Matrix[indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction - topFlats[topFlats.Count - 1].SelectedIndexBottom * direction];
-        //                                if (indexRow - Math.Abs(ln) * direction >= 0)
-        //                                    ins =
-        //                                        insulation.Matrix[
-        //                                            indexColumn + indexColumnLLUBottom, indexRow - Math.Abs(ln) * direction];
-        //                            }
-        //                            else
-        //                                ins =
-        //                                    insulation.Matrix[
-        //                                        indexColumn - Math.Abs(ln) * direction -
-        //                                        topFlats[topFlats.Count - 1].SelectedIndexBottom * direction,
-        //                                        indexRow + indexColumnLLUBottom];
-        //                            if (string.IsNullOrWhiteSpace(ins)) continue;
-        //                            if (!masRule[1].Equals(ins.Split('|')[1]))
-        //                                continue;
-        //                            countValidCell++;
-        //                        }
-        //                        if (Convert.ToInt16(masRule[0]) > countValidCell)
-        //                            continue;
-        //                        isValid = true;
-        //                        if (isCorner & insulation.IsRightNizSection)
-        //                        {
-        //                            indexColumn += bottomFlat.SelectedIndexBottom * direction;
-        //                        }
-        //                        else if (isCorner & indexRow - bottomFlat.SelectedIndexBottom * direction < insulation.MaxLeftXY[1] & !isPovorot)
-        //                        {
-        //                            indexRow -= bottomFlat.SelectedIndexBottom * direction;
-
-        //                        }
-        //                        else if (isCorner & indexRow - bottomFlat.SelectedIndexBottom * direction >= insulation.MaxLeftXY[1] & !isPovorot)
-        //                        {
-        //                            indexRow = insulation.MaxLeftXY[1] - 3;
-        //                            indexColumn = bottomFlat.SelectedIndexBottom - 3;
-        //                            isPovorot = true;
-        //                            //  indexColumn -= (indexRow - bottomFlat.SelectedIndexBottom * indexLLU - 13) * indexLLU;
-        //                        }
-        //                        else if (isPovorot)
-        //                        {
-        //                            indexColumn -= bottomFlat.SelectedIndexBottom * direction;
-        //                        }
-        //                        else if (isVertical)
-        //                            indexRow -= bottomFlat.SelectedIndexBottom * direction;
-        //                        else indexColumn -= bottomFlat.SelectedIndexBottom * direction;
-        //                        break;
-        //                    }
-        //                    if (!isValid) break;
-        //                }
-        //                if (!isValid) continue;
-        //                bool isAdd = true;
-        //                //проверка на однотипность
-        //                foreach (var sectionGeneral in s.Sections)
-        //                {
-        //                    if (!IsEqualSections(sectionGeneral.Flats, flats.Flats))
-        //                        continue;
-        //                    isAdd = false;
-        //                    break;
-
-        //                }
-        //                if (isAdd)
-        //                {
-        //                    SpotInfo sp1 = new SpotInfo();
-        //                    sp1 = sp1.CopySpotInfo(spotInfo);
-        //                    for (int l = 0; l < flats.Flats.Count; l++) //Квартиры
-        //                    {
-        //                        if (flats.Flats[l].SubZone.Equals("0")) continue;
-        //                        var reqs =
-        //                            sp1.requirments.Where(
-        //                                x => x.CodeZone.Equals(flats.Flats[l].SubZone))
-        //                                .Where(
-        //                                    x =>
-        //                                        x.MaxArea + 5 >= flats.Flats[l].AreaTotal &
-        //                                        x.MinArea - 5 <= flats.Flats[l].AreaTotal)
-        //                                .ToList();
-        //                        if (reqs.Count == 0) continue;
-        //                        reqs[0].RealCountFlats++;
-        //                    }
-        //                    string code = "";
-        //                    foreach (var r in sp1.requirments)
-        //                    {
-        //                        code += r.RealCountFlats.ToString();
-        //                    }
-        //                    flats.Code = code;
-        //                    s.Sections.Add(flats);
-        //                }
-        //            }
-        //            return s;
-        //        }
-
-        //List<RoomInfo> GetTopFlatsInSection(List<RoomInfo> section, bool isTop, bool isRight)
+        //public void GetAllSectionPercentage(List<List<HouseInfo>> listSections, Requirment requirment)
         //{
-        //    List<RoomInfo> topFlats = new List<RoomInfo>();
-        //    if (isTop)
-        //    {
-        //        if (!isRight)
-        //        {
-        //            for (int i = section.Count - 3; i < section.Count; i++)
-        //            {
-        //                if (section[i].SelectedIndexTop == 0) continue;
-        //                topFlats.Add(section[i]);
-        //            }
-
-        //            for (int i = 0; i < 4; i++)
-        //            {
-        //                if (section[i].SelectedIndexTop == 0) continue;
-        //                topFlats.Add(section[i]);
-        //            }
-
-        //        }
-        //        else
-        //        {
-        //            for (int i = 3; i >= 0; i--)
-        //            {
-        //                if (section[i].SelectedIndexTop == 0) continue;
-        //                topFlats.Add(section[i]);
-        //            }
-
-        //            for (int i = section.Count - 1; i > section.Count - 4; i--)
-        //            {
-        //                if (section[i].SelectedIndexTop == 0) continue;
-        //                topFlats.Add(section[i]);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (!isRight)
-        //        {
-        //            for (int i = 0; i < section.Count; i++)
-        //            {
-        //                if (section[i].SelectedIndexTop != 0) continue;
-        //                topFlats.Add(section[i]);
-        //            }
-        //        }
-        //        else
-        //        {
-
-
-        //            for (int i = section.Count - 1; i >= 0; i--)
-        //            {
-        //                if (section[i].SelectedIndexTop != 0) continue;
-        //                topFlats.Add(section[i]);
-        //            }
-        //        }
-        //    }
-        //    return topFlats;
+        //    int counter = 0;
+        //    int allCounter = 0;
+        //    bool isContinue = true;
+        //    houses = listSections;
+        //    ParallelOptions po = new ParallelOptions();
+        //    po.MaxDegreeOfParallelism = 15;
+        //    Parallel.For(0, houses[0].Count, po, GetGeneralObjects);
         //}
-
-        //public bool IsEqualSections(List<RoomInfo> section1, List<RoomInfo> section2)
-        //{
-        //    if (section1.Count != section2.Count) return false;
-        //    foreach (var flat1 in section1)
-        //    {
-        //        int countInSection1 = section1.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-        //        int countInSection2 = section2.Where(x => x.ShortType.Equals(flat1.ShortType)).ToList().Count();
-        //        if (countInSection1 != countInSection2)
-        //            return false;
-
-        //    }
-        //    return true;
-        //}
-
-
-
-        //private int[] GetLightingPosition(string lightStr, RoomInfo room, List<RoomInfo> allRooms)
-        //{
-        //    int[] light = new int[5];
-        //    string[] masStr = lightStr.Split(';');
-        //    //var l = lightStr.Length;
-        //    //if (masStr.Length > 1)
-        //    //{
-
-        //    //    string[] ss = masStr[1].Split('*');
-        //    //    if (allRooms.IndexOf(room) - 1 < 0)
-        //    //        return null;
-        //    //    var preRoom = allRooms[allRooms.IndexOf(room) - 1];
-        //    //    if (preRoom.LinkagePOSLE.Contains(ss[0].Trim().Substring(0, 1)) &
-        //    //        (room.LinkageDO.Contains(ss[0].Trim().Substring(1, 1))))
-        //    //    {
-        //    //        masStr[0] = ss[1];
-        //    //    }
-        //    //}
-        //    if (masStr[0].Contains('|'))
-        //    {
-        //        if (masStr[0].Contains('-'))
-        //        {
-        //            string[] ss = masStr[0].Split('-');
-        //            if (ss[0].Contains('|'))
-        //            {
-
-        //                light[0] = -Convert.ToInt16(ss[0].Split('|')[0]);
-        //                light[1] = -Convert.ToInt16(ss[0].Split('|')[1]);
-        //                light[2] = Convert.ToInt16(ss[1]);
-        //            }
-        //            else
-        //            {
-        //                light[1] = -Convert.ToInt16(ss[1].Split('|')[0]);
-        //                light[2] = -Convert.ToInt16(ss[1].Split('|')[1]);
-        //                light[0] = Convert.ToInt16(ss[0]);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            light[0] = -Convert.ToInt16(masStr[0].Split('|')[0]);
-        //            light[1] = -Convert.ToInt16(masStr[0].Split('|')[1]);
-        //        }
-        //    }
-        //    else if (masStr[0].Contains('-'))
-        //    {
-        //        int counter = 0;
-        //        string[] ms = masStr[0].Split('|');
-        //        if (ms[0].Contains('-'))
-        //        {
-        //            for (int i = Convert.ToInt16(ms[0].Split('-')[0]); i <= Convert.ToInt16(ms[0].Split('-')[1]); i++)
-        //            {
-        //                light[counter] = i;
-        //                counter++;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            for (int i = Convert.ToInt16(ms[1].Split('-')[0]); i <= Convert.ToInt16(ms[1].Split('-')[1]); i++)
-        //            {
-        //                light[counter] = i;
-        //                counter++;
-        //            }
-        //        }
-        //    }
-        //    else if (masStr[0].Contains(','))
-        //    {
-        //        string[] mass = masStr[0].Split(',');
-        //        int counter = 0;
-        //        for (int i = 0; i < mass.Length; i++)
-        //        {
-        //            light[counter] = Convert.ToInt16(mass[i]);
-        //            counter++;
-        //        }
-        //    }
-        //    else light[0] = Convert.ToInt16(masStr[0]);
-        //    return light;
-        //}
-
-
-        //public bool IncrementSection(List<HouseInfo> listSections, int i)
-        //{
-        //    if (i == -1)
-        //    {
-        //        i = 0;
-        //    }
-        //    var sizeSection = listSections[i].SectionsBySize[listSections[i].LastSizeSelected];
-        //    if (i == 0)
-        //    {
-        //        return false;
-        //        //Для поточности
-        //        //for (int j = 1; j < listSections.Count; j++)
-        //        //{
-        //        //    listSections[j].LastSizeSelected = 0;
-        //        //}
-        //    }
-        //    // sizeSection.LastSectionSelected++;
-        //    sizeSection.LastSectionSelected++;
-        //    //sizeSection.LastSectionSelected +5;
-        //    if (sizeSection.LastSectionSelected >= (sizeSection.Sections.Count))    //последняя секция по размеру
-        //    {
-        //        if (i == 0)
-        //        {
-        //            sizeSection.LastSectionSelected = 0;
-        //            listSections[i].LastSizeSelected++;
-        //            if (listSections[i].LastSizeSelected.Equals(listSections[i].SectionsBySize.Count))
-        //                return false;
-
-        //        }
-        //        sizeSection.LastSectionSelected = 0;
-        //        listSections[i].LastSizeSelected++;
-        //        if (listSections[i].LastSizeSelected.Equals(listSections[i].SectionsBySize.Count))
-        //        {
-        //            listSections[i].LastSizeSelected = 0;
-        //            if (!IncrementSection(listSections, i - 1))
-        //                return false;
-        //            //var preSection = listSections[i-1].Sections[listSections[i-1].LastSizeSelected];
-        //            //preSection.LastSectionSelected++;
-
-        //        }
-        //    }
-        //    return true;
-        //}
-
-        //public bool IsExist(HouseInfo house)
-        //{
-        //    bool isEqual = false;
-        //    if (houses.Count == 0)
-        //        return false;
-        //    for (int i = 0; i < houses.Count; i++)
-        //    {
-        //        isEqual = true;
-        //        for (int j = 0; j < houses[0][i].SectionsBySize.Count; j++)
-        //        {
-        //            for (int k = 0; k < houses[0][i].SectionsBySize[j].Sections.Count; k++)
-        //            {
-        //                for (int l = 0; l < houses[0][i].SectionsBySize[j].Sections[k].Flats.Count; l++)
-        //                {
-        //                    if (houses[0][i].SectionsBySize[j].Sections[k].Flats[l].Type.Equals(house.SectionsBySize[j].Sections[k].Flats[l].Type)) continue;
-        //                    isEqual = false;
-        //                    break;
-        //                }
-
-        //            }
-        //            if (!isEqual)
-        //                break;
-        //        }
-        //        if (isEqual)
-        //        {
-        //            return true;
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
-
-
-        public void GetAllSectionPercentage(List<List<HouseInfo>> listSections, Requirment requirment)
-        {
-            int counter = 0;
-            int allCounter = 0;
-            bool isContinue = true;
-            houses = listSections;
-            //   label3.Text = DateTime.Now.ToString();
-            ParallelOptions po = new ParallelOptions();
-            po.MaxDegreeOfParallelism = 15;
-            Parallel.For(0, houses[0].Count, po, GetGeneralObjects);
-        }
 
         private void GetGeneralObjects(int index)
         {
@@ -929,105 +242,6 @@ namespace AR_AreaZhuk
         }
 
 
-        //public void IncrementSection(List<HouseInfo> listSections, int indexSection, int[] indexSelectedSize, int[] indexSelectedSection, bool isSizeSection)
-        //{
-        //    if (indexSection == 0)
-        //    {
-        //        isContinue = false;
-        //        return;
-        //    }
-        //    var section = listSections[indexSection];
-        //    var sectionSize = section.SectionsBySize[indexSelectedSize[indexSection]];
-        //    if (isSizeSection)
-        //    {
-        //        indexSelectedSize[indexSection]++;
-
-        //        var section1 = listSections[indexSection - 1];
-        //        var sectionSize1 = section.SectionsBySize[indexSelectedSize[indexSection - 1]];
-        //        if (indexSelectedSize[indexSection] >= section.SectionsBySize.Count)
-        //        {
-        //            IncrementSection(listSections, indexSection - 1, indexSelectedSize, indexSelectedSection,
-        //                isSizeSection);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        indexSelectedSection[indexSection]++;
-        //        if (indexSelectedSection[indexSection] >= sectionSize.Sections.Count)
-        //        {
-        //            indexSelectedSection[indexSection - 1]++;
-        //            indexSelectedSection[indexSection] = 0;
-        //            // indexSelectedSize[indexSection]=0;
-        //            var section1 = listSections[indexSection - 1];
-        //            var sectionSize1 = section1.SectionsBySize[indexSelectedSize[indexSection - 1]];
-        //            if (indexSelectedSection[indexSection - 1] >= sectionSize1.Sections.Count)
-        //            {
-        //                IncrementSection(listSections, indexSection - 1, indexSelectedSize, indexSelectedSection,
-        //              true);
-        //            }
-        //            //IncrementSection(listSections, indexSection - 1, indexSelectedSize, indexSelectedSection,
-        //            //  isSizeSection);
-        //        }
-        //    }
-        //}
-
-        //public HouseInfo SelectSectionForHouse(int[] indexSelectedSection, int[] indexSelectedSize, List<HouseInfo> listSections, HouseInfo house, int remainingModules)
-        //{
-        //    bool isExit = false;
-        //    int indexSection = house.SectionsBySize[0].Sections.Count;
-        //    var section = listSections[indexSection];
-        //    var sectionSize = section.SectionsBySize[indexSelectedSize[indexSection]];
-        //    if (sectionSize.Sections.Count == 0)
-        //    {
-        //        IncrementSection(listSections, indexSection, indexSelectedSize, indexSelectedSection,
-        //                   true);
-        //        isExit = true;
-        //    }
-
-        //    if (!isExit)
-        //    {
-        //        if (remainingModules - sectionSize.CountModules != 0)
-        //        {
-        //            house.SectionsBySize[0].Sections.Add(sectionSize.Sections[indexSelectedSection[indexSection]]);
-        //            if (remainingModules - sectionSize.CountModules > 32)
-        //            {
-
-        //                remainingModules = remainingModules - sectionSize.CountModules;
-        //                SelectSectionForHouse(indexSelectedSection, indexSelectedSize, listSections, house,
-        //                    remainingModules);
-        //            }
-        //            else if (remainingModules - sectionSize.CountModules < 32)
-        //            {
-        //                indexSelectedSize[indexSection]++;
-        //                if (indexSelectedSize[indexSection] >= section.SectionsBySize.Count)
-        //                {
-        //                    IncrementSection(listSections, indexSection - 1, indexSelectedSize, indexSelectedSection,
-        //                        true);
-        //                }
-        //                isExit = true;
-        //            }
-        //        }
-        //        else
-        //        {
-        //            house.SectionsBySize[0].Sections.Add(sectionSize.Sections[indexSelectedSection[indexSection]]);
-        //            IncrementSection(listSections, indexSection, indexSelectedSize, indexSelectedSection, false);
-        //        }
-        //    }
-
-
-        //    // house.SectionsBySize[0].Sections.Add(sectionSize.Sections[indexSelectedSection[indexSection]]);
-        //    if (isExit)
-        //        house.SectionsBySize[0].Sections.Clear();
-        //    return house;
-
-
-        //}
-
-        //public void SelectSectionForHouse(int[] indexSelected, List<HouseInfo> listSections,HouseInfo house)
-        //{
-
-        //}
-
         public bool SetIndexesSection(int[] indexes, int[] sizes, int index, List<HouseInfo> listSections)
         {
             if (index == 0)
@@ -1061,218 +275,6 @@ namespace AR_AreaZhuk
             }
             return isContinue;
         }
-        //private void GetHousesBySection(List<HouseInfo> listSections, int countStart, int indexSpot)//List<HouseInfo> listSections
-        //{
-        //    SpotInfo sp = new SpotInfo();
-        //    int[] indexSelectedSize = new int[15];
-        //    int[] indexSelectedSection = new int[15];
-        //    bool isGo = true;
-        //    houses.Add(new List<HouseInfo>());
-        //    isContinue = true;
-        //    while (isContinue)
-        //    {
-        //        int countModulesTotal = Convert.ToInt16(sp.SpotArea / 12.96);
-        //        for (int i = 0; i < listSections.Count; i++)
-        //        {
-        //            countModulesTotal = countModulesTotal -
-        //                                listSections[i].SectionsBySize[indexSelectedSize[i]].CountModules;
-        //            if (countModulesTotal == 0)
-        //            {
-        //                bool isValid = true;
-        //                for (int j = 0; j < listSections.Count; j++)
-        //                {
-        //                    if (listSections[j].SectionsBySize[indexSelectedSize[j]].Sections.Count > 0)
-        //                        continue;
-        //                    isValid = false;
-        //                    break;
-        //                }
-        //                if (isValid)
-        //                {
-        //                    isContinue2 = true;
-        //                    while (isContinue2)
-        //                    {
-        //                        //try
-        //                        //{
-        //                        //    HouseInfo house = new HouseInfo();
-        //                        //    house.SectionsBySize = new List<Section>();
-        //                        //    house.SectionsBySize.Add(new Section());
-        //                        //    for (int j = 0; j <= i; j++)
-        //                        //    {
-        //                        //        house.SectionsBySize[0].Sections.Add(
-        //                        //            listSections[j].SectionsBySize[indexSelectedSize[j]].Sections[
-        //                        //                indexSelectedSection[j]]);
-        //                        //    }
-        //                        //    GetHousePercentage(ref house);
-        //                        //    houses[indexSpot].Add(house);
-        //                        //    indexSelectedSection[i]++;
-        //                        //    if (indexSelectedSection[i] >=
-        //                        //        listSections[i].SectionsBySize[indexSelectedSize[i]].Sections.Count)
-        //                        //    {
-        //                        //        SetIndexesSection(indexSelectedSection, indexSelectedSize, i, listSections);
-        //                        //    }
-        //                        //}
-        //                        //catch
-        //                        //{
-        //                        //    break;
-        //                        //}
-
-        //                    }
-        //                }
-        //                //выполняется код
-        //                indexSelectedSize[i]++;
-        //                if (indexSelectedSize[i] >= listSections[i].SectionsBySize.Count)
-        //                {
-        //                    //SetIndexesSize(indexSelectedSize, i, listSections);
-        //                }
-        //                break;
-        //            }
-        //            else if (countModulesTotal < 32)
-        //            {
-        //                indexSelectedSize[i]++;
-        //                if (indexSelectedSize[i] >= listSections[i].SectionsBySize.Count)
-        //                {
-        //                    //SetIndexesSize(indexSelectedSize, i, listSections);
-        //                }
-        //                break;
-        //            }
-        //        }
-
-
-        //    }
-        //  var opa =  GetCountHouses(houses, dg, false).ToString();
-        //while (true)
-        //{
-        //    HouseInfo house = new HouseInfo();
-        //    house.SectionsBySize = new List<Section>();
-        //    house.SectionsBySize.Add(new Section());
-        //    IsExit = false;
-        //    house = SelectSectionForHouse(indexSelectedSection, indexSelectedSize, listSections, house, 108);//house,Convert.ToInt16(sp.SpotArea/12.96));
-        //    if (!isContinue) break;
-        //    if (house.SectionsBySize[0].Sections.Count == 0)
-        //        continue;
-        //    if (listSections[0].SectionsBySize.Count <= indexSelectedSize[0])
-        //        break;
-        //    houses.Add(house);
-        //}
-
-
-
-        //List<HouseInfo> listSections = (List<HouseInfo>)listSections1;
-        //bool isContinue = true;
-        //while (isContinue)
-        //{
-        //    int countTotalModules = 108;//Convert.ToInt16(sp.SpotArea / 12.96);
-        //    HouseInfo house = new HouseInfo();
-        //    house.SectionsBySize = new List<Section>();
-        //    house.SectionsBySize.Add(new Section());
-        //    house.SectionsBySize[0].Sections.Add(listSections[0].SectionsBySize[0].Sections[countStart]);
-        //    for (int i = 0; i < listSections.Count; i++)
-        //    {
-        //        var sizeSection = listSections[i].SectionsBySize[listSections[i].LastSizeSelected];
-        //        while (listSections[i].SectionsBySize[listSections[i].LastSizeSelected].Sections.Count == 0)
-        //        {
-        //            listSections[i].LastSizeSelected++;
-        //            if (listSections[i].LastSizeSelected >= (listSections[i].SectionsBySize.Count))
-        //            {
-        //                listSections[i].LastSizeSelected = 0;
-        //                sizeSection = listSections[i].SectionsBySize[listSections[i].LastSizeSelected];
-        //                sizeSection.LastSectionSelected = 0;
-        //                if (!IncrementSection(listSections, i - 1))
-        //                {
-        //                    isContinue = false;
-        //                    break;
-        //                }
-
-        //                //MessageBox.Show("Нет подходящей секции для инсоляции");
-        //                //isContinue = false;
-        //                //break;
-        //            }
-        //            else
-        //            {
-        //                sizeSection = listSections[i].SectionsBySize[listSections[i].LastSizeSelected];
-        //            }
-        //        }
-        //        if (!isContinue)
-        //        {
-        //            break;
-        //        }
-        //        countTotalModules -= sizeSection.CountModules;
-        //        if (sizeSection.Sections.Count == 0)
-        //            continue;
-        //        house.SectionsBySize[0].Sections.Add(sizeSection.Sections[sizeSection.LastSectionSelected]);
-
-        //        if (countTotalModules == 0)
-        //        {
-        //            if (!IncrementSection(listSections, i))
-        //            {
-        //                isContinue = false;
-        //                break;
-        //            }
-        //            if (!IsExist(houses, house))
-        //                houses.Add(house);
-        //            break;
-        //        }
-        //        else if (countTotalModules < 32)
-        //        {
-        //            listSections[i].LastSizeSelected++;
-        //            if (listSections[i].LastSizeSelected == listSections[i].SectionsBySize.Count)
-        //            {
-        //                listSections[i].LastSizeSelected = 0;
-        //            }
-        //            //if (!IncrementSection(listSections, i))
-        //            //{
-        //            //    isContinue = false;
-        //            //    break;
-        //            //}
-        //        }
-        //        else if (i == listSections.Count - 1)
-        //        {
-        //            if (!IncrementSection(listSections, i))
-        //            {
-        //                isContinue = false;
-        //                break;
-        //            }
-        //        }
-        //        if (!isContinue)
-        //        {
-        //            break;
-        //        }
-        //        if (listSections[0].LastSizeSelected.Equals(listSections[0].SectionsBySize.Count))
-        //        {
-        //            var sizeSection11 = listSections[0].SectionsBySize[listSections[0].LastSizeSelected];
-        //            if (sizeSection11.LastSectionSelected.Equals(sizeSection11.Sections.Count))
-        //            {
-        //                isContinue = false;
-        //            }
-        //        }
-        //        //if (countTotalModules < 0)
-        //        //{
-
-
-        //        //    sec.LastSectionSelected++;
-        //        //    if (sec.LastSectionSelected == sec.SectionsInSection.Count)
-        //        //    {
-        //        //        sec.LastSectionSelected = 0;
-        //        //        listSections[i].LastSizeSelected++;
-        //        //        //if (listSections[i].LastSizeSelected == listSections[i].Sections.Count)
-        //        //        //{
-        //        //        //    listSections[i-1].la
-        //        //        //}
-        //        //    }
-        //        //    break;
-        //        //}
-        //        //if (i == listSections.Count - 1 & countTotalModules > 0)
-        //        //{
-        //        //    break;
-        //        //}
-        //        //house.Add(sec.SectionsInSection[sec.LastSectionSelected]);
-        //        //sec.LastSectionSelected++;
-        //        ////sec.SectionsInSection[sec.LastSectionSelected];
-        //    }
-        //    //if (houses.Count == 50000)
-        //    //    break;
-        //}
-        // }
 
 
         public void GetHousePercentage(ref HouseInfo houseInfo, SpotInfo sp1)
@@ -1307,81 +309,6 @@ namespace AR_AreaZhuk
             }
             houseInfo.SpotInf = sp1;
         }
-        //private static int GetCountHouses(DataGridView dg, bool isSave)
-        //{
-        //    ob = new List<GeneralObject>();
-        //    FrameWork fw = new FrameWork();
-        //    //  var roomInfo = fw.GetRoomData("");
-        //    //  spotInfo = fw.GetSpotInformation(roomInfo);
-
-        //    int countHouses = 0;
-        //    for (int i = 0; i < dg.RowCount; i++)
-        //    {
-        //        string[] parse = dg[1, i].Value.ToString().Split('-');
-        //        spotInfo.requirments.Where(x => x.SubZone.Equals(dg[0, i].Value.ToString()))
-        //            .Where(x => x.MinArea.ToString().Equals(parse[0]))
-        //            .ToList()[0].Percentage =
-        //            Convert.ToInt16(dg[2, i].Value);
-
-        //    }
-
-        //    for (int l = 0; l < houses[0].Count; l++)
-        //    {
-        //        var house1 = houses[0][l];
-        //        var spot1 = house1.SpotInf;
-        //        for (int j = 0; j < houses[1].Count; j++)
-        //        {
-        //            countGood++;
-        //            var house2 = houses[1][j];
-        //            bool isValid = false;
-
-        //            var spot2 = house2.SpotInf;
-        //            for (int k = 0; k < spotInfo.requirments.Count; k++)
-        //            {
-        //                double realPercentage = spot1.requirments[k].RealPercentage +
-        //                                        spot2.requirments[k].RealPercentage;
-        //                if (Math.Abs(spotInfo.requirments[k].Percentage - realPercentage / 2) > offset)
-        //                {
-        //                    isValid = false;
-        //                    break;
-        //                }
-        //                isValid = true;
-        //                continue;
-
-        //            }
-        //            if (!isValid) continue;
-        //            int countS = house1.Sections.Count + house2.Sections.Count;
-        //            int[] ss = new int[countS];
-        //            for (int i = 0; i < house1.Sections.Count; i++)
-        //            {
-        //                ss[i] = house1.Sections[i].IdSection;
-        //            }
-        //            for (int i = 0; i < house2.Sections.Count; i++)
-        //            {
-        //                ss[i + house1.Sections.Count] = house2.Sections[i].IdSection;
-        //            }
-        //            int countSovp = countS - ss.GroupBy(x => x).ToList().Count + 1;
-        //            GeneralObject go = new GeneralObject();
-        //            go.Houses.Add(house1);
-        //            go.Houses.Add(house2);
-        //            ob.Add(go);
-        //            if (isSave)
-        //            {
-        //                Serializer ser = new Serializer();
-        //                ser.SerializeList(go,
-        //                    house1.Sections.Count.ToString() + "-" + house2.Sections.Count.ToString() + "- (" +
-        //                    countSovp.ToString() + ") - " + countGood.ToString());
-        //            }
-        //        }
-        //    }
-
-        //    return ob.Count;
-        //}
-
-        //private List<Requirment> GetRequirments(List<Requirment> requirments)
-        //{
-        //    return requirments.ToList();
-        //}
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -1412,22 +339,6 @@ namespace AR_AreaZhuk
 
         }
 
-        //private void dg2_FilterStringChanged(object sender, EventArgs e)
-        //{
-        //    BindingSource bs = new BindingSource();
-        //    bs.DataSource = dg2.DataSource;
-        //    bs.Filter = dg2.FilterString;
-        //    dg2.DataSource = bs;
-        //}
-
-        //private void dg2_SortStringChanged(object sender, EventArgs e)
-        //{
-        //    BindingSource bs = new BindingSource();
-        //    bs.DataSource = dg2.DataSource;
-        //    bs.Sort = dg2.SortString;
-        //    dg2.DataSource = bs;
-        //}
-
         private static bool isEvent = false;
         private void dg_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
@@ -1445,6 +356,10 @@ namespace AR_AreaZhuk
 
         private void btnStartScan_Click(object sender, EventArgs e)
         {
+            isStop = false;
+            
+            ob = new List<GeneralObject>();
+            lblCountObjects.Text = ob.Count.ToString();
             C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
             flatsAreas = pikFlats.GetData();
             isEvent = false;
@@ -1453,8 +368,11 @@ namespace AR_AreaZhuk
             Requirment requirment = new Requirment();
             FrameWork fw = new FrameWork();
             spotInfo = fw.GetSpotInformation();
+            spotInfo.PathInsolation = PathToFileInsolation;
             FormManager.GetSpotTaskFromDG(spotInfo, dg);                          //Условия квартирографии 
-            string insolationFile = PathToFileInsulation;
+           // string insolationFile = PathToFileInsolation;
+            Serializer s = new Serializer();
+            s.SerializeSpoinfo(spotInfo);
             List<HouseOptions> options = new List<HouseOptions>();
             for (int i = 1; i < 5; i++)
             {
@@ -1469,64 +387,29 @@ namespace AR_AreaZhuk
                 options.Add(houseOption);
             }
             ProjectScheme profectShema = new ProjectScheme(options, spotInfo);
-            profectShema.ReadScheme(PathToFileInsulation);
+            profectShema.ReadScheme(PathToFileInsolation);
             Thread th = new Thread(ViewProgress);
             th.Start();
             List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(1000);
-            // totalObject[0].Reverse();
 
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
-            int megacounter = 0;
             int counterGood = 0;
             int[] selectedHouse = new int[totalObject.Count];
             while (isContinue)
             {
+                if (isStop)
+                    break;
                 List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
                 //Получение cекций из домов
                 if (GetHouseSections(selectedHouse, totalObject, sections)) continue;
                 if (!isContinue)
                     break;
-                List<CodeSection> codeSections = new List<CodeSection>();
                 int counter = 0;
                 //Группировка и сортировка секций
-                foreach (var ss in sections.OrderBy(x => x.Count))
-                {
-                    List<Code> codes = new List<Code>();
-                    CodeSection codeSection = new CodeSection();
-                    codeSection.CountFloors = ss[0].Floors;
-
-                    //Группировка по коду
-                    foreach (var s in ss.OrderByDescending(x => x.CountFlats))
-                    {
-                        if (codes.Any(x => x.CodeStr.Equals(s.Code)))
-                            codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
-                        else
-                        {
-                            codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1) * (s.CountFlats - 1),
-                                s.NumberInSpot, s.SpotOwner));
-                        }
-                    }
-                    //Группировка  по кол-ву квартир в секции
-                    foreach (
-                        var c in codes.OrderBy(x => x.CountFlats).OrderByDescending(x => x.CodeStr).ToList())
-                    {
-                        FlatsInSection flatsInSection = new FlatsInSection();
-                        flatsInSection.Count = c.CountFlats;
-                        flatsInSection.SectionsByCode.Add(c);
-                        if (codeSection.SectionsByCountFlats.Any(x => x.Count.Equals(c.CountFlats)))
-                            codeSection.SectionsByCountFlats.First(x => x.Count.Equals(c.CountFlats))
-                                .SectionsByCode.Add(c);
-                        else codeSection.SectionsByCountFlats.Add(flatsInSection);
-                    }
-                    //Сортировка по кол-ву квартир
-                    codeSection.SectionsByCountFlats =
-                        codeSection.SectionsByCountFlats.OrderByDescending(x => x.Count).ToList();
-                    codeSections.Add(codeSection);
-                    counter++;
-                }
-                int[] selectedSectSize = new int[40];
-                int[] selectedSectCode = new int[40];
+               List<CodeSection> codeSections =  GetSectionsByCode(sections, counter);
+                int[] selectedSectSize = new int[40];                                    //Выбранная размерность дома
+                int[] selectedSectCode = new int[40];                                    //Выбранный код секций
                 isContinue2 = true;
 
 
@@ -1539,32 +422,27 @@ namespace AR_AreaZhuk
                 //Обход сформированных секций с уникальными кодами на объект
                 while (isContinue2)
                 {
-
+                    Application.DoEvents();
+                    if (isStop)
+                        break;
                     List<Code> listCodes = new List<Code>();
-
-                    megacounter++; //общее кол-во обходов(для информации)
-                    string codeHouse = "";
-                    if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0])
+                    if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0]) //Последний рассматриваемый вариант
                     {
                         isContinue2 = false;
                         break;
                     }
                     bool isValidPercentage = true;
-                    string str = "";
-                    string strCount = "";
-                    bool isOverFlow = false;
+                    string strP = "";
                     for (int q = 0; q < spotInfo.requirments.Count; q++)
                     {
                         var rr = spotInfo.requirments[q];
                         int countFlats = 0;
-                        isOverFlow = false;
+                        var isOverFlow = false;
                         for (int i = 0; i < codeSections.Count; i++)
                         {
                             countFlats +=
-                                Convert.ToInt16(
-                                    codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
-                                        selectedSectCode[i]].CodeStr[q].ToString()) *
-                                (codeSections[i].CountFloors - 1);
+                                Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
+                                SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) *(codeSections[i].CountFloors - 1);
                             double percentage1 = countFlats * 100 / totalCountFlats;
 
                             if (rr.Percentage + rr.OffSet < percentage1)
@@ -1590,7 +468,7 @@ namespace AR_AreaZhuk
 
                         //Процентаж определенного типа квартир в объекте
                         double percentage = countFlats * 100 / totalCountFlats;
-                        str += (Math.Round(percentage, 0)).ToString() + ";";
+                        strP += (Math.Round(percentage, 0)).ToString() + ";";
 
 
                         if (rr.Percentage - rr.OffSet <= percentage & rr.Percentage + rr.OffSet >= percentage)
@@ -1601,22 +479,19 @@ namespace AR_AreaZhuk
                             break;
                         }
                     }
-                    //if (isOverFlow)
-                    //    continue;
                     if (counterGood > 5)
                     {
                         break;
                     }
-                    if (isValidPercentage)
+                    if (isValidPercentage)  //Процентаж прошел
                     {
 
                         counterGood++;
+                        //сбор секций
                         for (int i = 0; i < sections.Count; i++)
-                        {
-                            listCodes.Add(
-                                codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
-                                    selectedSectCode[i]]);
-                        }
+                            listCodes.Add(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[selectedSectCode[i]]);
+
+                        //сортровка по пятнам и очередности расположения
                         listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
 
                         List<HouseInfo> hoyses = new List<HouseInfo>();
@@ -1625,7 +500,7 @@ namespace AR_AreaZhuk
                         isContinue = true;
                         int countSections = listCodes.Count - 1;
 
-                        while (isContinue)
+                        while (true)
                         {
                             GeneralObject go = new GeneralObject();
                             HouseInfo hi1 = new HouseInfo();
@@ -1644,15 +519,12 @@ namespace AR_AreaZhuk
                                     if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
                                           secByPosition[0].NumberInSpot.Equals(listCodes[j].NumberSection)))
                                         continue;
-                                    var sec = secByPosition.Where(x => x.IdSection.Equals(
-                                                    listCodes[j].IdSections[indexSelectedId[j]])).ToList();
+                                    var sec = secByPosition.Where(x => x.IdSection.Equals(listCodes[j].IdSections[indexSelectedId[j]])).ToList();
                                     if (sec.Count == 0) continue;
                                     idSections[j] = sec[0].IdSection;
                                     hi1.Sections.Add(sec[0]);
                                     foreach (var flat in sec[0].Flats)
                                     {
-                                        //if (flat.SubZone.Equals("0"))
-                                        //    continue;
                                         var currentFlatAreas =
                                             flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
                                         var areas = Calculate.GetAreaFlat(sec[0].Floors, flat, currentFlatAreas);
@@ -1693,27 +565,26 @@ namespace AR_AreaZhuk
                             spGo.TotalFlats = countFlats;
                             spGo.TypicalSections = typicalSect;
                             spGo.TotalSections = countSections + 1;
-                            string[] strPercent = str.Split(';');
+                            string[] strPercent = strP.Split(';');
                             for (int k = 0; k < spotInfo.requirments.Count; k++)
                                 spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
                             go.Houses = housesInSpot;
                             go.SpotInf = spGo;
                             ob.Add(go);
+                            lblCountObjects.Text = ob.Count.ToString();
+                            Application.DoEvents();
 
 
                             indexSelectedId[countSections]++;
-                            if (listCodes[countSections].IdSections.Count <=
-                                indexSelectedId[countSections])
-                            {
+                            if (listCodes[countSections].IdSections.Count <=indexSelectedId[countSections])
                                 IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
-                            }
+                            
                             if (listCodes[0].IdSections.Count == indexSelectedId[0])
                             {
-                                isContinue = false;
+                              //  isContinue = false;
                                 break;
                             }
-                            // }
-                            isContinue = true;
+                           // isContinue = true;
 
                         }
                         counterGood++;
@@ -1731,299 +602,51 @@ namespace AR_AreaZhuk
             isEvent = true;
             sw.Stop();
             MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
-             bs.DataSource = dg2.DataSource;
-            //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
-            //ob = new List<GeneralObject>();
-            //C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
-            //flatsAreas = pikFlats.GetData();
-            //isEvent = false;
-            //btnStartScan.Enabled = false;
-            //btnViewPercentsge.Enabled = true;
-            //Requirment requirment = new Requirment();
-            //FrameWork fw = new FrameWork();
-            //spotInfo = fw.GetSpotInformation();
-            //FormManager.GetSpotTaskFromDG(spotInfo, dg);                          //Условия квартирографии 
-            //string insolationFile = PathToFileInsulation;
-            //List<HouseOptions> options = new List<HouseOptions>();
-            //for (int i = 1; i < 5; i++)
-            //{
-            //    List<bool> dominantsPositions = new List<bool>();
-
-            //    for (int j = 0; j < 5; j++)
-            //    {
-            //        dominantsPositions.Add(
-            //            ((CheckedListBox)this.Controls.Find("chkListP" + i.ToString(), true)[0]).GetItemChecked(j));
-            //    }
-            //    HouseOptions houseOption = new HouseOptions("P" + i.ToString(), Convert.ToInt16(numMainCountFloor.Value), Convert.ToInt16(numDomCountFloor.Value), dominantsPositions);
-            //    options.Add(houseOption);
-            //}
-            //ProjectScheme profectShema = new ProjectScheme(options, spotInfo);
-            //profectShema.ReadScheme(PathToFileInsulation);
-            //Thread th = new Thread(ViewProgress);
-            //th.Start();
-            //List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
-            //// totalObject[0].Reverse();
-
-            //System.Diagnostics.Stopwatch sw = new Stopwatch();
-            //sw.Start();
-            //int megacounter = 0;
-            //int counterGood = 0;
-            //int[] selectedHouse = new int[totalObject.Count];
-            //while (isContinue)
-            //{
-            //    List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
-            //    //Получение cекций из домов
-            //    if (GetHouseSections(selectedHouse, totalObject, sections)) continue;
-            //    if (!isContinue)
-            //        break;
-            //    List<CodeSection> codeSections = new List<CodeSection>();
-            //    int counter = 0;
-            //    //Группировка и сортировка секций
-            //    foreach (var ss in sections.OrderBy(x => x.Count))
-            //    {
-            //        List<Code> codes = new List<Code>();
-            //        CodeSection codeSection = new CodeSection();
-            //        codeSection.CountFloors = ss[0].Floors;
-
-            //        //Группировка по коду
-            //        foreach (var s in ss.OrderByDescending(x => x.CountFlats))
-            //        {
-            //            if (codes.Any(x => x.CodeStr.Equals(s.Code)))
-            //                codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
-            //            else
-            //            {
-            //                codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1) * (s.CountFlats - 1),
-            //                    s.NumberInSpot, s.SpotOwner));
-            //            }
-            //        }
-            //        //Группировка  по кол-ву квартир в секции
-            //        foreach (
-            //            var c in codes.OrderBy(x => x.CountFlats).OrderByDescending(x => x.CodeStr).ToList())
-            //        {
-            //            FlatsInSection flatsInSection = new FlatsInSection();
-            //            flatsInSection.Count = c.CountFlats;
-            //            flatsInSection.SectionsByCode.Add(c);
-            //            if (codeSection.SectionsByCountFlats.Any(x => x.Count.Equals(c.CountFlats)))
-            //                codeSection.SectionsByCountFlats.First(x => x.Count.Equals(c.CountFlats))
-            //                    .SectionsByCode.Add(c);
-            //            else codeSection.SectionsByCountFlats.Add(flatsInSection);
-            //        }
-            //        //Сортировка по кол-ву квартир
-            //        codeSection.SectionsByCountFlats =
-            //            codeSection.SectionsByCountFlats.OrderByDescending(x => x.Count).ToList();
-            //        codeSections.Add(codeSection);
-            //        counter++;
-            //    }
-            //    int[] selectedSectSize = new int[40];
-            //    int[] selectedSectCode = new int[40];
-            //    isContinue2 = true;
-
-
-            //    double totalCountFlats = 0;
-            //    //Общее кол-во квартир в объекте
-            //    for (int i = 0; i < sections.Count; i++)
-            //    {
-            //        totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
-            //    }
-            //    //Обход сформированных секций с уникальными кодами на объект
-            //    while (isContinue2)
-            //    {
-
-            //        List<Code> listCodes = new List<Code>();
-
-            //        megacounter++; //общее кол-во обходов(для информации)
-            //        string codeHouse = "";
-            //        if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0])
-            //        {
-            //            isContinue2 = false;
-            //            break;
-            //        }
-            //        bool isValidPercentage = true;
-            //        string str = "";
-            //        string strCount = "";
-            //        bool isOverFlow = false;
-            //        for (int q = 0; q < spotInfo.requirments.Count; q++)
-            //        {
-            //            var rr = spotInfo.requirments[q];
-            //            int countFlats = 0;
-            //            isOverFlow = false;
-            //            for (int i = 0; i < codeSections.Count; i++)
-            //            {
-            //                countFlats +=
-            //                    Convert.ToInt16(
-            //                        codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
-            //                            selectedSectCode[i]].CodeStr[q].ToString()) *
-            //                    (codeSections[i].CountFloors - 1);
-            //                double percentage1 = countFlats * 100 / totalCountFlats;
-
-            //                if (rr.Percentage + rr.OffSet < percentage1)
-            //                {
-            //                    //selectedSectCode[sections.Count - 1]++;
-            //                    //if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
-            //                    //    IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
-            //                    //selectedSectCode[i]++;
-            //                    //if (selectedSectCode[i] >= codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode.Count)
-            //                    //    IncrementSectionCode(selectedSectCode, selectedSectSize, i, codeSections, ref totalCountFlats);
-            //                    isOverFlow = true;
-            //                    break;
-            //                }
-            //            }
-            //            if (isOverFlow)
-            //            {
-            //                isValidPercentage = false;
-            //                break;
-            //            }
-            //            //Кол-во квартир определенного типа в объекте
-            //            //  currentTotal += countFlats;
-            //            // strCount += countFlats.ToString() + "; ";
-
-            //            //Процентаж определенного типа квартир в объекте
-            //            double percentage = countFlats * 100 / totalCountFlats;
-            //            str += (Math.Round(percentage, 0)).ToString() + ";";
-
-
-            //            if (rr.Percentage - rr.OffSet <= percentage & rr.Percentage + rr.OffSet >= percentage)
-            //                isValidPercentage = true;
-            //            else
-            //            {
-            //                isValidPercentage = false;
-            //                break;
-            //            }
-            //        }
-            //        //if (isOverFlow)
-            //        //    continue;
-            //        //if (counterGood > 5)
-            //        //{
-            //        //    break;
-            //        //}
-            //        if (isValidPercentage)
-            //        {
-
-            //            counterGood++;
-            //            for (int i = 0; i < sections.Count; i++)
-            //            {
-            //                listCodes.Add(
-            //                    codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[
-            //                        selectedSectCode[i]]);
-            //            }
-            //            listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
-
-            //                List<HouseInfo> hoyses = new List<HouseInfo>();
-            //                int[] indexSelectedId = new int[listCodes.Count];
-
-            //               // isContinue = true;
-            //                int countSections = listCodes.Count - 1;
-
-            //                while (isContinue)
-            //                {
-            //                    GeneralObject go = new GeneralObject();
-            //                    HouseInfo hi1 = new HouseInfo();
-            //                    hi1.Sections = new List<FlatInfo>();
-            //                    int countFlats = 0;
-            //                    int[] idSections = new int[listCodes.Count];
-            //                    double totalArea = 0;
-            //                    double liveArea = 0;
-            //                    double levelArea = 0;
-            //                    double levelAreaOffLLU = 0;
-            //                    double levelAreaOnLLU = 0;
-            //                    for (int j = 0; j <= countSections; j++)
-            //                    {
-            //                        foreach (var secByPosition in sections)
-            //                        {
-            //                            if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
-            //                                  secByPosition[0].NumberInSpot.Equals(listCodes[j].NumberSection)))
-            //                                continue;
-            //                            var sec = secByPosition.Where(x => x.IdSection.Equals(
-            //                                            listCodes[j].IdSections[indexSelectedId[j]])).ToList();
-            //                            if (sec.Count == 0) continue;
-            //                            idSections[j] = sec[0].IdSection;
-            //                            hi1.Sections.Add(sec[0]);
-            //                            foreach (var flat in sec[0].Flats)
-            //                            {
-            //                                //if (flat.SubZone.Equals("0"))
-            //                                //    continue;
-            //                                var currentFlatAreas =
-            //                                    flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
-            //                                var areas = Calculate.GetAreaFlat(sec[0].Floors,flat, currentFlatAreas);
-            //                                totalArea += areas[0];
-            //                                liveArea += areas[1];
-            //                                levelArea += areas[2];
-            //                                levelAreaOffLLU += areas[3];
-            //                                levelAreaOnLLU += areas[4];
-
-            //                            }
-            //                            break;
-            //                        }
-
-            //                        countFlats += listCodes[j].CountFlats;
-            //                    }
-            //                    double k1 = levelAreaOffLLU/levelArea;
-            //                    double k2 = levelAreaOffLLU / levelAreaOnLLU;
-
-            //                    var objectByHouses =
-            //                        hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
-            //                    List<HouseInfo> housesInSpot = new List<HouseInfo>();
-            //                    foreach (var house in objectByHouses)
-            //                    {
-            //                        HouseInfo h = new HouseInfo();
-            //                        foreach (var section in house.OrderBy(x => x.NumberInSpot).ToList())
-            //                        {
-            //                            h.Sections.Add(section);
-            //                        }
-            //                        housesInSpot.Add(h);
-            //                    }
-            //                    var typicalSect = GetCountTypicalSections(idSections);
-            //                    SpotInfo spGo = new SpotInfo();
-            //                    spGo = spotInfo.CopySpotInfo(spotInfo);
-            //                    spGo.K1 = k1;
-            //                    spGo.K2 = k2;
-            //                    spGo.TotalStandartArea = totalArea;
-            //                    spGo.TotalLiveArea = liveArea;
-            //                    spGo.TotalFlats = countFlats;
-            //                    spGo.TypicalSections = typicalSect;
-            //                    spGo.TotalSections = countSections + 1;
-            //                    string[] strPercent = str.Split(';');
-            //                    for (int k = 0; k < spotInfo.requirments.Count; k++)
-            //                        spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
-            //                    go.Houses = housesInSpot;
-            //                    go.SpotInf = spGo;
-            //                    ob.Add(go);
-
-
-            //                    indexSelectedId[countSections]++;
-            //                    if (listCodes[countSections].IdSections.Count <=
-            //                        indexSelectedId[countSections])
-            //                    {
-            //                        IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
-            //                    }
-            //                    if (listCodes[0].IdSections.Count == indexSelectedId[0])
-            //                    {
-            //                       // isContinue = false;
-            //                        break;
-            //                    }
-            //               // }
-            //                //isContinue = true;
-
-            //            }
-            //            counterGood++;
-            //        }
-
-            //        selectedSectCode[sections.Count - 1]++;
-            //        if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].
-            //            SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
-            //            IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
-            //    }
-            //}
-            //FormManager.ViewDataProcentage(dg2, ob, spotInfo);
-            //th.Abort();
-            //lblCountObjects.Text = ob.Count.ToString();
-            //isEvent = true;
-            //sw.Stop();
-            //MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
-            ////  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
-
+            bs.DataSource = dg2.DataSource;
+          //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
+           
         }
 
+        private static List<CodeSection> GetSectionsByCode(List<List<FlatInfo>> sections, int counter)
+        {
+            List<CodeSection> codeSections = new List<CodeSection>();
+            foreach (var ss in sections.OrderBy(x => x.Count))
+            {
+                List<Code> codes = new List<Code>();
+                CodeSection codeSection = new CodeSection();
+                codeSection.CountFloors = ss[0].Floors;
+
+                //Группировка по коду
+                foreach (var s in ss.OrderByDescending(x => x.CountFlats))
+                {
+                    if (codes.Any(x => x.CodeStr.Equals(s.Code)))
+                        codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
+                    else
+                    {
+                        codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1)*(s.CountFlats - 1),
+                            s.NumberInSpot, s.SpotOwner));
+                    }
+                }
+                //Группировка  по кол-ву квартир в секции
+                foreach (
+                    var c in codes.OrderBy(x => x.CountFlats).OrderByDescending(x => x.CodeStr).ToList())
+                {
+                    FlatsInSection flatsInSection = new FlatsInSection();
+                    flatsInSection.Count = c.CountFlats;
+                    flatsInSection.SectionsByCode.Add(c);
+                    if (codeSection.SectionsByCountFlats.Any(x => x.Count.Equals(c.CountFlats)))
+                        codeSection.SectionsByCountFlats.First(x => x.Count.Equals(c.CountFlats))
+                            .SectionsByCode.Add(c);
+                    else codeSection.SectionsByCountFlats.Add(flatsInSection);
+                }
+                //Сортировка по кол-ву квартир
+                codeSection.SectionsByCountFlats =
+                    codeSection.SectionsByCountFlats.OrderByDescending(x => x.Count).ToList();
+                codeSections.Add(codeSection);
+                counter++;
+            }
+            return codeSections;
+        }
 
 
         private static string GetCountTypicalSections(int[] idSections)
@@ -2084,20 +707,6 @@ namespace AR_AreaZhuk
             return false;
         }
 
-        //private void GetInsolationDominants(List<Insolation> insolations)
-        //{
-        //    for (int i = 0; i < insolations.Count; i++)
-        //    {
-        //        insolations[i].CountFloorsDominant = Convert.ToInt16(numDomCountFloor.Value);
-        //        insolations[i].CountFloorsMain = Convert.ToInt16(numMainCountFloor.Value);
-        //        for (int j = 0; j < 5; j++)
-        //        {
-        //            insolations[i].DominantPositions.Add(
-        //                ((CheckedListBox)this.Controls.Find("chkListP" + (i + 1).ToString(), true)[0]).GetItemChecked(j));
-        //        }
-        //    }
-        //}
-
 
         public void IncrementSelectedHouse(int index, int[] houses, List<List<HouseInfo>> totalObject)
         {
@@ -2126,15 +735,6 @@ namespace AR_AreaZhuk
             }
         }
 
-        //public string SummCode(string oldCode, string newCode)
-        //{
-        //    string code = "";
-        //    for (int i = 0; i < oldCode.Length; i++)
-        //    {
-        //        code += (Convert.ToInt16(oldCode[i].ToString() + Convert.ToInt16(newCode[i].ToString()))).ToString() + ";";
-        //    }
-        //    return code;
-        //}
 
         public void IncrementSectionCode(int[] selectedSectCode, int[] selectedSectSize, int index, List<CodeSection> sections, ref double totalCountFlats)
         {
@@ -2215,21 +815,6 @@ namespace AR_AreaZhuk
             return;
         }
 
-        //private static void GetDBSections(int startIndex, Insolation insulation, FrameWork fw, List<Section> dbSections, int countFloors, bool isLeftCorner, bool isRightCorner, SpotInfo sp)
-        //{
-        //    //for (int i = 7; i < 15; i++)
-        //    //{
-        //    Section sec = new Section();
-        //    sec.Sections = new List<FlatInfo>();
-        //    sec.Floors = countFloors;
-        //    sec.CountModules = startIndex * 4;
-        //    sec.IsLeftBottomCorner = isLeftCorner;
-        //    sec.IsRightBottomCorner = isRightCorner;
-        //    sec.Sections = fw.GetAllSectionsFromDB(startIndex * 4, isLeftCorner, isRightCorner, sec.Floors, sp);
-        //    dbSections.Add(sec);
-        //    //}
-        //}
-
         private void pb_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right) return;
@@ -2265,36 +850,13 @@ namespace AR_AreaZhuk
             DominantOffSet = Convert.ToInt16(txtOffsetDominants.Text);
         }
 
-        //private void txtOffsetDominants_TextChanged(object sender, EventArgs e)
-        //{
-        //    try
-        //    {
-        //        DominantOffSet = Convert.ToInt16(txtOffsetDominants.Text);
-        //    }
-        //    catch { }
-
-        //}
-
         private void dg2_SelectionChanged(object sender, EventArgs e)
         {
             if (!isEvent)
                 return;
-            //try
-            //{
-            // List<string> guids = (from DataGridViewRow row in dg2.SelectedRows select dg2[dg2.Columns.Count - 1, row.Index].Value.ToString()).ToList();
-            // foreach (var g in guids)
-            // {
-            GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
-            //    GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
-            if (go == null) return;
-          //  Serializer ser = new Serializer();
-           // ser.SerializeList(go, Guid.NewGuid().ToString());
-            //go.Houses[0].Sections.Reverse();
-            //for (int i = 0; i < go.Houses[0].Sections.Count; i++)
-            //{
-            //    go.Houses[0].Sections[i].NumberInSpot = go.Houses[0].Sections.Count - i;
-            //}
 
+            GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
+            if (go == null) return;
             string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
 
             string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1 -Не трогать.xlsx";
@@ -2302,30 +864,13 @@ namespace AR_AreaZhuk
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
             var im = imgComb.generateGeneralObject();
             pb.Image = im;
-
-            //  break;
-
-            //   }
-            //}
-            //catch { }
-
-
         }
-
-        //private void dg2_MouseClick(object sender, MouseEventArgs e)
-        //{
-
-        //}
 
         private void txtOffsetDominants_ValueChanged(object sender, EventArgs e)
         {
             DominantOffSet = Convert.ToInt16(txtOffsetDominants.Value);
         }
 
-        //private void btnMenuGroup1_Click(object sender, EventArgs e)
-        //{
-
-        //}
 
         private void btnMenuGroup1_Click_1(object sender, EventArgs e)
         {
@@ -2342,11 +887,6 @@ namespace AR_AreaZhuk
             FormManager.Panel_Show(pnlMenuGroup3, btnMenuGroup3, 25, 273);
         }
 
-        private void pb_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -2358,11 +898,6 @@ namespace AR_AreaZhuk
             }
         }
 
-        //private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        //{
-
-        //}
-
         private void chkEnableDominant_CheckedChanged(object sender, EventArgs e)
         {
             numDomCountFloor.Enabled = chkEnableDominant.Checked;
@@ -2371,16 +906,18 @@ namespace AR_AreaZhuk
         private void GetFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            openFileDialog.InitialDirectory = "c:\\";
+            string initDirectory = "c:\\";
+            if (!string.IsNullOrWhiteSpace(spotInfo.PathInsolation))
+                initDirectory = Path.GetDirectoryName(spotInfo.PathInsolation);
+            openFileDialog.InitialDirectory = initDirectory;
             openFileDialog.Filter = "Файл задание инсоляции (*.xlsx)|*.xlsx";
             openFileDialog.RestoreDirectory = true;
-            PathToFileInsulation = "";
+            PathToFileInsolation = "";
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                PathToFileInsulation = openFileDialog.FileName;
+                PathToFileInsolation = openFileDialog.FileName;
             }
-            if (PathToFileInsulation == "")
+            if (PathToFileInsolation == "")
                 btnStartScan.Enabled = false;
             else btnStartScan.Enabled = true;
         }
@@ -2410,22 +947,16 @@ namespace AR_AreaZhuk
             if (e.RowIndex == dg.RowCount - 1) return;
         }
 
-        //private void dg_SelectionChanged(object sender, EventArgs e)
-        //{
-
-
-        //}
-
-        //private void groupBox2_Enter(object sender, EventArgs e)
-        //{
-
-        //}
-
         private void UpdateDbFlats_Click(object sender, EventArgs e)
         {
             DbController dbController = new DbController();
             dbController.UpdateFlats(chkUpdateSections.Checked);
 
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            isStop = true;
         }
     }
 }
