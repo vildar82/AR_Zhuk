@@ -15,6 +15,7 @@ namespace AR_Zhuk_Schema.Insolation
         public Side Side { get; set; }
 
         public List<InsRequired> TotalRoomIns { get; private set; }
+        public int TotalInsPts { get; private set; }
 
         public object Clone ()
         {
@@ -28,11 +29,11 @@ namespace AR_Zhuk_Schema.Insolation
             return roomClone;
         }
 
-        internal void FillIns (int step, string[] insTopSide, string[] insBotSide, 
+        internal void FillIns (int stepTop, int stepBot, string[] insTopSide, string[] insBotSide, 
             string insSideLeftBot, string insSideLeftTop, string insSideRightBot, string insSideRightTop)
         {
-            Fill(IndexesTop, insTopSide, step);
-            Fill(IndexesBot, insBotSide, step);
+            Fill(IndexesTop, insTopSide, stepTop);
+            Fill(IndexesBot, insBotSide, stepBot);
             if (Side == Side.Left)
             {
                 if (SideIndexTop != null) SideIndexTop.InsValue = insSideLeftTop;
@@ -81,11 +82,12 @@ namespace AR_Zhuk_Schema.Insolation
                         }
                         else
                         {
-                            totalIns.CountLighting += 1;
+                            totalIns.AddCount(1);
                         }
                     }                   
                 }
             }
+            TotalInsPts = TotalRoomIns.Sum(s => s.InsPoints);
         }
 
         private void Fill (List<LightingWindow> windows, string[] ins, int step)
@@ -99,16 +101,18 @@ namespace AR_Zhuk_Schema.Insolation
 
         internal bool CheckInsRule (InsRule rule)
         {
-            // Проверка, общая инсоляция квартиры (TotalRoomIns) больше или равна требуемому правилу?
-            foreach (var req in rule.Requirements)
-            {
-                var roomIns = TotalRoomIns.FirstOrDefault(r => r.InsIndex.CompareTo(req.InsIndex)>=0);                
-                if (roomIns == null || roomIns.CountLighting < req.CountLighting)
-                {                 
-                    return false;
-                }
-            }
-            return true;
+            // Проверка, общая инсоляция квартиры (TotalRoomIns) больше или равна требуемому правилу?            
+            bool res = TotalInsPts >= rule.TotalInsPoints;
+            return res;            
+            //foreach (var req in rule.Requirements)
+            //{
+            //    var roomIns = TotalRoomIns.Where(r => r.InsIndex.CompareTo(req.InsIndex)>=0).Sum(s=>s.CountLighting);                
+            //    if (roomIns < req.CountLighting)
+            //    {                 
+            //        return false;
+            //    }
+            //}
+            //return true;
         }
     }    
 }

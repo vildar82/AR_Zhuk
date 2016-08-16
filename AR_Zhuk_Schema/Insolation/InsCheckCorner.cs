@@ -77,33 +77,17 @@ namespace AR_Zhuk_Schema.Insolation
             // Проверка инсоляции квартир сверху
             isTop = true;            
             curSideFlats = topFlats;
-            res = CheckFlats();
+            res = CheckSideFlats();
 
             if (res) // прошла инсоляция верхних квартир
             {
                 // Проверка инсоляции квартир снизу                
                 isTop = false;                
                 curSideFlats = bottomFlats;
-                res = CheckFlats();
-            }
-            return res;
-        }
-
-        protected bool CheckFlats ()
-        {
-            bool res = false;
-            if (isTop)
-            {
-                curSideFlats = topFlats;
-                res = CheckSideFlats();
-            }
-            else
-            {
-                curSideFlats = bottomFlats;
                 res = CheckSideFlats();
             }
             return res;
-        }
+        }        
 
         /// <summary>
         /// Проверка инсоляции верхних квартир
@@ -169,19 +153,31 @@ namespace AR_Zhuk_Schema.Insolation
                             if (isTop)
                             {
                                 insBotCur = insBot;
-                                indexBot = flat.SelectedIndexBottom>0? flat.SelectedIndexBottom-1: 0;
+                                indexBot = flat.SelectedIndexBottom>0? flat.SelectedIndexBottom: 0;
                             }
                             else
                             {
                                 insBotCur = insBot;
                             }                            
                         }
-                        roomLighting.FillIns(step, insTop, insBotCur, insSideLeftBot, insSideLeftTop, insSideRightBot, insSideRightTop);
+                        int stepTop;
+                        int stepBot;
+                        if (isTop)
+                        {
+                            stepTop = step;
+                            stepBot = 0;
+                        }
+                        else
+                        {
+                            stepTop = 0;
+                            stepBot = step;
+                        }
+                        roomLighting.FillIns(stepTop, stepBot, insTop, insBotCur, insSideLeftBot, insSideLeftTop, insSideRightBot, insSideRightTop);
 
                         // Проверка на затык бокового окна (если есть)
+                        flatPassed = false;
                         if (CheckFlatSideStopper(isFirstFlatInSide, isLastFlatInSide, roomLighting))
-                        {
-                            flatPassed = false;
+                        {                            
                             foreach (var rule in ruleInsFlat.Rules)
                             {
                                 if (roomLighting.CheckInsRule(rule))

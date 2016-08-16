@@ -202,26 +202,26 @@ namespace AR_Zhuk_Schema.Insolation
                     {
                         if (section.SectionType == SectionType.CornerLeft)
                         {
-                            insSideRightTopStandart = section.InsSideStart[0].InsValue;
-                            insSideRightBotStandart = section.InsSideStart[1].InsValue;
+                            insSideRightTopStandart = section.InsSideEnd[0].InsValue;
+                            insSideRightBotStandart = section.InsSideEnd[1].InsValue;
                         }
                         else
                         {
-                            insSideLeftTopStandart = section.InsSideStart[0].InsValue;
-                            insSideLeftBotStandart = section.InsSideStart[1].InsValue;
+                            insSideLeftTopStandart = section.InsSideEnd[0].InsValue;
+                            insSideLeftBotStandart = section.InsSideEnd[1].InsValue;
                         }
                     }
                     else
                     {
                         if (section.SectionType == SectionType.CornerLeft)
                         {
-                            insSideRightTopStandart = section.InsSideStart[0].InsValue;
-                            insSideRightBotStandart = section.InsSideStart[1].InsValue;
+                            insSideRightTopStandart = section.InsSideEnd[0].InsValue;
+                            insSideRightBotStandart = section.InsSideEnd[1].InsValue;
                         }
                         else
                         {
-                            insSideLeftBotStandart = section.InsSideStart[0].InsValue;
-                            insSideLeftTopStandart = section.InsSideStart[1].InsValue;
+                            insSideLeftBotStandart = section.InsSideEnd[0].InsValue;
+                            insSideLeftTopStandart = section.InsSideEnd[1].InsValue;
                         }
                     }
                 }
@@ -245,13 +245,13 @@ namespace AR_Zhuk_Schema.Insolation
                 {
                     if (section.Direction > 0)
                     {
-                        insSideRightTopStandart = section.InsSideStart[0].InsValue;
-                        insSideRightBotStandart = section.InsSideStart[1].InsValue;
+                        insSideRightTopStandart = section.InsSideEnd[0].InsValue;
+                        insSideRightBotStandart = section.InsSideEnd[1].InsValue;
                     }
                     else
                     {
-                        insSideLeftTopStandart = section.InsSideStart[0].InsValue;
-                        insSideLeftBotStandart = section.InsSideStart[1].InsValue;
+                        insSideLeftTopStandart = section.InsSideEnd[1].InsValue;
+                        insSideLeftBotStandart = section.InsSideEnd[0].InsValue;
                     }
                 }
             }

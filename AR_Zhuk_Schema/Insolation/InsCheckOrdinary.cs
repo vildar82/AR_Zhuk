@@ -204,12 +204,33 @@ namespace AR_Zhuk_Schema.Insolation
                             }
 
                             // Запись значений инсоляции в квартире
-                            lightingRoom.FillIns(step, insTopSide, insBotSide, insSideLeftBot, insSideLeftTop, insSideRightBot, insSideRightTop);
+                            int stepTop=0;
+                            int stepBot=0;
+                            string[] insBotCurFlat = null;
+                            if (isTop)
+                            {
+                                stepTop = step;
+                                if (isFirstFlatInSide)
+                                {
+                                    insBotCurFlat = insBotSide;
+                                }
+                                else if (isLastFlatInSide)
+                                {
+                                    insBotCurFlat = insBotSide.Reverse().ToArray();
+                                }
+                            }
+                            else
+                            {
+                                insBotCurFlat = insBotSide;
+                                stepTop = 0;
+                                stepBot = step;
+                            }
+                            lightingRoom.FillIns(stepTop, stepBot, insTopSide, insBotCurFlat, insSideLeftBot, insSideLeftTop, insSideRightBot, insSideRightTop);
 
                             // Проверка на затык бокового окна (если есть)
+                            flatPassed = false;
                             if (CheckFlatSideStopper(isFirstFlatInSide, isLastFlatInSide, lightingRoom))
-                            {
-                                flatPassed = false;
+                            {                                
                                 foreach (var rule in ruleInsFlat.Rules)
                                 {
                                     if (lightingRoom.CheckInsRule(rule))

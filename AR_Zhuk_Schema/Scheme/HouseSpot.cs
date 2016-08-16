@@ -120,7 +120,7 @@ namespace AR_Zhuk_Schema.Scheme
                 var nextSegment = Segments[segment.Number];
 
                 int countStepInThisSeg = segment.CountSteps - startStepInSeg;
-                if (countStepInThisSeg > WidthOrdinary + 1)
+                if (countStepInThisSeg > WidthOrdinary)
                 {
                     // Хвост угловой секции на этом сегменте
                     section.IsCornerStartTail = true;                        
@@ -400,7 +400,7 @@ namespace AR_Zhuk_Schema.Scheme
             { 
                 section.InsSideStart = segment.ModulesSideStart;
             }
-            else if (segment.EndType == SegmentEnd.End && section.CountStep == endStepInSeg)
+            else if (segment.EndType == SegmentEnd.End && startStepInSeg + section.CountStep-1 == endStepInSeg)
             {
                 section.InsSideEnd = segment.ModulesSideEnd;
             }            

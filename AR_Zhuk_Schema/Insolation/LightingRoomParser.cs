@@ -16,12 +16,13 @@ namespace AR_Zhuk_Schema.Insolation
         static Dictionary<string, LightingRoom> dictLightings = new Dictionary<string, LightingRoom>();
 
         public static LightingRoom GetLightings (RoomInfo room, bool isCorner)
-        {
+        {            
             LightingRoom lightRoomRes;
-            string key = room.Type + (isCorner ? "c" : "");
+            string key = room.Type + "_" + room.LightingTop + "_" + room.LightingNiz;
             if (!dictLightings.TryGetValue(key, out lightRoomRes))
             {
                 lightRoomRes = new LightingRoom();
+                roomNumber = 0;
 
                 LightingWindow sideLightings;
                 Side side = Side.None;
