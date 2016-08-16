@@ -52,7 +52,6 @@
     <Compile Include="DB\IDBService.cs" />
     <Compile Include="DB\PIK1.cs">
       <DependentUpon>PIK1.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="DB\PIK1.Designer.cs">
       <AutoGen>True</AutoGen>
