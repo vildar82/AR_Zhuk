@@ -17,7 +17,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             CreateHouseImage testCreateHouse = new CreateHouseImage();
 
             // Исходнве данные
-            string insolationFile = @"c:\work\test\АР\ЖУКИ\Задание по инсоляции ПИК1-новый тест.xlsx";
+            string insolationFile = @"c:\work\test\АР\ЖУКИ\Задание по инсоляции ПИК1-новый тест - копия (2).xlsx";
             List<HouseOptions> options = new List<HouseOptions>() {
                  new HouseOptions("P1", 9, 18, new List<bool> { false, false, false, false, true }),
                  new HouseOptions("P2", 9, 18, new List<bool> { true, false, false, false, false })
@@ -41,7 +41,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             Console.WriteLine($"Пятен = {totalHouses.Count}; Домов = {totalHouses.Sum(s => s.Count)} - {string.Join(",", totalHouses.Select(t => t.Count))}");
             
             Console.WriteLine($"{string.Join("; ", totalHouses.Select(h=>h[0].SectionsBySize[0].SpotOwner + " домов=" +  h.Count))}");
-            testCreateHouse.TestCreateImage(totalHouses, true);
+            testCreateHouse.TestCreateImage(totalHouses);
         }
 
         public static SpotInfo GetSpotInformation ()
