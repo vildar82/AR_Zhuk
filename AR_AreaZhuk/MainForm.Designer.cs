@@ -45,11 +45,8 @@ namespace AR_AreaZhuk
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dg = new System.Windows.Forms.DataGridView();
-            this.Column1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnViewPercentsge = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
@@ -92,6 +89,16 @@ namespace AR_AreaZhuk
             this.UpdateDbFlats = new System.Windows.Forms.Button();
             this.chkUpdateSections = new System.Windows.Forms.CheckBox();
             this.btnStop = new System.Windows.Forms.Button();
+            this.lblTotalCount = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lblMaxArea = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.Column1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lblTime = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -125,58 +132,25 @@ namespace AR_AreaZhuk
             this.Column1,
             this.Column3,
             this.Column2,
-            this.Column4});
+            this.Column4,
+            this.Column5});
             this.dg.Location = new System.Drawing.Point(1, 25);
             this.dg.Name = "dg";
             this.dg.RowHeadersVisible = false;
-            this.dg.Size = new System.Drawing.Size(346, 289);
+            this.dg.Size = new System.Drawing.Size(415, 289);
             this.dg.TabIndex = 0;
             this.dg.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellEndEdit);
             this.dg.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellValueChanged);
-            // 
-            // Column1
-            // 
-            this.Column1.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.Nothing;
-            this.Column1.HeaderText = "Зона";
-            this.Column1.Items.AddRange(new object[] {
-            "Студия",
-            "Однокомн.",
-            "Двухкомн.",
-            "Трехкомн.",
-            "Четырехкомн."});
-            this.Column1.Name = "Column1";
-            this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Column1.Width = 80;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "Площадь (м2.)";
-            this.Column3.Name = "Column3";
-            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column3.Width = 90;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Кол-во (%)";
-            this.Column2.Name = "Column2";
-            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column2.Width = 80;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "Допуск (%)";
-            this.Column4.Name = "Column4";
-            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column4.Width = 80;
+            this.dg.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dg_CellValueNeeded);
             // 
             // btnViewPercentsge
             // 
             this.btnViewPercentsge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnViewPercentsge.Enabled = false;
             this.btnViewPercentsge.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnViewPercentsge.Location = new System.Drawing.Point(348, 289);
+            this.btnViewPercentsge.Location = new System.Drawing.Point(303, 53);
             this.btnViewPercentsge.Name = "btnViewPercentsge";
-            this.btnViewPercentsge.Size = new System.Drawing.Size(66, 23);
+            this.btnViewPercentsge.Size = new System.Drawing.Size(35, 23);
             this.btnViewPercentsge.TabIndex = 3;
             this.btnViewPercentsge.Text = "Показать";
             this.btnViewPercentsge.UseVisualStyleBackColor = true;
@@ -185,19 +159,19 @@ namespace AR_AreaZhuk
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(897, 785);
+            this.label3.Location = new System.Drawing.Point(875, 787);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 13);
+            this.label3.Size = new System.Drawing.Size(68, 26);
             this.label3.TabIndex = 4;
-            this.label3.Text = "Количество:";
+            this.label3.Text = "Текущее \r\nкол-во (шт.):";
             // 
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSave.Location = new System.Drawing.Point(684, 807);
+            this.btnSave.Location = new System.Drawing.Point(529, 814);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 9;
@@ -214,7 +188,7 @@ namespace AR_AreaZhuk
             this.groupBox2.Controls.Add(this.dg2);
             this.groupBox2.Location = new System.Drawing.Point(416, 0);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(630, 782);
+            this.groupBox2.Size = new System.Drawing.Size(738, 782);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Подробная информация";
@@ -232,7 +206,7 @@ namespace AR_AreaZhuk
             this.dg2.Name = "dg2";
             this.dg2.ReadOnly = true;
             this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dg2.Size = new System.Drawing.Size(618, 757);
+            this.dg2.Size = new System.Drawing.Size(726, 757);
             this.dg2.TabIndex = 0;
             this.dg2.SortStringChanged += new System.EventHandler(this.dg2_SortStringChanged);
             this.dg2.FilterStringChanged += new System.EventHandler(this.dg2_FilterStringChanged);
@@ -243,7 +217,7 @@ namespace AR_AreaZhuk
             this.btnStartScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnStartScan.Enabled = false;
             this.btnStartScan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStartScan.Location = new System.Drawing.Point(422, 788);
+            this.btnStartScan.Location = new System.Drawing.Point(422, 782);
             this.btnStartScan.Name = "btnStartScan";
             this.btnStartScan.Size = new System.Drawing.Size(75, 23);
             this.btnStartScan.TabIndex = 12;
@@ -253,10 +227,10 @@ namespace AR_AreaZhuk
             // 
             // lblCountObjects
             // 
-            this.lblCountObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCountObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblCountObjects.AutoSize = true;
             this.lblCountObjects.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblCountObjects.Location = new System.Drawing.Point(972, 785);
+            this.lblCountObjects.Location = new System.Drawing.Point(944, 797);
             this.lblCountObjects.Name = "lblCountObjects";
             this.lblCountObjects.Size = new System.Drawing.Size(16, 16);
             this.lblCountObjects.TabIndex = 14;
@@ -280,6 +254,7 @@ namespace AR_AreaZhuk
             this.groupBox3.Controls.Add(this.txtOffsetDominants);
             this.groupBox3.Controls.Add(this.chkDominant);
             this.groupBox3.Controls.Add(this.groupBox4);
+            this.groupBox3.Controls.Add(this.btnViewPercentsge);
             this.groupBox3.Location = new System.Drawing.Point(3, 1);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(416, 237);
@@ -607,7 +582,6 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup1.Controls.Add(this.btnRemove);
             this.pnlMenuGroup1.Controls.Add(this.dg);
             this.pnlMenuGroup1.Controls.Add(this.btnMenuGroup1);
-            this.pnlMenuGroup1.Controls.Add(this.btnViewPercentsge);
             this.pnlMenuGroup1.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlMenuGroup1.Location = new System.Drawing.Point(0, 0);
             this.pnlMenuGroup1.Name = "pnlMenuGroup1";
@@ -657,7 +631,7 @@ namespace AR_AreaZhuk
             // 
             this.GetFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.GetFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.GetFile.Location = new System.Drawing.Point(529, 788);
+            this.GetFile.Location = new System.Drawing.Point(529, 783);
             this.GetFile.Name = "GetFile";
             this.GetFile.Size = new System.Drawing.Size(106, 23);
             this.GetFile.TabIndex = 22;
@@ -669,9 +643,9 @@ namespace AR_AreaZhuk
             // 
             this.UpdateDbFlats.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.UpdateDbFlats.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.UpdateDbFlats.Location = new System.Drawing.Point(907, 807);
+            this.UpdateDbFlats.Location = new System.Drawing.Point(1015, 810);
             this.UpdateDbFlats.Name = "UpdateDbFlats";
-            this.UpdateDbFlats.Size = new System.Drawing.Size(139, 23);
+            this.UpdateDbFlats.Size = new System.Drawing.Size(133, 23);
             this.UpdateDbFlats.TabIndex = 23;
             this.UpdateDbFlats.Text = "Обновить базу квартир";
             this.UpdateDbFlats.UseVisualStyleBackColor = true;
@@ -682,7 +656,7 @@ namespace AR_AreaZhuk
             // 
             this.chkUpdateSections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkUpdateSections.AutoSize = true;
-            this.chkUpdateSections.Location = new System.Drawing.Point(907, 835);
+            this.chkUpdateSections.Location = new System.Drawing.Point(1015, 836);
             this.chkUpdateSections.Name = "chkUpdateSections";
             this.chkUpdateSections.Size = new System.Drawing.Size(141, 17);
             this.chkUpdateSections.TabIndex = 24;
@@ -694,7 +668,7 @@ namespace AR_AreaZhuk
             // 
             this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStop.Location = new System.Drawing.Point(422, 817);
+            this.btnStop.Location = new System.Drawing.Point(422, 814);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 23);
             this.btnStop.TabIndex = 25;
@@ -702,12 +676,113 @@ namespace AR_AreaZhuk
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
+            // lblTotalCount
+            // 
+            this.lblTotalCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblTotalCount.AutoSize = true;
+            this.lblTotalCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblTotalCount.Location = new System.Drawing.Point(781, 786);
+            this.lblTotalCount.Name = "lblTotalCount";
+            this.lblTotalCount.Size = new System.Drawing.Size(16, 16);
+            this.lblTotalCount.TabIndex = 27;
+            this.lblTotalCount.Text = "0";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(671, 787);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(106, 13);
+            this.label4.TabIndex = 26;
+            this.label4.Text = "Общее кол-во (шт.):";
+            // 
+            // lblMaxArea
+            // 
+            this.lblMaxArea.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblMaxArea.AutoSize = true;
+            this.lblMaxArea.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblMaxArea.ForeColor = System.Drawing.Color.Red;
+            this.lblMaxArea.Location = new System.Drawing.Point(781, 817);
+            this.lblMaxArea.Name = "lblMaxArea";
+            this.lblMaxArea.Size = new System.Drawing.Size(16, 16);
+            this.lblMaxArea.TabIndex = 29;
+            this.lblMaxArea.Text = "0";
+            // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(671, 804);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(111, 26);
+            this.label6.TabIndex = 28;
+            this.label6.Text = "Макс. продаваемая \r\nплощадь (м2):";
+            // 
+            // Column1
+            // 
+            this.Column1.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.Nothing;
+            this.Column1.HeaderText = "Зона";
+            this.Column1.Items.AddRange(new object[] {
+            "Студия",
+            "Однокомн.",
+            "Двухкомн.",
+            "Трехкомн.",
+            "Четырехкомн."});
+            this.Column1.Name = "Column1";
+            this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "Площадь (м2.)";
+            this.Column3.Name = "Column3";
+            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column3.Width = 70;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Кол-во (%)";
+            this.Column2.Name = "Column2";
+            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column2.Width = 70;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "Допуск (%)";
+            this.Column4.Name = "Column4";
+            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column4.Width = 70;
+            // 
+            // Column5
+            // 
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
+            this.Column5.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Column5.HeaderText = "Кол-во квартир, попадающих в диапазон.";
+            this.Column5.Name = "Column5";
+            this.Column5.ReadOnly = true;
+            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // lblTime
+            // 
+            this.lblTime.AutoSize = true;
+            this.lblTime.Location = new System.Drawing.Point(1088, 786);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(40, 13);
+            this.lblTime.TabIndex = 30;
+            this.lblTime.Text = "lblTime";
+            this.lblTime.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1050, 856);
+            this.ClientSize = new System.Drawing.Size(1158, 856);
+            this.Controls.Add(this.lblTime);
+            this.Controls.Add(this.lblMaxArea);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.lblTotalCount);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.chkUpdateSections);
             this.Controls.Add(this.UpdateDbFlats);
@@ -721,7 +796,7 @@ namespace AR_AreaZhuk
             this.MinimumSize = new System.Drawing.Size(978, 514);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "\"Жучки\". В разработке. ";
+            this.Text = "\"Жучки\".  Тест.";
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dg)).EndInit();
             this.groupBox2.ResumeLayout(false);
@@ -793,14 +868,20 @@ namespace AR_AreaZhuk
         private Button GetFile;
         private Button btnAdd;
         private Button btnRemove;
-        private DataGridViewComboBoxColumn Column1;
-        private DataGridViewTextBoxColumn Column3;
-        private DataGridViewTextBoxColumn Column2;
-        private DataGridViewTextBoxColumn Column4;
         private Button UpdateDbFlats;
         private CheckBox chkUpdateSections;
         private AdvancedDataGridView dg2;
         private Button btnStop;
+        private Label lblTotalCount;
+        private Label label4;
+        private Label lblMaxArea;
+        private Label label6;
+        private DataGridViewComboBoxColumn Column1;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn Column2;
+        private DataGridViewTextBoxColumn Column4;
+        private DataGridViewTextBoxColumn Column5;
+        private Label lblTime;
     }
 }
 

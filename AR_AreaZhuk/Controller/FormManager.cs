@@ -9,12 +9,55 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
+using Zuby.ADGV;
 
 namespace AR_AreaZhuk
 {
   public static  class FormManager
     {
 
+
+      public static void DataReqValidator(DataGridView dg)
+      {
+          var selectedCell = dg.SelectedCells[0];
+          int iRow = selectedCell.RowIndex;
+          int iCol = selectedCell.ColumnIndex;
+          if (iCol == 1)
+          {
+              if (!Convert.ToString(dg[iCol, iRow].Value).Contains('-'))
+              {
+                  MessageBox.Show("Площадь должна задаваться диапазоном, например 30-35!", "");
+                  dg[iCol, iRow].Value = "30-35";
+              }
+              else
+              {
+                  string[] val = Convert.ToString(dg[iCol, iRow].Value).Split('-');
+                  if (val.Length != 2)
+                  {
+                      MessageBox.Show("Площадь должна задаваться диапазоном, например 30-35!", "");
+                      dg[iCol, iRow].Value = "30-35";
+                  }
+                  int valid = 0;
+                  for (int i = 0; i < val.Length; i++)
+                  {
+                      if (int.TryParse(val[0], out valid)) continue;
+                      MessageBox.Show("Площадь должна задаваться диапазоном, например 30-35!", "");
+                      dg[iCol, iRow].Value = "30-35";
+                      break;
+
+                  }
+              }
+          }
+          else if (iCol > 1)
+          {
+              int valid = 0;
+              if (!int.TryParse(Convert.ToString(dg[iCol, iRow].Value), out valid))
+              {
+                  MessageBox.Show("Необходимо ввести целое число!", "");
+                  dg[iCol, iRow].Value = 5;
+              }
+          }
+      }
 
       public static void Panel_Show(Panel panel, Button btn, int minSize, int maxSize)
       {
@@ -40,9 +83,10 @@ namespace AR_AreaZhuk
           }
       }
 
-      public static SpotInfo GetSpotTaskFromDG(SpotInfo spotInfo, DataGridView dg)
+      public static void GetSpotTaskFromDG(SpotInfo spotInfo, DataGridView dg)
       {
           spotInfo.requirments = new List<Requirment>();
+         // bool isValid = true;
           for (int i = 0; i < dg.RowCount - 1; i++)
           {
               string[] parse = dg[1, i].Value.ToString().Split('-');
@@ -52,6 +96,8 @@ namespace AR_AreaZhuk
               r.SubZone = subZone;
 
               r.Percentage =Convert.ToInt16(dg[2, i].Value);
+              if (r.Percentage <= 0)
+                  continue;
              r.OffSet = off;
               r.MinArea = Convert.ToInt16(parse[0]);
               r.MaxArea = Convert.ToInt16(parse[1]);
@@ -68,7 +114,7 @@ namespace AR_AreaZhuk
 
               spotInfo.requirments.Add(r);
           }
-          return spotInfo;
+        //  return isValid;
       }
       public static void ViewDataProcentage(DataGridView dg2,List<GeneralObject> ob,SpotInfo sp)
       {
@@ -82,8 +128,10 @@ namespace AR_AreaZhuk
           dt.Columns.Add("K1", typeof(Double));
           dt.Columns.Add("K2", typeof(Double));
           dt.Columns.Add("Общее кол-во секций (шт.)", typeof(Int16));
+          dt.Columns.Add("Кол-во секций с 3 и 4 комн. кв. (шт.)", typeof(Int16));
           dt.Columns.Add("Кол-во одинаковых секций (шт.)", typeof(string));
           dt.Columns.Add("Кол-во квартир (шт.)", typeof(Int16));
+         
 
           foreach (var rew in sp.requirments)
           {
@@ -100,20 +148,21 @@ namespace AR_AreaZhuk
               {
                   percent.Add(Math.Round(s.RealPercentage, 1));
               }
-              object[] newrow = new object[8 + percent.Count];
+              object[] newrow = new object[9 + percent.Count];
               newrow[0] = Math.Round(ss.SpotInf.TotalStandartArea, 1);
               newrow[1] = Math.Round(ss.SpotInf.TotalLiveArea, 1);
               newrow[2] = Math.Round(ss.SpotInf.K1,2);
               newrow[3] =  Math.Round(ss.SpotInf.K2,2);
               newrow[4] = ss.SpotInf.TotalSections;
-              newrow[5] = ss.SpotInf.TypicalSections;
-              newrow[6] = ss.SpotInf.TotalFlats;
-
+              newrow[5] = ss.SpotInf.CountContainsSections;
+              newrow[6] = ss.SpotInf.TypicalSections;
+              newrow[7] = ss.SpotInf.TotalFlats;
+             
               for (int i = 0; i < percent.Count; i++)
               {
-                  newrow[7 + i] = percent[i];
+                  newrow[8 + i] = percent[i];
               }
-              newrow[7 + percent.Count] = ss;
+              newrow[8 + percent.Count] = ss;
 
               dt.Rows.Add(newrow);
               counter++;

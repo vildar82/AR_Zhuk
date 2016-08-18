@@ -294,8 +294,8 @@ namespace AR_AreaZhuk
                     foreach (var r in roomsInfo.Where(x => x.ShortType.Equals(shortType)).ToList())
                     {
                         r.AreaModules = Convert.ToInt16(xlPackage.Workbook.Worksheets[2].Cells[counter, 3].Value);
-                        r.AreaTotal = Convert.ToDouble(xlPackage.Workbook.Worksheets[2].Cells[counter, 4].Value.ToString().Replace('.', ','));
-                        r.AreaTotalStandart = Convert.ToDouble(xlPackage.Workbook.Worksheets[2].Cells[counter, 5].Value.ToString().Replace('.', ','));
+                        r.AreaTotalStandart = Convert.ToDouble(xlPackage.Workbook.Worksheets[2].Cells[counter, 4].Value.ToString().Replace('.', ','));
+                        r.AreaTotal = Convert.ToDouble(xlPackage.Workbook.Worksheets[2].Cells[counter, 5].Value.ToString().Replace('.', ','));
                         r.AreaLive = Convert.ToDouble(xlPackage.Workbook.Worksheets[2].Cells[counter, 15].Value.ToString().Replace('.', ','));
                     }
                    
@@ -321,44 +321,46 @@ namespace AR_AreaZhuk
         //}
 
 
-        //public static void TestCreateImage(HouseInfo house)
-        //{
-        //    GeneralObject go = new GeneralObject();
-        //    go.SpotInf = house.SpotInf;
-        //    //double area = GetTotalArea(house);            
-        //    go.Houses.Add(house);
-        //    //go.SpotInf.RealArea = area;
-        //    go.GUID = Guid.NewGuid().ToString();
-        //    // ob.Add(go);
+        public static void TestCreateImage(HouseInfo house)
+        {
+            GeneralObject go = new GeneralObject();
+            go.SpotInf = new SpotInfo();
+            go.SpotInf.Size = new Cell(20,20);
+            go.SpotInf.InsModulesAll = new List<Module>();
+            //double area = GetTotalArea(house);            
+            go.Houses.Add(house);
+            //go.SpotInf.RealArea = area;
+            go.GUID = Guid.NewGuid().ToString();
+            // ob.Add(go);
 
-        //    //string spotName = house.Sections.First().SpotOwner.Split('|')[0];
-        //    //string curSteps = string.Join(".", house.Sections.Select(s=>s.CountStep.ToString()));
+            //string spotName = house.Sections.First().SpotOwner.Split('|')[0];
+            //string curSteps = string.Join(".", house.Sections.Select(s=>s.CountStep.ToString()));
 
-        //    //  if (steps != curSteps)
-        //    //  {
-        //    //      steps = curSteps;
-        //    //      countFile = 0;
-        //    //      countSteps++;
-        //    //  }
+            //  if (steps != curSteps)
+            //  {
+            //      steps = curSteps;
+            //      countFile = 0;
+            //      countSteps++;
+            //  }
 
-        //    //  countFile++;
-        //    //  contFileString = countSteps.ToString("0000") + "_" +  countFile.ToString("0000");
+            //  countFile++;
+            //  contFileString = countSteps.ToString("0000") + "_" +  countFile.ToString("0000");
 
-        //    //  string ids = string.Join("_", house.Sections.Select(s => s.IdSection.ToString()));
-        //    ////  string name = $"{contFileString}_{spotName}_{steps}_{ids}.png";            
+            //  string ids = string.Join("_", house.Sections.Select(s => s.IdSection.ToString()));
+            ////  string name = $"{contFileString}_{spotName}_{steps}_{ids}.png";            
 
-        //    string imagePath = Path.Combine(@"E:\Test\ЖУКИ\");
+            string imagePath = Path.Combine(@"E:\Test\ЖУКИ\");
 
-        //    string sourceImgFlats = @"z:\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
-        //    string ExcelDataPath = @"\\ab4\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1 -Не трогать.xlsx";
+            string sourceImgFlats = @"z:\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
+            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1 -Не трогать.xlsx";
 
-        //    BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, sourceImgFlats, 72);
-        //    var img = imgComb.generateGeneralObject();
-        //    img.Save(imagePath + Guid.NewGuid() + ".png", ImageFormat.Png);
+            BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, sourceImgFlats, 72);
+            var img = imgComb.generateGeneralObject();
+            img.Save(imagePath + Guid.NewGuid() + ".png", ImageFormat.Png);
 
-        //    // Лог дома
-        //    //  LogHouse(house, contFileString);
-        //}
+            // Лог дома
+            //  LogHouse(house, contFileString);
+        }
 
 
 
@@ -396,7 +398,7 @@ namespace AR_AreaZhuk
 
 
         public List<FlatInfo> GenerateSections(List<RoomInfo> roomInfo, int countModulesInSection,
-          bool isCornerLeftNiz, bool isCornerRightNiz, int countFloors)
+          bool isCornerLeftNiz, bool isCornerRightNiz, string countFloors)
         {
             // FrameWork fw = new FrameWork();
             //  double averageAreaSection = spotInfo.SpotArea / countSections;
@@ -406,7 +408,7 @@ namespace AR_AreaZhuk
             // double currentSum = 569.95 + 51.84;//spotInfo.SpotArea / 4; //569.95+51.84;//571.5;//+51.84;
             int countIndexes = countModulesInSection / 2;
 
-            int limit = 4000000;
+            int limit =3000000;
             int iteration = 0;
             Random random = new Random();
             // bool isContinue = true;
@@ -419,9 +421,14 @@ namespace AR_AreaZhuk
 
             if (isCornerLeftNiz)
             {
-                var rr = roomInfo.Where(x => x.Type.Equals("PIK1U_BS_A_10-17_A_2")).ToList();
-                summ = rr.Max(x => x.AreaModules);
-                lastRoom = rr.Where(x => x.AreaModules.Equals(summ)).ToList()[0];
+               // var rr = roomInfo.Where(x => x.Type.Equals("PIK1U_BS_A_10-17_A_2")).ToList();
+                RoomInfo llu = null;
+                if (countFloors == "10-18")
+                    llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_10-17_A_2"));//PIK1U_BS_L_18-25_A_3
+                else 
+                    llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_9_A"));//PIK1U_BS_L_9_A
+                summ = llu.AreaModules;
+                lastRoom = llu;
                 indexSummNiz = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
                 indexSummTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
                 lastRoom.SelectedIndexTop = indexSummTop;
@@ -439,9 +446,14 @@ namespace AR_AreaZhuk
             {
                 if (isCornerRightNiz)
                 {
-                    var rr = roomInfo.Where(x => x.Type.Equals("PIK1U_BS_L_10-17_A_2")).ToList();
-                    summ = rr.Max(x => x.AreaModules);
-                    lastRoom = rr.Where(x => x.AreaModules.Equals(summ)).ToList()[0];
+                    RoomInfo llu = null;
+                    if (countFloors == "10-18")
+                        llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_L_10-17_A_2"));//PIK1U_BS_L_18-25_A_3
+                    else
+                        llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_9_Z"));//PIK1U_BS_L_9_A
+                    
+                    summ = llu.AreaModules;
+                    lastRoom = llu;
                     indexSummNiz = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
                     indexSummTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
                     lastRoom.SelectedIndexTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
@@ -453,30 +465,26 @@ namespace AR_AreaZhuk
                 }
                 else
                 {
-                    if (countFloors == 25)
+                    RoomInfo llu = null;
+                    if (countFloors == "19-25")
                     {
-                        var rr = roomInfo.First(x => x.Type.Equals("PIK1U_BS_L_18-25_A_3"));//PIK1U_BS_L_18-25_A_3
-
-                        summ = rr.AreaModules;
-                        lastRoom = rr;
-                        indexSummNiz = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
-                        indexSummTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
-                        lastRoom.SelectedIndexTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
-                        lastRoom.SelectedIndexBottom = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
-                        flatsISection.Add(lastRoom);
+                        llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_L_18-25_A_3"));//PIK1U_BS_L_18-25_A_3
+                    }
+                    else if (countFloors == "10-18")
+                    {
+                        llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_10-17_Z_2"));//PIK1U_BS_L_18-25_A_3
                     }
                     else
                     {
-                        var rr = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_10-17_Z_2"));//PIK1U_BS_L_18-25_A_3
-
-                        summ = rr.AreaModules;
-                        lastRoom = rr;//PIK1U_BS_A_10-17_Z_2
-                        indexSummNiz = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
-                        indexSummTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
-                        lastRoom.SelectedIndexTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
-                        lastRoom.SelectedIndexBottom = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
-                        flatsISection.Add(lastRoom);
+                        llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_L_9_A"));//PIK1U_BS_L_9_A
                     }
+                    summ = llu.AreaModules;
+                    lastRoom = llu;
+                    indexSummNiz = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
+                    indexSummTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
+                    lastRoom.SelectedIndexTop = Convert.ToInt16(lastRoom.IndexLenghtTOP);
+                    lastRoom.SelectedIndexBottom = Convert.ToInt16(lastRoom.IndexLenghtNIZ);
+                    flatsISection.Add(lastRoom);
 
                 }
             }
@@ -547,6 +555,8 @@ namespace AR_AreaZhuk
                     lastRoomTemp.SelectedIndexTop = indexTop;
                     lastRoomTemp.SelectedIndexBottom = indexNiz;
                     flatsInSectionTemp.Add(tempRoomInfo[indexRandom]);
+                    if (countFloors == "9" & flatsInSectionTemp.Count > 6)
+                        break;
                     if (i >= 0)
                     {
                         if (isCornerRightNiz & lastRoomTemp.LinkagePOSLE.Contains("P"))
@@ -575,7 +585,7 @@ namespace AR_AreaZhuk
                         {
 
                            
-                            if (flatsInSectionTemp.Count < 5)
+                            if (flatsInSectionTemp.Count < 5&countFloors!="9")
                                 break;
                            
                             if (indexSummNizTemp + indexSummTopTemp == countIndexes & indexSummNizTemp == countIndexes / 2 &
@@ -899,7 +909,7 @@ namespace AR_AreaZhuk
 
 
 
-        private void AddToListSections(List<FlatInfo> listSections, List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isLeftCorner, int countFloors)
+        private void AddToListSections(List<FlatInfo> listSections, List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isLeftCorner, string countFloors)
         {
             bool isExist = false;
             //if (listRooms1[listRooms1.Count - 2].ShortType.Equals("2KL2"))
@@ -940,7 +950,7 @@ namespace AR_AreaZhuk
                     //int b = a + 1;
                     //HouseInfo h = new HouseInfo();
                     //h.Sections.Add(fi);
-                    //FrameWork.TestCreateImage(h);
+                    //TestCreateImage(h);
                     //Serializer ser = new Serializer();
                     //GeneralObject go = new GeneralObject();
                     //go.Houses.Add(h);
@@ -979,11 +989,6 @@ namespace AR_AreaZhuk
                     continue;
                 if (ri.TypeSection.Equals("Право") && isCornerLeftNiz)
                     continue;
-                //if (ri.TypeSection.Equals("Право") & !isCornerRightNiz)
-                //    continue;
-                //if (ri.TypeSection.Equals("Лево") & !isCornerLeftNiz)
-                //    continue;
-
                 if (tempRoomConfig.Length < 3)
                     continue;
                 if (lastRoomConfig[2].Equals("C"))
@@ -1092,13 +1097,13 @@ namespace AR_AreaZhuk
                 }
                 tempRoomInfo.Add(ri);
             }
-            if (tempRoomInfo.Where(x => x.ShortType.Equals("2KL2")).ToList().Count > 0)
-            {
-                if (tempRoomInfo.Where(x => x.ShortType.Equals("2KL2")).ToList().Count > 0)
-                {
+            //if (tempRoomInfo.Where(x => x.ShortType.Equals("2KL2")).ToList().Count > 0)
+            //{
+            //    if (tempRoomInfo.Where(x => x.ShortType.Equals("2KL2")).ToList().Count > 0)
+            //    {
 
-                }
-            }
+            //    }
+            //}
             return tempRoomInfo;
         }
 
@@ -1140,11 +1145,16 @@ namespace AR_AreaZhuk
 
         public bool IsValidRoom(RoomInfo selectedRoom, RoomInfo preRoom, List<RoomInfo> tempInfo, bool isLeftNiz, bool isRightNiz)
         {
-            //if (selectedRoom.ShortType.Equals("2KL2"))
-            //{
-            //    int a = 1;
-            //    int b = a + 1;
-            //}
+            if (tempInfo.Any(x => x.Type.Contains("PIK1_2KL2")))
+            {
+                if (selectedRoom.Type.Contains("PIK1_2KL2"))
+                {
+                    if (selectedRoom.Type.Contains("PIK1_2KL2"))
+                    {
+
+                    }
+                }
+            }
             if (selectedRoom.SubZone.Contains('!'))
                 return false;
             if (selectedRoom.Requirment.Equals("0"))
@@ -1157,20 +1167,7 @@ namespace AR_AreaZhuk
             if (selectedRoom.IndexLenghtNIZ.Split('/')[0].Equals("!") | selectedRoom.SubZone.Equals("0"))
                 return false;
             //Условия компановки
-            if (preRoom.LinkageOR.Contains(">"))
-            {
-                string[] mass = preRoom.LinkageOR.Split(';');
-                for (int i = 0; i < mass.Length; i++)
-                {
-                    if (mass[i].Replace(">", "").Equals(selectedRoom.LinkageDO))
-                        return true;
-                }
-                return false;
-            }
-            //if (selectedRoom.ShortType.Equals("2NM2"))
-            //{
-            //    return false;
-            //}
+           
             if (preRoom.ShortType.Equals(selectedRoom.ShortType))
             {
                 string codeReal = selectedRoom.Type.Substring(selectedRoom.Type.Length - 2, 1);
@@ -1182,27 +1179,16 @@ namespace AR_AreaZhuk
                 }
                 if (codeReal.Length > selectedRoom.OrderBuild.Length & !selectedRoom.OrderBuild.Equals(""))
                     return false;
-                //if (selectedRoom.ShortType.Equals("1NS1"))
-                //{
-                //    if (codeReal.Equals("ZA"))
-                //    { }
-                //}
+
                 if (!selectedRoom.OrderBuild.Equals(""))
                 {
                     if (!codeReal.Substring(0, codeReal.Length)
                             .Equals(selectedRoom.OrderBuild.Substring(0, codeReal.Length)))
                         return false;
                 }
-                //string code = preRoom.Type.Substring(preRoom.Type.Length - 2, 1) + selectedRoom.Type.Substring(selectedRoom.Type.Length - 2, 1);
-                //if (!code.Equals(selectedRoom.OrderBuild))
-                //{
-                //    var count = tempInfo.Where(x => x.ShortType.Equals(selectedRoom.ShortType)).ToList().Count;
-                //}
-
             }
             bool isKM = preRoom.LinkagePOSLE.Contains("K") & selectedRoom.LinkageDO.Contains("M");
             bool isFk = preRoom.LinkagePOSLE.Contains("F") & selectedRoom.LinkageDO.Contains("K");
-            // bool isFk = preRoom.LinkagePOSLE.Contains("F") & selectedRoom.LinkageDO.Contains("K");
             if (isKM & isLeftNiz)
             {
                 var kms = tempInfo.Where(x => x.LinkagePOSLE.Contains("J")).ToList();
@@ -1219,7 +1205,7 @@ namespace AR_AreaZhuk
             }
             if (selectedRoom.Requirment.Equals("0"))
                 return false;
-            else if (!selectedRoom.Requirment.Equals(""))
+            else if (!selectedRoom.Requirment.Equals("") & !selectedRoom.Requirment.Equals("1"))
             {
                 string requirment = selectedRoom.Requirment;
                 string[] reqs = Regex.Split(requirment, "<=");
@@ -1235,16 +1221,38 @@ namespace AR_AreaZhuk
                 }
                 else if (firstSybmol.Equals(""))  //<=1
                 {
-                    if (tempInfo.Where(y => y.Type.Equals(selectedRoom.Type)).ToList().Count > Convert.ToInt16(secondSybmol) - 1)
+                    if (tempInfo.Where(y => y.Type.Equals(selectedRoom.Type)).Where(x => x.LinkageOR.Equals(selectedRoom.LinkageOR)).ToList().Count > Convert.ToInt16(secondSybmol) - 1)
                         return false;
                 }
                 else if (firstSybmol.Length == 1)   //H<=1
                 {
-                    if (tempInfo.Where(y => y.Type.Equals(selectedRoom.Type) & (selectedRoom.LinkageDO.Contains(firstSybmol) |
+                    if (tempInfo.Where(y => y.Type.Equals(selectedRoom.Type)&y.LinkageOR.Equals(selectedRoom.LinkageOR) & (selectedRoom.LinkageDO.Contains(firstSybmol) |
                         selectedRoom.LinkagePOSLE.Contains(firstSybmol))).ToList()
                         .Count > Convert.ToInt16(secondSybmol) - 1)
-                        return false; ;
+                        return false; 
                 }
+            }
+
+
+            if (preRoom.LinkageOR.Contains(">"))
+            {
+                string[] mass = preRoom.LinkageOR.Split(';');
+                for (int i = 0; i < mass.Length; i++)
+                {
+                    if (mass[i].Replace(">", "").Equals(selectedRoom.LinkageDO))
+                        return true;
+                }
+                return false;
+            }
+            if (selectedRoom.LinkageOR.Contains("<"))
+            {
+                string[] mass = selectedRoom.LinkageOR.Split(';');
+                for (int i = 0; i < mass.Length; i++)
+                {
+                    if (mass[i].Replace(">", "").Equals(preRoom.LinkagePOSLE))
+                        return true;
+                }
+                return false;
             }
 
             return true;
@@ -1383,9 +1391,10 @@ namespace AR_AreaZhuk
         }
 
 
-        private bool IsValidSmoke(List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isCorner, int countFloors, List<FlatInfo> allsections)
+        private bool IsValidSmoke(List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isCorner, string countFloors, List<FlatInfo> allsections)
         {
-
+            if(countFloors=="9")
+                return true;
             if (listRooms1.Count > 7)
             {
             
@@ -1393,7 +1402,7 @@ namespace AR_AreaZhuk
                           .Where(x => x.LevelsSection.Equals("10-18")).Where(x => x.Requirment != "0")
                           .Where(x => x.TypeSection.Equals("Рядовая")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => !x.FactorSmoke.Equals(""))
                           .ToList()[0];
-                if (countFloors == 25)
+                if (countFloors == "19-25")
                 {
                     rr = allRooms.Where(x => x.SubZone.Equals("0")).Where(x => x.Requirment != "0")
                            .Where(x => x.LevelsSection.Equals("19-25"))

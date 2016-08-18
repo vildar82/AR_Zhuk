@@ -11,7 +11,7 @@
     <AssemblyName>AR_AreaZhuk</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AssemblyVersion>1.0.225.4337</AssemblyVersion>
+    <AssemblyVersion>1.0.231.4533</AssemblyVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -42,7 +42,8 @@
     <Reference Include="AdvancedDataGridView">
       <HintPath>\\picompany.ru\root\dep_ort\8.САПР\технические данные\source\Dll\ЖУКИ\AdvancedDataGridView.dll</HintPath>
     </Reference>
-    <Reference Include="BeetlyVisualisation">
+    <Reference Include="BeetlyVisualisation, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>\\picompany.ru\root\dep_ort\8.САПР\технические данные\source\Dll\ЖУКИ\BeetlyVisualisation.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus">
@@ -96,7 +97,7 @@
       <DependentUpon>PIK1.xsd</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="PIK11.Designer.cs">
+    <Compile Include="PIK1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>PIK1.xsd</DependentUpon>
@@ -133,7 +134,7 @@
     <None Include="PIK1.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>PIK11.Designer.cs</LastGenOutput>
+      <LastGenOutput>PIK1.Designer.cs</LastGenOutput>
     </None>
     <None Include="PIK1.xss">
       <DependentUpon>PIK1.xsd</DependentUpon>
