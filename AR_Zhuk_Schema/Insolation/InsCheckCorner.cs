@@ -111,7 +111,7 @@ namespace AR_Zhuk_Schema.Insolation
                     if (flat.SubZone == "0")
                     {
                         // прыжок на ширину ЛЛУ без 1 шага (уходит внутрь угла и не занимает шаг секции)
-                        step += flat.SelectedIndexTop - 1;
+                        step += flat.SelectedIndexTop;
                         continue;
                     }
 

@@ -37,7 +37,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             }            
         }
 
-        public void TestCreateImage (List<List<HouseInfo>> houses, bool onlyPassedIns)
+        public void TestCreateImage (List<List<HouseInfo>> houses)
         {
             var countHousesVar = houses.Max(h => h.Count);
             for (int i = 0; i < countHousesVar; i++)
@@ -53,16 +53,11 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                     else
                     {
                         hi = house.Last();
-                    }
-                    if (onlyPassedIns)
-                    {
-                        hi.SectionsBySize = hi.SectionsBySize.Where(w => !w.Sections.
-                                            Any(s => s.Flats.Any(f => !f.IsInsPassed))).ToList();
-                    }
+                    }                    
                     housesVar.Add(hi);
                 }                
-                var countsectBySize = housesVar.Max(h => h.SectionsBySize.Max(s=>s.Sections.Count));
-                for (int s = 0; s < countsectBySize; s++)
+                //var countsectBySize = housesVar.Max(h => h.SectionsBySize.Max(s=>s.Sections.Count));
+                for (int s = 0; s < 5; s++)
                 {
                     List<HouseInfo> hbs = new List<HouseInfo>();                    
                     foreach (var house in housesVar)
