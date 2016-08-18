@@ -143,6 +143,8 @@ namespace AR_Zhuk_Schema.Insolation
             resFlats.IsVertical = section.IsVertical;
             resFlats.ImageAngle = section.ImageAngle;
             resFlats.ImageStart = section.ImageStart;
+            resFlats.Floors = section.Floors;
+            resFlats.IsDominant = section.IsDominant;            
             if (isInvert)
             {
                 resFlats.ImageAngle += 180;
@@ -158,10 +160,10 @@ namespace AR_Zhuk_Schema.Insolation
                     itemFlat.LightingTop = sideFlat.LightingTop;
                     itemFlat.LightingNiz = sideFlat.LightingBot;
                 }
-            }            
-//#else
-//            resFlats.Flats = flat.Flats;
-//#endif            
+            }
+            //#else
+            //            resFlats.Flats = flat.Flats;
+            //#endif            
             return resFlats;
         }
     }

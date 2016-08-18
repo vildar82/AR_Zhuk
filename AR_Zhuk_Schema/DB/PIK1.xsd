@@ -402,7 +402,8 @@ FROM            C_Flats_PIK1 INNER JOIN
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT        C_Sections.ID_Section, C_Sections.CountModules, C_Sections.Type AS TypeSection, C_Sections.Levels, C_Flats_PIK1.Type AS TypeFlat, C_Flats_PIK1.ID_Flat, 
-                         F_nn_FlatsInSection.SelectedIndexBottom, F_nn_FlatsInSection.SelectedIndexTop, F_nn_FlatsInSection.ID_FlatInSection
+                         F_nn_FlatsInSection.SelectedIndexBottom, F_nn_FlatsInSection.SelectedIndexTop, F_nn_FlatsInSection.ID_FlatInSection, C_Flats_PIK1.LightTop, 
+                         C_Flats_PIK1.LightBottom
 FROM            C_Flats_PIK1 INNER JOIN
                          F_nn_FlatsInSection ON C_Flats_PIK1.ID_Flat = F_nn_FlatsInSection.ID_Flat INNER JOIN
                          C_Sections ON F_nn_FlatsInSection.ID_Section = C_Sections.ID_Section
@@ -456,6 +457,25 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
                 </SelectCommand>
               </DbSource>
             </Sources>
+          </TableAdapter>
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="vil_SectionsTypesTableAdapter" GeneratorDataComponentClassName="vil_SectionsTypesTableAdapter" Name="vil_SectionsTypes" UserDataComponentName="vil_SectionsTypesTableAdapter">
+            <MainSource>
+              <DbSource ConnectionRef="SAPRConnectionString (Settings)" DbObjectName="SAPR.dbo.C_Sections" DbObjectType="Table" GenerateMethods="Get" GenerateShortCommands="false" GeneratorGetMethodName="GetSectionTypes" GetMethodModifier="Public" GetMethodName="GetSectionTypes" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="true" UserGetMethodName="GetSectionTypes" UserSourceName="GetSectionTypes">
+                <SelectCommand>
+                  <DbCommand CommandType="Text" ModifiedByUser="true">
+                    <CommandText>SELECT DISTINCT CountModules, Type, Levels
+FROM            C_Sections</CommandText>
+                    <Parameters />
+                  </DbCommand>
+                </SelectCommand>
+              </DbSource>
+            </MainSource>
+            <Mappings>
+              <Mapping SourceColumn="CountModules" DataSetColumn="CountModules" />
+              <Mapping SourceColumn="Type" DataSetColumn="Type" />
+              <Mapping SourceColumn="Levels" DataSetColumn="Levels" />
+            </Mappings>
+            <Sources />
           </TableAdapter>
         </Tables>
         <Sources />
@@ -687,6 +707,27 @@ WHERE        (C_Sections.CountModules = @CountModules) AND (C_Sections.Type = @T
                 </xs:simpleType>
               </xs:element>
               <xs:element name="ID_FlatInSection" msdata:ReadOnly="true" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="-1" msdata:AutoIncrementStep="-1" msprop:Generator_ColumnVarNameInTable="columnID_FlatInSection" msprop:Generator_ColumnPropNameInRow="ID_FlatInSection" msprop:Generator_ColumnPropNameInTable="ID_FlatInSectionColumn" msprop:Generator_UserColumnName="ID_FlatInSection" type="xs:int" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="vil_SectionsTypes" msprop:Generator_TableClassName="vil_SectionsTypesDataTable" msprop:Generator_TableVarName="tablevil_SectionsTypes" msprop:Generator_RowChangedName="vil_SectionsTypesRowChanged" msprop:Generator_TablePropName="vil_SectionsTypes" msprop:Generator_RowDeletingName="vil_SectionsTypesRowDeleting" msprop:Generator_RowChangingName="vil_SectionsTypesRowChanging" msprop:Generator_RowEvHandlerName="vil_SectionsTypesRowChangeEventHandler" msprop:Generator_RowDeletedName="vil_SectionsTypesRowDeleted" msprop:Generator_RowClassName="vil_SectionsTypesRow" msprop:Generator_UserTableName="vil_SectionsTypes" msprop:Generator_RowEvArgName="vil_SectionsTypesRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="CountModules" msprop:Generator_ColumnVarNameInTable="columnCountModules" msprop:Generator_ColumnPropNameInRow="CountModules" msprop:Generator_ColumnPropNameInTable="CountModulesColumn" msprop:Generator_UserColumnName="CountModules" type="xs:int" />
+              <xs:element name="Type" msprop:Generator_ColumnVarNameInTable="columnType" msprop:Generator_ColumnPropNameInRow="Type" msprop:Generator_ColumnPropNameInTable="TypeColumn" msprop:Generator_UserColumnName="Type">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Levels" msprop:Generator_ColumnVarNameInTable="columnLevels" msprop:Generator_ColumnPropNameInRow="Levels" msprop:Generator_ColumnPropNameInTable="LevelsColumn" msprop:Generator_UserColumnName="Levels" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="50" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
