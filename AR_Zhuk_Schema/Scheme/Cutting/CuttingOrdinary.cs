@@ -44,7 +44,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         public List<HouseInfo> Cut()
         {
-            Debug.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
+            Console.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
 
             failedSections = new List<string>();
             passedSections = new Dictionary<string, Section>();
@@ -280,21 +280,20 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         }        
 
         private int GetSectionFloors(ref Section section, int sectionsInHouse)
-        {
-            int numberSect = section.NumberInSpot;
+        {            
             int floors = houseSpot.HouseOptions.CountFloorsMain;
             if (!section.IsCorner)
             {
                 bool isDominant = false;
-                if (numberSect < 4)
+                if (section.NumberInSpot < 4)
                 {
-                    isDominant = houseSpot.HouseOptions.DominantPositions[numberSect - 1];
+                    isDominant = houseSpot.HouseOptions.DominantPositions[section.NumberInSpot - 1];
                 }
-                else if (numberSect == sectionsInHouse)
+                else if (section.NumberInSpot == sectionsInHouse)
                 {
                     isDominant = houseSpot.HouseOptions.DominantPositions.Last();
                 }
-                else if (numberSect == sectionsInHouse - 1)
+                else if (section.NumberInSpot == sectionsInHouse - 1)
                 {
                     isDominant = houseSpot.HouseOptions.DominantPositions[3];
                 }
@@ -312,7 +311,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             string floors = "10-18";
             if (countFloors > 18 & countFloors <= 25)
                 floors = "19-25";
-            if (countFloors < 9)
+            if (countFloors <= 9)
                 floors = "9";
             return floors;
         }

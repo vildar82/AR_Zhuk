@@ -131,18 +131,11 @@ namespace AR_Zhuk_Schema.DB
             if (notInDictSS.Count > 0)
             {
                 // Паралельная загрузка секций   
-                //foreach (var item in notInDictSS)
-                //{
-                //    try
-                //    {
-                //        dictDbFlats.TryAdd(item, LoadFromDbSection(item));
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        string err = ex.Message;
-                //    }
-                //}
-                Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
+                foreach (var item in notInDictSS)
+                {
+                    dictDbFlats.TryAdd(item, LoadFromDbSection(item));
+                }
+                //Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
 
