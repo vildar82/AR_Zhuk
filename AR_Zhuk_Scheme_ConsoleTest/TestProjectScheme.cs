@@ -19,8 +19,8 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             // Исходнве данные
             string insolationFile = @"c:\work\test\АР\ЖУКИ\Задание по инсоляции ПИК1_Test.xlsx";
             List<HouseOptions> options = new List<HouseOptions>() {
-                 new HouseOptions("P1", 15, 25, new List<bool> { false, false, false, false, false }),
-                 new HouseOptions("P2", 15, 25, new List<bool> { false, false, false, false, false })
+                 new HouseOptions("P1", 15, 25, new List<bool> { true, false, false, true, false }),
+                 new HouseOptions("P2", 15, 25, new List<bool> { false, true, false, false, true })
             };
             SpotInfo sp = GetSpotInformation();
 
@@ -33,7 +33,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            var totalHouses = projectSpot.GetTotalHouses(1000, 100);
+            var totalHouses = projectSpot.GetTotalHouses(1000);
 
             timer.Stop();
             Console.WriteLine("Получение всех домов = " + timer.Elapsed.TotalSeconds);
