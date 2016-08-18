@@ -133,17 +133,9 @@ namespace AR_Zhuk_Schema.DB
                 // Паралельная загрузка секций   
                 foreach (var item in notInDictSS)
                 {
-                    try
-                    {
-                        dictDbFlats.TryAdd(item, LoadFromDbSection(item));
-                    }
-                    catch (Exception ex)
-                    {
-                        string err = ex.Message;
-                        err = "";
-                    }
+                    dictDbFlats.TryAdd(item, LoadFromDbSection(item));
                 }
-               // Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
+                //Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
 

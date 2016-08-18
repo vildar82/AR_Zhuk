@@ -18,27 +18,19 @@ namespace AR_Zhuk_Schema.Insolation
 
         readonly string[] insTopStandart;
         readonly string[] insBotStandart;
+        readonly string[] insBotStandartReverse;        
         readonly string[] insTopInvert;
-        readonly string[] insBotInvert;        
-
-        Lighting lightingCurSide;
-        Lighting lightingOtherSide;
+        readonly string[] insBotInvert;
+        readonly string[] insBotInvertReverse;        
         
-        string[] insCurSide;
-        string[] insOtherSide;
-
-        string insSideCurTopLeft;
-        string insSideCurBotLeft;
-        string insSideCurTopRight;
-        string insSideCurBotRight;
+        string[] insTopSide;
+        string[] insBotSide;        
 
         Joint jointCurLeft;
         Joint jointCurRight;
 
         bool isFirstFlatInSide;
-        bool isLastFlatInSide;
-
-        
+        bool isLastFlatInSide;        
 
         public InsCheckOrdinary (IInsolation insService, Section section) 
             : base(insService, section)
@@ -46,7 +38,9 @@ namespace AR_Zhuk_Schema.Insolation
             insTopStandart = section.InsTop.Select(m => m.InsValue).ToArray();
             insBotStandart = section.InsBot.Select(m => m.InsValue).ToArray();            
             insTopInvert = insBotStandart;
-            insBotInvert = insTopStandart;            
+            insBotInvert = insTopStandart;
+            insBotStandartReverse = insBotStandart.Reverse().ToArray();
+            insBotInvertReverse = insBotInvert.Reverse().ToArray();
         }
 
         public override List<FlatInfo> CheckSections (Section section)
@@ -98,18 +92,7 @@ namespace AR_Zhuk_Schema.Insolation
             checkSection = sect;
 
             topFlats = insService.GetSideFlatsInSection(sect.Flats, true, section.SectionType);
-            bottomFlats = insService.GetSideFlatsInSection(sect.Flats, false, section.SectionType);
-
-            // Временно!!! подмена индекса угловой квартиры 2KL2
-            if (section.SectionType == SectionType.CornerLeft || section.SectionType == SectionType.CornerRight)
-            {
-                var cornerFlat = section.SectionType == SectionType.CornerLeft ? bottomFlats.First() : bottomFlats.Last();
-                if (cornerFlat.ShortType == "2KL2")
-                {
-                    cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
-                    cornerFlat.SelectedIndexBottom = 4;
-                }
-            }
+            bottomFlats = insService.GetSideFlatsInSection(sect.Flats, false, section.SectionType);            
 
             InvertInsSide(isRightOrTopLLu);
 
@@ -128,7 +111,7 @@ namespace AR_Zhuk_Schema.Insolation
             return res;
         }
 
-        protected override bool CheckFlats ()
+        protected bool CheckFlats ()
         {
             bool res = false;            
 
@@ -136,13 +119,13 @@ namespace AR_Zhuk_Schema.Insolation
             {
                 if (isTop)
                 {
-                    insCurSide = insTopStandart;
-                    insOtherSide = insBotStandart;                    
+                    insTopSide = insTopStandart;
+                    insBotSide = insBotStandartReverse;
                 }
                 else
                 {
-                    insCurSide = insBotStandart;
-                    insOtherSide = insTopStandart;
+                    insTopSide = null;
+                    insBotSide = insBotStandart;
                 }
                 jointCurLeft = section.JointLeft;
                 jointCurRight = section.JointRight;            
@@ -151,13 +134,13 @@ namespace AR_Zhuk_Schema.Insolation
             {
                 if (isTop)
                 {
-                    insCurSide = insTopInvert;
-                    insOtherSide = insBotInvert;
+                    insTopSide = insTopInvert;
+                    insBotSide = insBotInvertReverse;
                 }
                 else
                 {
-                    insCurSide = insBotInvert;
-                    insOtherSide = insTopInvert;
+                    insBotSide = insBotInvert;
+                    insTopSide = null;
                 }
                 jointCurLeft = section.JointRight;
                 jointCurRight = section.JointLeft;
@@ -180,8 +163,7 @@ namespace AR_Zhuk_Schema.Insolation
             int step = startStep;
 
             for (int i = 0; i < curSideFlats.Count; i++)
-            {
-                specialFail = false;
+            {                
                 flat = curSideFlats[i];
 
                 string keyInsFlat = GetKey(step);
@@ -189,63 +171,77 @@ namespace AR_Zhuk_Schema.Insolation
                 if (!dictInsFlats.TryGetValue(keyInsFlat, out insFlatValue))
                 {
                     curFlatIndex = i;
-                    bool flatPassed = false;
-                    string lightingCurSideString = null;
-                    string lightingOtherSideString = null;
+                    bool flatPassed = true;                    
                     isFirstFlatInSide = IsEndFirstFlatInSide();
                     isLastFlatInSide = IsEndLastFlatInSide();
 
-                    if (flat.SubZone == "0")
+                    if (flat.SubZone != "0")
                     {
-                        // без правил инсоляции может быть ЛЛУ
-                        flatPassed = true;
-                    }
-                    else
-                    {
-                        if (isTop)
+                        LightingRoom lightingRoom = null;
+                        // Ошибка, если у квартиры снизу есть верхняя инсоляция
+                        if (!isTop && flat.SelectedIndexTop != 0)
                         {
-                            lightingCurSideString = flat.LightingTop;
-                            lightingOtherSideString = flat.LightingNiz;
+                            flatPassed = false;
                         }
                         else
                         {
-                            lightingCurSideString = flat.LightingNiz;
-                        }
-
-                        lightingCurSide = LightingStringParser.GetLightings(lightingCurSideString, isTop);
-                        // Для верхних крайних верхних квартир нужно проверить низ
-                        lightingOtherSide = null;
-                        if (isTop)
-                        {
-                            if (lightingOtherSideString != null && (isFirstFlatInSide || isLastFlatInSide))
+                            lightingRoom = LightingRoomParser.GetLightings(flat, false);
+                            // Ошибка, если у не торцевой квартиры будет боковая инсоляция
+                            if (!isFirstFlatInSide && !isLastFlatInSide &&
+                                (lightingRoom.SideIndexTop != null || lightingRoom.SideIndexBot!= null))
                             {
-                                lightingOtherSide = LightingStringParser.GetLightings(lightingOtherSideString, false);
+                                flatPassed = false;
                             }
                         }
 
-                        var ruleInsFlat = insService.FindRule(flat);
-                        if (ruleInsFlat == null)
+                        if (flatPassed)
                         {
-                            // Атас, квартира не ЛЛУ, но без правил инсоляции
-                            throw new Exception("Не определено правило инсоляции для квартиры - " + flat.Type);
-                        }
-
-                        foreach (var rule in ruleInsFlat.Rules)
-                        {
-                            if (CheckRule(rule, step))
+                            var ruleInsFlat = insService.FindRule(flat);
+                            if (ruleInsFlat == null)
                             {
-                                // Правило удовлетворено, оставшиеся правила можно не проверять
-                                // Евартира проходит инсоляцию
-                                flatPassed = true;
-                                break;
+                                // Атас, квартира не ЛЛУ, но без правил инсоляции
+                                throw new Exception("Не определено правило инсоляции для квартиры - " + flat.Type);
                             }
-                        }
-                    }
 
-                    if (specialFail)
-                    {
-                        flatPassed = false;
-                    }
+                            // Запись значений инсоляции в квартире
+                            int stepTop=0;
+                            int stepBot=0;
+                            string[] insBotCurFlat = null;
+                            if (isTop)
+                            {
+                                stepTop = step;
+                                if (isFirstFlatInSide)
+                                {
+                                    insBotCurFlat = insBotSide;
+                                }
+                                else if (isLastFlatInSide)
+                                {
+                                    insBotCurFlat = insBotSide.Reverse().ToArray();
+                                }
+                            }
+                            else
+                            {
+                                insBotCurFlat = insBotSide;
+                                stepTop = 0;
+                                stepBot = step;
+                            }
+                            lightingRoom.FillIns(stepTop, stepBot, insTopSide, insBotCurFlat, insSideLeftBot, insSideLeftTop, insSideRightBot, insSideRightTop);
+
+                            // Проверка на затык бокового окна (если есть)
+                            flatPassed = false;
+                            if (CheckFlatSideStopper(isFirstFlatInSide, isLastFlatInSide, lightingRoom))
+                            {                                
+                                foreach (var rule in ruleInsFlat.Rules)
+                                {
+                                    if (lightingRoom.CheckInsRule(rule))
+                                    {
+                                        flatPassed = true;
+                                        break;
+                                    }
+                                }
+                            }                        
+                        }
+                    }                    
 
                     flat.IsInsPassed = flatPassed;
 
@@ -277,29 +273,6 @@ namespace AR_Zhuk_Schema.Insolation
         {
             string res = (isTop ? "1" : "0") + (isRightOrTopLLu? "1":"0") + step + flat.Type;
             return res;
-        }
-
-        private bool CheckRule (InsRule rule, int step)
-        {
-            // подходящие окна в квартиирах будут вычитаться из требований
-            var requires = rule.Requirements.ToList();                       
-
-            // Проверка окон с этой строны
-            isCurSide = true;
-            CheckLighting(ref requires, lightingCurSide.Indexes, insCurSide, step);           
-
-            // Проверка окон с другой стороны
-            isCurSide = false;
-            if (lightingOtherSide!= null)
-                CheckLighting(ref requires, lightingOtherSide.Indexes, insOtherSide, step);
-
-            // проверка боковин            
-            CheckLightingSide(ref requires, lightingCurSide, lightingOtherSide, isFirstFlatInSide, isLastFlatInSide);
-
-            // Если все требуемые окно были вычтены, то сумма остатка будет <= 0
-            // Округление вниз - от окон внутри одного помещения
-            var isPassed = RequirementsIsEmpty(requires);                    
-            return isPassed;            
         }
 
         private void DefineJoint (ref RoomInfo flat, bool isFirstFlatInSide, bool isLastFlatInSide, bool isTop)

@@ -17,7 +17,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         private const string SectionCornerRightName = "Угловая право";
         private const string SectionTowerName = "Башня";
 
-        public static readonly List<int> SectionSteps = new List<int> { 7, 8, 9, 10, 11, 12, 13, 14 };
+        public readonly List<int> SectionSteps;
 
         private List<string> failedSections;
         private Dictionary<string, Section> passedSections;
@@ -37,11 +37,14 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             this.insService = insService;
             this.sp = sp;
             this.maxHousesBySpot = maxHousesBySpot;
-        }
+
+            // Определение шагов секций
+            SectionSteps = GetSectionSteps();
+        }        
 
         public List<HouseInfo> Cut()
         {
-            Debug.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
+            Console.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
 
             failedSections = new List<string>();
             passedSections = new Dictionary<string, Section>();
@@ -277,21 +280,20 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         }        
 
         private int GetSectionFloors(ref Section section, int sectionsInHouse)
-        {
-            int numberSect = section.NumberInSpot;
+        {            
             int floors = houseSpot.HouseOptions.CountFloorsMain;
             if (!section.IsCorner)
             {
                 bool isDominant = false;
-                if (numberSect < 4)
+                if (section.NumberInSpot < 4)
                 {
-                    isDominant = houseSpot.HouseOptions.DominantPositions[numberSect - 1];
+                    isDominant = houseSpot.HouseOptions.DominantPositions[section.NumberInSpot - 1];
                 }
-                else if (numberSect == sectionsInHouse)
+                else if (section.NumberInSpot == sectionsInHouse)
                 {
                     isDominant = houseSpot.HouseOptions.DominantPositions.Last();
                 }
-                else if (numberSect == sectionsInHouse - 1)
+                else if (section.NumberInSpot == sectionsInHouse - 1)
                 {
                     isDominant = houseSpot.HouseOptions.DominantPositions[3];
                 }
@@ -309,7 +311,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             string floors = "10-18";
             if (countFloors > 18 & countFloors <= 25)
                 floors = "19-25";
-            if (countFloors < 9)
+            if (countFloors <= 9)
                 floors = "9";
             return floors;
         }
@@ -489,6 +491,26 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             {
                 return Joint.Seam;
             }
+        }
+
+        private List<int> GetSectionSteps ()
+        {
+            List<int> resSectSteps = new List<int>();
+            // Если нет этажности больше 9 - то шаги от 6 до 11
+            if (houseSpot.HouseOptions.CountFloorsMain < 10 && 
+                !houseSpot.HouseOptions.DominantPositions.Any(d=>d))
+            {
+                resSectSteps.AddRange(Enumerable.Range(6, 6));
+            }
+            else if (houseSpot.HouseOptions.CountFloorsMain > 9)
+            {
+                resSectSteps.AddRange(Enumerable.Range(7, 8));
+            }
+            else
+            {
+                resSectSteps.AddRange(Enumerable.Range(6, 9));
+            }
+            return resSectSteps;
         }
     }
 }

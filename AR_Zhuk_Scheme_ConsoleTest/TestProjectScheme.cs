@@ -17,10 +17,10 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             CreateHouseImage testCreateHouse = new CreateHouseImage();
 
             // Исходнве данные
-            string insolationFile = @"c:\work\test\АР\ЖУКИ\Задание по инсоляции ПИК1-TEST.xlsx";
+            string insolationFile = @"c:\work\test\АР\ЖУКИ\Задание по инсоляции ПИК1-новый тест.xlsx";
             List<HouseOptions> options = new List<HouseOptions>() {
-                 new HouseOptions("P1", 15, 25, new List<bool> { false, false, false, false, false }),
-                 new HouseOptions("P2", 15, 25, new List<bool> { false, false, false, false, false })
+                 new HouseOptions("P1", 9, 18, new List<bool> { false, false, false, false, true }),
+                 new HouseOptions("P2", 9, 18, new List<bool> { true, false, false, false, false })
             };
             SpotInfo sp = GetSpotInformation();
 

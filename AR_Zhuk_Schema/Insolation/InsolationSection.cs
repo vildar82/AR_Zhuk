@@ -217,6 +217,7 @@ namespace AR_Zhuk_Schema.Insolation
         /// Требование инсоляции (B - одно требование; B+2C - два требования, 1B и 2C инсолируемых помещения(окна) в квартире)
         /// </summary>
         public List<InsRequired> Requirements = new List<InsRequired>();
+        public int TotalInsPoints { get; private set; }
 
         /// <summary>
         /// Требования инсоляции (C, 2D, C+2B)
@@ -230,24 +231,38 @@ namespace AR_Zhuk_Schema.Insolation
                 Requirements.Add(requireAdd);
             }
             Requirements = Requirements.OrderByDescending(o => o.InsIndex).ToList();
+            TotalInsPoints = Requirements.Sum(r => r.InsPoints);
         }
     }
 
     /// <summary>
     /// Инсоляционное требование - один индекс и кол инсолируемых комнат(окон)
     /// </summary>
-    public struct InsRequired
+    public class InsRequired
     {
         /// <summary>
         /// Требуемое кол инсолиуемых окон
         /// </summary>
-        public double CountLighting { get; set; }
+        public int CountLighting { get; private set; }
         /// <summary>
         /// Требуемый индекс инсоляции (A, B, C, D)
         /// </summary>
         public string InsIndex { get; private set; }
+        public int InsPoints { get; private set; }
 
-        public InsRequired (string item) : this()
+        public InsRequired (string insValue, int count)        
+        {
+            InsIndex = insValue;
+            CountLighting = count;
+            var pts = GetInsPoints(insValue);
+            InsPoints = pts * count;
+        }        
+
+        /// <summary>
+        /// item - требование инсоляции - 2C
+        /// </summary>
+        /// <param name="item"></param>
+        public InsRequired (string item)
         {
             string insIndex;
             CountLighting = 0;
@@ -260,6 +275,21 @@ namespace AR_Zhuk_Schema.Insolation
                 throw new Exception("Недопустимый индекс инсоляции в правилах - " + InsIndex + ".\n " +
                     "Допустимые индексы инсоляции " + string.Join(", ", RoomInsolation.AllowedIndexes));
             }
+
+            InsPoints = GetInsPoints(insIndex) * CountLighting;
+        }
+
+        private int GetInsPoints (string insValue)
+        {
+            switch (insValue)
+            {
+                case "B":
+                    return 1;
+                case "C":
+                case "D":
+                    return 100;
+            }
+            return 0;
         }
 
         private int GetCountLighting (string item, out string insIndex)
@@ -286,6 +316,12 @@ namespace AR_Zhuk_Schema.Insolation
             // Если проектный индекс больше требуемого, то проходит            
             var res = insIndexProject.CompareTo(InsIndex) >= 0;
             return res;
+        }
+
+        public void AddCount (int count)
+        {
+            CountLighting += count;
+            InsPoints = GetInsPoints(InsIndex) * CountLighting;
         }
     }
 
