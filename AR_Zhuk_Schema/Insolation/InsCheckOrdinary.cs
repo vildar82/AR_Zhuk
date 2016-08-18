@@ -49,7 +49,20 @@ namespace AR_Zhuk_Schema.Insolation
             foreach (var sectFlats in section.Sections)
             {
                 sectFlats.Code = insService.GetFlatCode(sectFlats);
-
+#if TEST
+                var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);
+                if (!insService.IsIdenticalSection(flats, resFlats))
+                {                    
+                    CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop);
+                    resFlats.Add(flats);
+                }
+                flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
+                if (!insService.IsIdenticalSection(flats, resFlats))
+                {
+                    CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop);
+                    resFlats.Add(flats);
+                }
+#else
                 // Для рядовой секции - проверка инсоляции с приоритетной стороны                    
                 var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);
                 // Проверка однотипной секции
@@ -72,15 +85,10 @@ namespace AR_Zhuk_Schema.Insolation
                                 // Прошла инсоляция с неприоритетной стороны.
                                 resFlats.Add(flats);
                             }
-#if TEST
-                            else
-                            {
-                                resFlats.Add(flats);
-                            }
-#endif
                         }
                     }
                 }
+#endif
             }
             return resFlats;
         }

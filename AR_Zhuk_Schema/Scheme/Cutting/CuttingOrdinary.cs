@@ -150,6 +150,8 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             bool addToFailed = true;
             int curStepInHouse = 1;
             int sectionsInHouse = houseSteps.Length;
+            // Определение этажности для каждого номера секции
+            var dominantsNumberSect = DefineDominantsHouseVar(houseSteps.Length);
             string key = string.Empty;
             // Перебор нарезанных секций в доме
             for (int numberSect = 1; numberSect <= sectionsInHouse; numberSect++)
@@ -206,7 +208,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
                     // Этажность секции, тип
                     var type = GetSectionType(section.SectionType);
-                    section.Floors = GetSectionFloors(ref section, sectionsInHouse);
+                    section.Floors = GetSectionFloors(ref section, dominantsNumberSect);
                     var levels = GetSectionLevels(section.Floors);                    
 
                     //
@@ -240,7 +242,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 failedHouseSteps.Add(houseStepsPassed);
             }
             return !fail;
-        }
+        }       
 
         private void InitLoadDBSections(List<int> stepsSet)
         {
@@ -279,24 +281,12 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return key;
         }        
 
-        private int GetSectionFloors(ref Section section, int sectionsInHouse)
+        private int GetSectionFloors(ref Section section,List<int> dominantsNumberSect)
         {            
             int floors = houseSpot.HouseOptions.CountFloorsMain;
             if (!section.IsCorner)
             {
-                bool isDominant = false;
-                if (section.NumberInSpot < 4)
-                {
-                    isDominant = houseSpot.HouseOptions.DominantPositions[section.NumberInSpot - 1];
-                }
-                else if (section.NumberInSpot == sectionsInHouse)
-                {
-                    isDominant = houseSpot.HouseOptions.DominantPositions.Last();
-                }
-                else if (section.NumberInSpot == sectionsInHouse - 1)
-                {
-                    isDominant = houseSpot.HouseOptions.DominantPositions[3];
-                }
+                bool isDominant = dominantsNumberSect.Contains(section.NumberInSpot);
                 if (isDominant)
                 {
                     floors = houseSpot.HouseOptions.CountFloorsDominant;
@@ -304,6 +294,35 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 section.IsDominant = isDominant;
             }
             return floors;
+        }
+
+        private List<int> DefineDominantsHouseVar (int sectionsInHouse)
+        {
+            List<int> dominantsNumSect = new List<int>();
+            var sectNums = Enumerable.Range(1, sectionsInHouse);
+            // Первая
+            if (isDominant(1))            
+                dominantsNumSect.Add(1);
+            // Вторая
+            if (isDominant(2))
+                dominantsNumSect.Add(2);
+            // Третья
+            if (isDominant(3))
+                dominantsNumSect.Add(3);
+            sectNums = sectNums.Reverse();
+            // предпоследняя
+            if (isDominant(4))
+                dominantsNumSect.Add(sectNums.Skip(1).First());
+            // последняя
+            if (isDominant(5))
+                dominantsNumSect.Add(sectNums.First());
+            return dominantsNumSect;
+        }
+
+        private bool isDominant (int sectNum)
+        {
+            var res = houseSpot.HouseOptions.DominantPositions[sectNum - 1];
+            return res;
         }
 
         public static string GetSectionLevels(int countFloors)
@@ -416,12 +435,12 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 if (section.NumberInSpot != 1)
                 {
                     var sectionPrev = sections[i - 1].Section;
-                    floorsPrev = GetSectionFloors(ref sectionPrev, sections.Count);
+                    floorsPrev = sectionPrev.Floors; //GetSectionFloors(ref sectionPrev, sections.Count);
                 }
                 if (section.NumberInSpot != sections.Count)
                 {
                     var sectionNext = sections[i + 1].Section;
-                    floorsNext = GetSectionFloors(ref sectionNext, sections.Count);
+                    floorsNext = sectionNext.Floors; //GetSectionFloors(ref sectionNext, sections.Count);
                 }
 
                 var jointStart = GetJoint(section.Floors, floorsPrev);

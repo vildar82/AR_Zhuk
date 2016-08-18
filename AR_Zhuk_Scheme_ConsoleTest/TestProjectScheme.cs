@@ -33,7 +33,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            var totalHouses = projectSpot.GetTotalHouses(1000);
+            var totalHouses = projectSpot.GetTotalHouses();
 
             timer.Stop();
             Console.WriteLine("Получение всех домов = " + timer.Elapsed.TotalSeconds);
@@ -41,7 +41,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             Console.WriteLine($"Пятен = {totalHouses.Count}; Домов = {totalHouses.Sum(s => s.Count)} - {string.Join(",", totalHouses.Select(t => t.Count))}");
             
             Console.WriteLine($"{string.Join("; ", totalHouses.Select(h=>h[0].SectionsBySize[0].SpotOwner + " домов=" +  h.Count))}");
-            testCreateHouse.TestCreateImage(totalHouses);
+            testCreateHouse.TestCreateImage(totalHouses, true);
         }
 
         public static SpotInfo GetSpotInformation ()
