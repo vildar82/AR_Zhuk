@@ -643,8 +643,8 @@ namespace AR_AreaZhuk
                         SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
                         IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
                 }
-                if (selectedHouse.Length == 1)
-                    break;
+                //if (selectedHouse.Length == 1)
+                //    break;
             }
 
             FormManager.ViewDataProcentage(dg2, ob, spotInfo);
@@ -794,34 +794,41 @@ namespace AR_AreaZhuk
 
         public void IncrementSectionCode(int[] selectedSectCode, int[] selectedSectSize, int index, List<CodeSection> sections, ref double totalCountFlats)
         {
-            if (index == 0)
-                return;
-            //Текущий выбранный код обнуляем
-            selectedSectCode[index] = 0;
-            //Изменяем выбранную размерность
-            selectedSectSize[index]++;
-
-            if (selectedSectSize[index] >= sections[index].SectionsByCountFlats.Count)
-            {
-
-                IncrementSectionSize(selectedSectCode, selectedSectSize, index - 1, sections, false);
-
-                if (sections[0].SectionsByCountFlats.Count <= selectedSectSize[0])
+            //try
+            //{
+                // if (index == 0) было 0
+                if (index == 0)
                     return;
+                //Текущий выбранный код обнуляем
+                selectedSectCode[index] = 0;
+                //Изменяем выбранную размерность
+                selectedSectSize[index]++;
 
-            }
-            totalCountFlats = 0;
-            //Общее кол-во квартир в размерности
-            for (int i = 0; i < sections.Count; i++)
-            {
-                totalCountFlats += sections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
-            }
+                if (selectedSectSize[index] >= sections[index].SectionsByCountFlats.Count)
+                {
 
+                    IncrementSectionSize(selectedSectCode, selectedSectSize, index - 1, sections, false);
+
+                    if (sections[0].SectionsByCountFlats.Count <= selectedSectSize[0])
+                        return;
+
+                }
+                totalCountFlats = 0;
+                //Общее кол-во квартир в размерности
+                for (int i = 0; i < sections.Count; i++)
+                {
+                    totalCountFlats += sections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
+                }
+            //}
+            //catch
+            //{
+            //    MessageBox.Show("");
+            //}
         }
 
         public void IncrementSectionSize(int[] selectedSectCode, int[] selectedSize, int index, List<CodeSection> sections, bool isSize)
         {
-            if (index == -1)
+            if (index == 0)//было 0
             {
                 return;
             }

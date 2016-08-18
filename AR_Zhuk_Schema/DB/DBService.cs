@@ -135,7 +135,7 @@ namespace AR_Zhuk_Schema.DB
                 {
                     dictDbFlats.TryAdd(item, LoadFromDbSection(item));
                 }
-                //Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
+               // Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
 

@@ -45,7 +45,7 @@ namespace AR_AreaZhuk
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dg = new System.Windows.Forms.DataGridView();
             this.btnViewPercentsge = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -755,8 +755,8 @@ namespace AR_AreaZhuk
             // 
             // Column5
             // 
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
-            this.Column5.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightGray;
+            this.Column5.DefaultCellStyle = dataGridViewCellStyle2;
             this.Column5.HeaderText = "Кол-во квартир, попадающих в диапазон.";
             this.Column5.Name = "Column5";
             this.Column5.ReadOnly = true;
@@ -764,6 +764,7 @@ namespace AR_AreaZhuk
             // 
             // lblTime
             // 
+            this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTime.AutoSize = true;
             this.lblTime.Location = new System.Drawing.Point(1088, 786);
             this.lblTime.Name = "lblTime";

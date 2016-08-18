@@ -25,7 +25,16 @@ namespace AR_AreaZhuk.Controller
            if (floors >= 18)
                corrector = currentFlatAreas.Correction_More18;
            string[] str = corrector.Split('|');
-           double correctArea = str.Sum(t => double.Parse(t));
+           double correctArea = 0;
+           try
+           {
+               correctArea = str.Sum(t => double.Parse(t));
+           }
+           catch 
+           {
+               correctArea = str.Sum(t => double.Parse(t.Replace(',','.')));
+           }
+          
            switch (flat.Joint)
            {
                #region Joint.None
