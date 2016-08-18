@@ -122,7 +122,7 @@ namespace AR_AreaZhuk.Controller
                    }
                #endregion:
            }
-           area[2] = areaLevel;
+           area[2] = areaLevel - correctArea;
           
            areaOffLLULevel = areaTotalStrong;
            if(Math.Round(areaTotalStrong,0).Equals(0))
@@ -137,18 +137,18 @@ namespace AR_AreaZhuk.Controller
            //    areaOnLLULevel = areaTotalStandart;
 
 
-           area[3] = areaOffLLULevel;
-           area[4] = areaOnLLULevel;
+           area[3] = areaOffLLULevel - correctArea;
+           area[4] = areaOnLLULevel - correctArea;
            if (floors <= 17)
            {
-               area[0] += areaTotalStandart + correctArea;//Один этаж считается с поправкой на вентблоки
-               area[0] += (floors - 2) * areaTotalStandart; //3-... этаж
+               area[0] += areaTotalStandart;//Один этаж считается с поправкой на вентблоки
+               area[0] += (floors - 2) * areaTotalStandart+correctArea; //3-... этаж
                area[1] += (floors - 1) * areaLiveStandart;
            }
            else if (floors >= 25)
            {
-               area[0] += areaTotalStrong + correctArea;//Один этаж считается с поправкой на вентблоки
-               area[0] += (8) * areaTotalStrong; //3-10 этаж
+               area[0] += areaTotalStrong ;//Один этаж считается с поправкой на вентблоки
+               area[0] += (8) * areaTotalStrong + correctArea; //3-10 этаж
                area[0] += (floors - 10) * areaTotalStandart; //11-... этаж
 
                area[1] += (9) * areaLiveStrong; //2-10 этаж жилая площадь
@@ -156,8 +156,8 @@ namespace AR_AreaZhuk.Controller
            }
            else if (floors >= 18 & floors < 25)
            {
-               area[0] += areaTotalStrong + correctArea;//Один этаж считается с поправкой на вентблоки
-               area[0] += (3) * areaTotalStrong; //3-5 этаж
+               area[0] += areaTotalStrong ;//Один этаж считается с поправкой на вентблоки
+               area[0] += (3) * areaTotalStrong + correctArea; //3-5 этаж
                area[0] += (floors - 5) * areaTotalStandart; //6-... этаж
 
                area[1] += (4) * areaLiveStrong; //2-5 этаж жилая плоащдь

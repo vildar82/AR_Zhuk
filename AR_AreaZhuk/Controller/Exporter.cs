@@ -14,7 +14,7 @@ namespace AR_AreaZhuk
     {
        public static void ExportFlatsToSQL(string excelPath)
        {
-           ExportBasicInfo(excelPath);
+          // ExportBasicInfo(excelPath);
            ExportFlatsAreas(excelPath);
        }
 
@@ -45,7 +45,7 @@ namespace AR_AreaZhuk
                    double area_Live_Standart_More18 = fw.DoubleConvert(worksheet.Cells[counter, 16].Value);
                    double area_Live_Strong_More18 = fw.DoubleConvert(worksheet.Cells[counter, 17].Value);
                    double area_Live_End_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 18].Value);
-                   double area_Live_Standart_End_More18 = fw.DoubleConvert(worksheet.Cells[counter, 9].Value);
+                   double area_Live_Standart_End_More18 = fw.DoubleConvert(worksheet.Cells[counter, 19].Value);
                    double area_Live_Strong_End_More18 = fw.DoubleConvert(worksheet.Cells[counter, 20].Value);
                    double area_Live_Seam_Low18 = fw.DoubleConvert(worksheet.Cells[counter, 21].Value);
                    double area_Live_Standart_Seam_More18 = fw.DoubleConvert(worksheet.Cells[counter, 22].Value);
@@ -90,13 +90,16 @@ namespace AR_AreaZhuk
            foreach (var rr in roomInfo)
            {
                if (flats.Any(x => x.Type.Equals(rr.Type)))
-                   flatsPIK1.UpdateFlat(rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
-                       rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR, rr.Type);
-               
+                   continue;
+               //flatsPIK1.UpdateFlat(rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
+               //    rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR, rr.Type);
+
                else
-                   flatsPIK1.InsertFlat(rr.Type, rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
-                       rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR);
-               
+                   flatsPIK1.InsertFlat(rr.Type, rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,
+                       Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
+                       rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,
+                       rr.LinkageOR);
+
            }
        }
 
@@ -106,34 +109,44 @@ namespace AR_AreaZhuk
 
            FrameWork fw = new FrameWork();
             //var roomInfo = fw.GetRoomData("");
-           var sections = fw.GenerateSections(roomInfo, countModules, isCornerLeft, isCornerRight, countFloors);
            string floors = "10-18";
-           if(countFloors==25)
+           if (countFloors <= 25&countFloors>=19)
                floors = "19-25";
-           else if (countFloors == 9)
+           else if (countFloors <= 9)
                floors = "9";
+           var sections = fw.GenerateSections(roomInfo, countModules, isCornerLeft, isCornerRight, floors);
+
+
            PIK1TableAdapters.C_SectionsTableAdapter sects = new C_SectionsTableAdapter();
            PIK1TableAdapters.F_nn_FlatsInSectionTableAdapter flatInSection = new F_nn_FlatsInSectionTableAdapter();
            PIK1TableAdapters.C_Flats_PIK1TableAdapter flatsISectionDB = new C_Flats_PIK1TableAdapter();
+           var allFlats = flatsISectionDB.GetData();
+          
            foreach (var section in sections)
            {
                var idSection = sects.InsertSection(countModules / 4, typeSection, floors);
+               int idSec = Convert.ToInt32(idSection);
                foreach (var flat in section.Flats)
                {
-                   try
-                   {
-                       var idFlat = flatsISectionDB.GetIdFlat(flat.Type, flat.LinkageDO.Trim(), flat.LinkagePOSLE.Trim());
-                       flatInSection.InsertFlatInSection(Convert.ToInt32(idSection), Convert.ToInt32(idFlat), flat.SelectedIndexBottom,
+                   //try
+                   //{
+                    //
+                   int idF =allFlats.First(x =>x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
+                               x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim())).ID_Flat;
+                      // var idFlat = flatsISectionDB.GetIdFlat(flat.Type, flat.LinkageDO.Trim(), flat.LinkagePOSLE.Trim());
+                   flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
                            flat.SelectedIndexTop);
-                   }
-                   catch
-                   {
-
-                   }
+                   //}
+                   //catch
+                   //{
+                   //    //var idFlat = flatsISectionDB.GetIdFlat(flat.Type, flat.LinkageDO.Trim(), flat.LinkagePOSLE.Trim());
+                   //    //flatInSection.InsertFlatInSection(Convert.ToInt32(idSection), Convert.ToInt32(idFlat), flat.SelectedIndexBottom,
+                   //    //    flat.SelectedIndexTop);
+                   //}
 
                }
            }
-           Environment.Exit(48);
+         
 
        }
 

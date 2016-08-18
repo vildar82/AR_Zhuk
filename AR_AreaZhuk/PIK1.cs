@@ -6,6 +6,10 @@
 }
 
 namespace AR_AreaZhuk.PIK1TableAdapters {
+    partial class C_SectionsTableAdapter
+    {
+    }
+
     partial class FlatsInSectionsTableAdapter
     {
     }

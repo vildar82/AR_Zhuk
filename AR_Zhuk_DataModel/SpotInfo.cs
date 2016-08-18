@@ -25,6 +25,7 @@ namespace AR_Zhuk_DataModel
         public double TotalArea { get; set; }
         public double TotalLiveArea { get; set; }
         public double LevelArea { get; set; }
+        public int CountContainsSections { get; set; }
 
         //Коэф TotalStandartArea/S этажа
         public double K1 { get; set; }

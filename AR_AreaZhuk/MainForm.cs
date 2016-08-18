@@ -36,6 +36,8 @@ namespace AR_AreaZhuk
 
         private bool isStop = false;
         public PIK1.C_Flats_PIK1_AreasDataTable flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
+
+        public PIK1.C_Flats_PIK1DataTable dbFlats = new PIK1.C_Flats_PIK1DataTable();
         public bool IsRemainingDominants { get; set; }
         public int DominantOffSet { get; set; }
         BindingSource bs = new BindingSource();
@@ -58,44 +60,35 @@ namespace AR_AreaZhuk
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
+
+            FrameWork fw = new FrameWork();
+           //string excelPath = @"E:\__ROM_Типы квартир.xlsx";
+           // var roomInfo = fw.GetRoomData(excelPath);
+           // Exporter.ExportSectionsToSQL(14* 4, "Угловая право", 18, false, true, roomInfo);
+           // //Parallel.For(8, 12, (q) => Exporter.ExportSectionsToSQL(q * 4, "Угловая право", 9, false, true, roomInfo)); //Рядовая 2-9
+           // ////  Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Рядовая", 9, false, false, roomInfo)); //Рядовая 10-18
+           // Environment.Exit(48);
             if (Environment.UserName.Equals("khisyametdinovvt") | Environment.UserName.Equals("ostaninam") | Environment.UserName.Equals("inkinli"))
             {
                 UpdateDbFlats.Visible = true;
                 chkUpdateSections.Visible = true;
             }
-           
+            C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
+            flatsAreas = pikFlats.GetData();
+            C_Flats_PIK1TableAdapter flatsTableAdapter = new C_Flats_PIK1TableAdapter();
+            dbFlats = flatsTableAdapter.GetData();
             DominantOffSet = 5;
             chkListP1.SetItemChecked(chkListP1.Items.Count - 1, true);
             chkListP2.SetItemChecked(chkListP2.Items.Count - 1, true);
             btnMenuGroup1.Image = Properties.Resources.up;
             btnMenuGroup2.Image = Properties.Resources.up;
             btnMenuGroup3.Image = Properties.Resources.up;
-            //  pnlMenuGroup2.Height = 25;
-            //  pnlMenuGroup3.Height = 25;
-            // Exporter.ExportFlatsToSQL();
-            //for (int i = 7; i < 15; i++)
-            //{
-            //Exporter.ExportSectionsToSQL(56, "Угловая право", 18, false, true);
-            //}
-            //for (int i = 8; i < 15; i++)
-            //{
-            //    Exporter.ExportSectionsToSQL(i * 4, "Угловая лево", 18, true, false);
-            //}
-            //for (int i = 7; i < 15; i++)
-            //{
-            //    Exporter.ExportSectionsToSQL(i * 4, "Рядовая", 25, false, false);
-            //}
-
-            //  Requirment requirment = new Requirment();
-            // this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
-            FrameWork fw = new FrameWork();
-            //var roomInfo = fw.GetRoomData("");
             spotInfo = fw.GetSpotInformation();
             Serializer s = new Serializer();
             var newSpotInfo = s.GetLastSpot();
             if (newSpotInfo.requirments.Count != 0)
                 spotInfo = newSpotInfo;
-          //  spotInfo = s.GetLastSpot() ?? new SpotInfo();
+            //  spotInfo = s.GetLastSpot() ?? new SpotInfo();
             foreach (var r in spotInfo.requirments)
             {
                 dg.Rows.Add();
@@ -103,6 +96,9 @@ namespace AR_AreaZhuk
                 dg[1, dg.RowCount - 1].Value = r.MinArea + "-" + r.MaxArea;
                 dg[2, dg.RowCount - 1].Value = r.Percentage;
                 dg[3, dg.RowCount - 1].Value = r.OffSet;
+                var flats =
+                    dbFlats.Where(x => x.SubZone.Equals(r.CodeZone)).ToList().Where(x => x.AreaTotalStrong >= r.MinArea & x.AreaTotalStrong <= r.MaxArea).ToList();
+                dg[4, dg.RowCount - 1].Value = flats.Count;
             }
 
             FillDgReqs();
@@ -344,24 +340,58 @@ namespace AR_AreaZhuk
         {
             if (e.RowIndex == dg.RowCount - 1) return;
             if (!isEvent) return;
+
+
+            FormManager.DataReqValidator(dg);
             int per = 0;
+
             for (int i = 0; i < dg.RowCount - 1; i++)
             {
                 int p = 0;
                 int.TryParse(Convert.ToString(dg[2, i].Value), out p);
                 per += p;
+                string[] deep = Convert.ToString(dg[1, i].Value).Split('-');
+                if (deep.Length == 1)
+                    continue;
+                string subZone = Convert.ToString(dg[0, i].Value);
+
+                if (subZone.StartsWith("Ст"))
+                    subZone = "01";
+                else if (subZone.StartsWith("Одно"))
+                    subZone = "1";
+                else if (subZone.StartsWith("Дву"))
+                    subZone = "2";
+                else if (subZone.StartsWith("Тр"))
+                    subZone = "3";
+                else if (subZone.StartsWith("Ч"))
+                    subZone = "4";
+                var flats =
+                dbFlats.Where(x => x.SubZone.Equals(subZone)).ToList().
+                Where(x => x.AreaTotalStrong >= Convert.ToInt16(deep[0]) & x.AreaTotalStrong <= Convert.ToInt16(deep[1])).ToList();
+                dg[4, i].Value = flats.Count;
             }
             dg[2, dg.RowCount - 1].Value = per;
+            dg[2, dg.RowCount - 1].Style.BackColor = Color.White;
+            if (per != 100)
+            {
+                MessageBox.Show("Сумма указанных значений не равна 100!", "Ошибка!!!");
+                dg[2, dg.RowCount - 1].Style.BackColor = Color.Red;
+            }
+
+
+
+
+
         }
 
         private void btnStartScan_Click(object sender, EventArgs e)
         {
             isStop = false;
-            
+            double maxArea = 0;
             ob = new List<GeneralObject>();
             lblCountObjects.Text = ob.Count.ToString();
-            C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
-            flatsAreas = pikFlats.GetData();
+
+
             isEvent = false;
             btnStartScan.Enabled = false;
             btnViewPercentsge.Enabled = true;
@@ -369,8 +399,7 @@ namespace AR_AreaZhuk
             FrameWork fw = new FrameWork();
             spotInfo = fw.GetSpotInformation();
             spotInfo.PathInsolation = PathToFileInsolation;
-            FormManager.GetSpotTaskFromDG(spotInfo, dg);                          //Условия квартирографии 
-           // string insolationFile = PathToFileInsolation;
+            FormManager.GetSpotTaskFromDG(spotInfo, dg);//Условия квартирографии 
             Serializer s = new Serializer();
             s.SerializeSpoinfo(spotInfo);
             List<HouseOptions> options = new List<HouseOptions>();
@@ -390,8 +419,10 @@ namespace AR_AreaZhuk
             profectShema.ReadScheme(PathToFileInsolation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(1000);
-
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
+            isContinue = true;
+            if (totalObject.Count == 0)
+                isContinue=false;
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
             int counterGood = 0;
@@ -407,7 +438,7 @@ namespace AR_AreaZhuk
                     break;
                 int counter = 0;
                 //Группировка и сортировка секций
-               List<CodeSection> codeSections =  GetSectionsByCode(sections, counter);
+                List<CodeSection> codeSections = GetSectionsByCode(sections, counter);
                 int[] selectedSectSize = new int[40];                                    //Выбранная размерность дома
                 int[] selectedSectCode = new int[40];                                    //Выбранный код секций
                 isContinue2 = true;
@@ -422,6 +453,7 @@ namespace AR_AreaZhuk
                 //Обход сформированных секций с уникальными кодами на объект
                 while (isContinue2)
                 {
+                   
                     Application.DoEvents();
                     if (isStop)
                         break;
@@ -442,7 +474,7 @@ namespace AR_AreaZhuk
                         {
                             countFlats +=
                                 Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
-                                SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) *(codeSections[i].CountFloors - 1);
+                                SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1);
                             double percentage1 = countFlats * 100 / totalCountFlats;
 
                             if (rr.Percentage + rr.OffSet < percentage1)
@@ -479,10 +511,10 @@ namespace AR_AreaZhuk
                             break;
                         }
                     }
-                    if (counterGood > 5)
-                    {
-                        break;
-                    }
+                    //if (counterGood > 500)
+                    //{
+                    //    break;
+                    //}
                     if (isValidPercentage)  //Процентаж прошел
                     {
 
@@ -509,11 +541,17 @@ namespace AR_AreaZhuk
                             int[] idSections = new int[listCodes.Count];
                             double totalArea = 0;
                             double liveArea = 0;
-                            double levelArea = 0;
-                            double levelAreaOffLLU = 0;
-                            double levelAreaOnLLU = 0;
+
+                            int countContainsSections = 0;
+                            //double k1 = levelAreaOffLLU / levelArea;
+                            //double k2 = levelAreaOffLLU / levelAreaOnLLU;
+                            double k1 = 0;
+                            double k2 = 0;
                             for (int j = 0; j <= countSections; j++)
                             {
+                                double levelArea = 0;
+                                double levelAreaOffLLU = 0;
+                                double levelAreaOnLLU = 0;
                                 foreach (var secByPosition in sections)
                                 {
                                     if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
@@ -523,6 +561,9 @@ namespace AR_AreaZhuk
                                     if (sec.Count == 0) continue;
                                     idSections[j] = sec[0].IdSection;
                                     hi1.Sections.Add(sec[0]);
+                                    if (sec[0].Flats.Any(x => x.SubZone.Equals("3")) |
+                                        sec[0].Flats.Any(x => x.SubZone.Equals("4")))
+                                        countContainsSections++;
                                     foreach (var flat in sec[0].Flats)
                                     {
                                         var currentFlatAreas =
@@ -535,14 +576,18 @@ namespace AR_AreaZhuk
                                         levelAreaOnLLU += areas[4];
 
                                     }
+                                    k1 += levelAreaOffLLU / levelArea;
+                                    k2 += levelAreaOffLLU / levelAreaOnLLU;
                                     break;
                                 }
 
+
                                 countFlats += listCodes[j].CountFlats;
                             }
-                            double k1 = levelAreaOffLLU / levelArea;
-                            double k2 = levelAreaOffLLU / levelAreaOnLLU;
+                            k1 = k1 / (countSections + 1);
+                            k2 = k2 / (countSections + 1);
 
+                            
                             var objectByHouses =
                                 hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
                             List<HouseInfo> housesInSpot = new List<HouseInfo>();
@@ -558,6 +603,7 @@ namespace AR_AreaZhuk
                             var typicalSect = GetCountTypicalSections(idSections);
                             SpotInfo spGo = new SpotInfo();
                             spGo = spotInfo.CopySpotInfo(spotInfo);
+                            spGo.CountContainsSections = countContainsSections;
                             spGo.K1 = k1;
                             spGo.K2 = k2;
                             spGo.TotalStandartArea = totalArea;
@@ -572,19 +618,21 @@ namespace AR_AreaZhuk
                             go.SpotInf = spGo;
                             ob.Add(go);
                             lblCountObjects.Text = ob.Count.ToString();
+                            if (maxArea < totalArea)
+                                maxArea = totalArea;
                             Application.DoEvents();
 
 
                             indexSelectedId[countSections]++;
-                            if (listCodes[countSections].IdSections.Count <=indexSelectedId[countSections])
+                            if (listCodes[countSections].IdSections.Count <= indexSelectedId[countSections])
                                 IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
-                            
+
                             if (listCodes[0].IdSections.Count == indexSelectedId[0])
                             {
-                              //  isContinue = false;
+                                //  isContinue = false;
                                 break;
                             }
-                           // isContinue = true;
+                            // isContinue = true;
 
                         }
                         counterGood++;
@@ -595,16 +643,23 @@ namespace AR_AreaZhuk
                         SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
                         IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
                 }
+                if (selectedHouse.Length == 1)
+                    break;
             }
+
             FormManager.ViewDataProcentage(dg2, ob, spotInfo);
             th.Abort();
             lblCountObjects.Text = ob.Count.ToString();
             isEvent = true;
             sw.Stop();
-            MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
+            //MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
+            lblTime.Visible = true;
+            lblTime.Text = (sw.ElapsedMilliseconds/1000).ToString();
             bs.DataSource = dg2.DataSource;
-          //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
-           
+            lblMaxArea.Text = maxArea.ToString();
+            lblTotalCount.Text = ob.Count.ToString();
+            //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
+
         }
 
         private static List<CodeSection> GetSectionsByCode(List<List<FlatInfo>> sections, int counter)
@@ -623,7 +678,7 @@ namespace AR_AreaZhuk
                         codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
                     else
                     {
-                        codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1)*(s.CountFlats - 1),
+                        codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1) * (s.CountFlats - 1),
                             s.NumberInSpot, s.SpotOwner));
                     }
                 }
@@ -712,7 +767,8 @@ namespace AR_AreaZhuk
         {
             if (index == 0)
             {
-                isContinue = false;
+              //  if (houses.Length > 1)
+                    isContinue = false;
                 return;
             }
             houses[index] = 0;
@@ -765,7 +821,7 @@ namespace AR_AreaZhuk
 
         public void IncrementSectionSize(int[] selectedSectCode, int[] selectedSize, int index, List<CodeSection> sections, bool isSize)
         {
-            if (index == 0)
+            if (index == -1)
             {
                 return;
             }
@@ -836,7 +892,7 @@ namespace AR_AreaZhuk
         private void dg2_FilterStringChanged(object sender, EventArgs e)
         {
             isEvent = false;
-           
+
             bs.Filter = dg2.FilterString;
             dg2.DataSource = bs;
             lblCountObjects.Text = dg2.RowCount.ToString();
@@ -859,9 +915,11 @@ namespace AR_AreaZhuk
             if (go == null) return;
             string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
 
-            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1 -Не трогать.xlsx";
+            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
 
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
+            //Serializer ser = new Serializer();
+            //ser.SerializeList(go, Guid.NewGuid().ToString());
             var im = imgComb.generateGeneralObject();
             pb.Image = im;
         }
@@ -891,10 +949,10 @@ namespace AR_AreaZhuk
         {
 
             SaveFileDialog dialog = new SaveFileDialog();
-            dialog.Filter = "Картинка (*.jpg)|*.jpg";
+            dialog.Filter = "Картинка (*.png)|*.png";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                pb.Image.Save(dialog.FileName, ImageFormat.Jpeg);
+                pb.Image.Save(dialog.FileName, ImageFormat.Png);
             }
         }
 
@@ -925,6 +983,7 @@ namespace AR_AreaZhuk
         private void btnAdd_Click(object sender, EventArgs e)
         {
             isEvent = false;
+            dg.Rows.Insert(dg.SelectedCells[0].RowIndex+1, 1);
             for (int i = 0; i < dg.Columns.Count; i++)
             {
                 dg[i, dg.RowCount - 1].Value = null;
@@ -957,6 +1016,11 @@ namespace AR_AreaZhuk
         private void btnStop_Click(object sender, EventArgs e)
         {
             isStop = true;
+        }
+
+        private void dg_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
+        {
+
         }
     }
 }
