@@ -70,27 +70,33 @@ namespace BeetlyVisualisation
 
             var package = new ExcelPackage(new System.IO.FileInfo(XLSXPath));
 
-
-            ExcelWorksheet wSheet = package.Workbook.Worksheets[1];
-
-            for (int i = wSheet.Dimension.Start.Row + 1;
-                i <= wSheet.Dimension.End.Row;
-                i++
-                )
+            try
             {
-                TypeName = getCell(i, flatTypeColumn, wSheet);
+                ExcelWorksheet wSheet = package.Workbook.Worksheets[1];
 
-                if (TypeName != null)
+                for (int i = wSheet.Dimension.Start.Row + 1;
+                    i <= wSheet.Dimension.End.Row;
+                    i++
+                    )
                 {
-                    HorisontalModules = getCell(i, HorModulesColumn, wSheet);
-                    CurrentOffsetX = getCell(i, CurOffcetColumn, wSheet);
-                    NextOffsetX = getCell(i, NextOffsetColumn, wSheet);
-                    FlatUntil = getCell(i, FlatUntilColumn, wSheet);
-                    FlatAfter = getCell(i, FlatAfterColumn, wSheet);
+                    TypeName = getCell(i, flatTypeColumn, wSheet);
 
-                    fTypes.Add(new FlatType(TypeName, HorisontalModules, CurrentOffsetX, NextOffsetX, FlatUntil, FlatAfter));
+                    if (TypeName != null)
+                    {
+                        HorisontalModules = getCell(i, HorModulesColumn, wSheet);
+                        CurrentOffsetX = getCell(i, CurOffcetColumn, wSheet);
+                        NextOffsetX = getCell(i, NextOffsetColumn, wSheet);
+                        FlatUntil = getCell(i, FlatUntilColumn, wSheet);
+                        FlatAfter = getCell(i, FlatAfterColumn, wSheet);
+
+                        fTypes.Add(new FlatType(TypeName, HorisontalModules, CurrentOffsetX, NextOffsetX, FlatUntil, FlatAfter));
+                    }
                 }
             }
+            catch {}
+
+            
+           
 
             return fTypes;
 

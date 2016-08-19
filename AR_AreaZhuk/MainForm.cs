@@ -61,12 +61,11 @@ namespace AR_AreaZhuk
         {
 
             FrameWork fw = new FrameWork();
-            string excelPath = @"E:\__ROM_Типы квартир.xlsx";
-            var roomInfo = fw.GetRoomData(excelPath);
-            Exporter.ExportSectionsToSQL(10 * 4, "Рядовая", 9, false, false, roomInfo);
-            //Parallel.For(8, 12, (q) => Exporter.ExportSectionsToSQL(q * 4, "Угловая право", 9, false, true, roomInfo)); //Рядовая 2-9
-            ////  Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Рядовая", 9, false, false, roomInfo)); //Рядовая 10-18
-            Environment.Exit(48);
+           // string excelPath = @"E:\__ROM_Типы квартир.xlsx";
+           // var roomInfo = fw.GetRoomData(excelPath);
+           // spotInfo = fw.GetSpotInformation();
+           //Exporter.ExportSectionsToSQL(8 * 4, "Рядовая", 9, false, false, roomInfo);//Если нужно залить 1 тип секции
+           // Environment.Exit(48);
             if (Environment.UserName.Equals("khisyametdinovvt") | Environment.UserName.Equals("ostaninam") | Environment.UserName.Equals("inkinli"))
             {
                 UpdateDbFlats.Visible = true;
@@ -934,7 +933,7 @@ namespace AR_AreaZhuk
 
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
             //Serializer ser = new Serializer();
-            //ser.SerializeList(go, Guid.NewGuid().ToString());
+            //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
             var im = imgComb.generateGeneralObject();
             pb.Image = im;
         }
