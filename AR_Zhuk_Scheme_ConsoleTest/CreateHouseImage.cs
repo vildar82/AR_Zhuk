@@ -32,7 +32,11 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 var files = Directory.GetFiles(testsResultFolder);
                 foreach (var item in files)
                 {
-                    File.Delete(item);
+                    try
+                    {
+                        File.Delete(item);
+                    }
+                    catch { }
                 }
             }            
         }
@@ -57,7 +61,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                     housesVar.Add(hi);
                 }                
                 //var countsectBySize = housesVar.Max(h => h.SectionsBySize.Max(s=>s.Sections.Count));
-                for (int s = 0; s < 5; s++)
+                for (int s = 0; s < 2; s++)
                 {
                     List<HouseInfo> hbs = new List<HouseInfo>();                    
                     foreach (var house in housesVar)

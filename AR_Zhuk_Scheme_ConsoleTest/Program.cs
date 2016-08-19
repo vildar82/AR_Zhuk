@@ -13,7 +13,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
         static void Main (string[] args)
         {
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
-            Debug.Listeners.Add(writer);
+            Debug.Listeners.Add(writer);            
 
             TestProjectScheme test = new TestProjectScheme();
             test.TestTotalHouses();

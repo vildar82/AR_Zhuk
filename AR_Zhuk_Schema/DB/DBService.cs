@@ -12,10 +12,19 @@ namespace AR_Zhuk_Schema.DB
 {
     public class DBService : IDBService
     {
+        /// <summary>
+        /// Сохранение запрошенных секций - прошедших через фильтр требований
+        /// </summary>
         private static Dictionary<string, List<FlatInfo>> dictSections = new Dictionary<string, List<FlatInfo>>();
-        private static ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>> dictDbFlats = 
-                    new ConcurrentDictionary<SelectSectionParam, List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow>>();
-        
+        /// <summary>
+        /// Словарь предварительно загруженных секций
+        /// </summary>
+        private static ConcurrentDictionary<SelectSectionParam, List<SAPR.FlatsInSectionsRow>> dictDbFlats = 
+                    new ConcurrentDictionary<SelectSectionParam, List<SAPR.FlatsInSectionsRow>>();
+        /// <summary>
+        /// Виды секций в базе - по шагу, типу и этажности (Type, Levels, CountStep)
+        /// </summary>
+        private static List<SelectSectionParam> sectionsTypesInDb;
 
         SpotInfo sp;
         int maxSectionBySize;        
@@ -24,7 +33,9 @@ namespace AR_Zhuk_Schema.DB
         {
             this.sp = sp;
             this.maxSectionBySize = maxSectionBySize;
-        }
+            // виды секций в базе
+            sectionsTypesInDb = GetSectionsTypesIndDb();
+        }        
 
         public List<FlatInfo> GetSections (Section section, SelectSectionParam selecSectParam)
         {
@@ -33,14 +44,11 @@ namespace AR_Zhuk_Schema.DB
 
             if (!dictSections.TryGetValue(key, out sectionsBySyze))
             {
-                List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow> flatsDb;                
+                List<SAPR.FlatsInSectionsRow> flatsDb;                
                 if (!dictDbFlats.TryGetValue(selecSectParam, out flatsDb))
                 {
-                    Debug.Assert(false, "Загрузка из базы!!!!");
-                    flatsDb = LoadFromDbSection(selecSectParam);
-                    dictDbFlats.TryAdd(selecSectParam, flatsDb);
+                    return null;
                 }
-
                 if (flatsDb.Count == 0)
                 {
                     return null;
@@ -112,13 +120,18 @@ namespace AR_Zhuk_Schema.DB
                     if (!isContains)
                         continue;
                     
-                    sectionsBySyze.Add(fl);                    
+                    if (fl.Flats.Count>3)
+                        sectionsBySyze.Add(fl);
+                    else
+                    {
+                        Trace.TraceWarning("Секция меньше 3 квартир, idSection = " + fl.IdSection);
+                    }                   
 
                     if (maxSectionBySize != 0 && sectionsBySyze.Count == maxSectionBySize)
                     {
                         break;
                     }
-                }
+                }                
                 dictSections.Add(key, sectionsBySyze);
             }
             return sectionsBySyze;
@@ -127,21 +140,22 @@ namespace AR_Zhuk_Schema.DB
         public void PrepareLoadSections (List<SelectSectionParam> selectSects)
         {
             // отбор типов секций которые не загружались
-            var notInDictSS = selectSects.Where(s => !dictDbFlats.ContainsKey(s)).ToList();
-            if (notInDictSS.Count > 0)
+            var ssToLoad = selectSects.Where(s => !dictDbFlats.ContainsKey(s) &&
+                            sectionsTypesInDb.Contains(s)).ToList();
+            if (ssToLoad.Count > 0)
             {
                 // Паралельная загрузка секций   
-                foreach (var item in notInDictSS)
-                {
-                    dictDbFlats.TryAdd(item, LoadFromDbSection(item));
-                }
-               // Parallel.ForEach(notInDictSS, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
+                //foreach (var item in ssToLoad)
+                //{
+                //    dictDbFlats.TryAdd(item, LoadFromDbSection(item));
+                //}
+                Parallel.ForEach(ssToLoad, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
 
-        private List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow> LoadFromDbSection (SelectSectionParam selectSectParam)
+        private List<SAPR.FlatsInSectionsRow> LoadFromDbSection (SelectSectionParam selectSectParam)
         {
-            List<AR_Zhuk_Schema.DB.SAPR.FlatsInSectionsRow> flatsDb;
+            List<SAPR.FlatsInSectionsRow> flatsDb;
             FlatsInSectionsTableAdapter flatsIsSection = new FlatsInSectionsTableAdapter();
             if (maxSectionBySize == 0)
             {
@@ -175,7 +189,20 @@ namespace AR_Zhuk_Schema.DB
             }
             return flatsDb;            
         }
-    }
+
+        private List<SelectSectionParam> GetSectionsTypesIndDb ()
+        {
+            List<SelectSectionParam> resSectTypesInDb = new List<SelectSectionParam>();
+            vil_SectionsTypesTableAdapter adapterSectTypes = new vil_SectionsTypesTableAdapter();
+            var selRes = adapterSectTypes.GetSectionTypes();
+            foreach (var item in selRes)
+            {
+                SelectSectionParam selSectParam = new SelectSectionParam(item.CountModules, item.Type, item.Levels);
+                resSectTypesInDb.Add(selSectParam);
+            }
+            return resSectTypesInDb;
+        }
+    }    
 
     public class SelectSectionParam : IEquatable<SelectSectionParam>
     {

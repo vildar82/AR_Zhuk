@@ -63,7 +63,7 @@ namespace AR_Zhuk_Schema.Insolation
             topFlats = insService.GetSideFlatsInSection(sect.Flats, true, section.SectionType);
             bottomFlats = insService.GetSideFlatsInSection(sect.Flats, false, section.SectionType);
 
-            // Временно!!! подмена индекса угловой квартиры 2KL2
+            //// Временно!!! подмена индекса угловой квартиры 2KL2
             if (section.SectionType == SectionType.CornerLeft || section.SectionType == SectionType.CornerRight)
             {
                 var cornerFlat = section.SectionType == SectionType.CornerLeft ? bottomFlats.First() : bottomFlats.Last();
@@ -72,7 +72,7 @@ namespace AR_Zhuk_Schema.Insolation
                     cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
                     cornerFlat.SelectedIndexBottom = 4;
                 }
-            }           
+            }
 
             // Проверка инсоляции квартир сверху
             isTop = true;            

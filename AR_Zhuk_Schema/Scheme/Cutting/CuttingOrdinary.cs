@@ -167,7 +167,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 houseStepsPassed += sectSize + ".";
 
                 // ключ размерности секции
-                key = GetSectionDataKey(sectCountStep, numberSect, curStepInHouse);
+                key = GetSectionDataKey(sectCountStep, numberSect, curStepInHouse, sectionsInHouse);
                 sectBySyze.Key = key;
                 if (failedSections.Contains(key))
                 {
@@ -275,9 +275,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             dbService.PrepareLoadSections(selectSects);
         }
 
-        private static string GetSectionDataKey(int sectCountStep, int numberSect, int startStepSect)
+        private static string GetSectionDataKey(int sectCountStep, int numberSect, int startStepSect,int sectionsInHouse)
         {
-            string key = "n" + numberSect + "z" + sectCountStep + "s" + startStepSect;
+            string key ="h" + sectionsInHouse + "n" + numberSect + "z" + sectCountStep + "s" + startStepSect;
             return key;
         }        
 
@@ -301,29 +301,23 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             List<int> dominantsNumSect = new List<int>();
             var sectNums = Enumerable.Range(1, sectionsInHouse);
             // Первая
-            if (isDominant(1))            
+            if (houseSpot.HouseOptions.DominantPositions[0])            
                 dominantsNumSect.Add(1);
             // Вторая
-            if (isDominant(2))
+            if (houseSpot.HouseOptions.DominantPositions[1])
                 dominantsNumSect.Add(2);
             // Третья
-            if (isDominant(3))
+            if (houseSpot.HouseOptions.DominantPositions[2])
                 dominantsNumSect.Add(3);
             sectNums = sectNums.Reverse();
             // предпоследняя
-            if (isDominant(4))
-                dominantsNumSect.Add(sectNums.Skip(1).First());
+            if (houseSpot.HouseOptions.DominantPositions[3])
+                dominantsNumSect.Add(sectNums.Skip(1).FirstOrDefault());
             // последняя
-            if (isDominant(5))
+            if (houseSpot.HouseOptions.DominantPositions[4])
                 dominantsNumSect.Add(sectNums.First());
             return dominantsNumSect;
-        }
-
-        private bool isDominant (int sectNum)
-        {
-            var res = houseSpot.HouseOptions.DominantPositions[sectNum - 1];
-            return res;
-        }
+        }        
 
         public static string GetSectionLevels(int countFloors)
         {
