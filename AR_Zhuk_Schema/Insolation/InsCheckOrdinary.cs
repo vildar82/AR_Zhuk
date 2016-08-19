@@ -46,52 +46,37 @@ namespace AR_Zhuk_Schema.Insolation
         public override List<FlatInfo> CheckSections (Section section)
         {
             List<FlatInfo> resFlats = new List<FlatInfo>();
+            HashSet<string> passedFlatsIndenticalHashs = new HashSet<string>();
             foreach (var sectFlats in section.Sections)
             {
                 sectFlats.Code = insService.GetFlatCode(sectFlats);
 #if TEST
-                var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);
-                if (!insService.IsIdenticalSection(flats, resFlats))
-                {                    
-                    CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop);
-                    resFlats.Add(flats);
-                }
+                var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);                
+                CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop);
+                resFlats.Add(flats);                
                 flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
-                if (!insService.IsIdenticalSection(flats, resFlats))
-                {
-                    CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop);
-                    resFlats.Add(flats);
-                }
+                CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop);
+                resFlats.Add(flats);                
 #else
                 // Для рядовой секции - проверка инсоляции с приоритетной стороны                    
                 var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);
-                // Проверка однотипной секции
-                if (!insService.IsIdenticalSection(flats, resFlats))
+                if (CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop))
                 {
-                    if (CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop))
+                    AddPassedInsFlats(flats, ref resFlats, ref passedFlatsIndenticalHashs);                    
+                }
+                else
+                {
+                    // Проверка инсоляции с неприоритетной стороны секции                        
+                    flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
+                    if (CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop))
                     {
-                        // Прошла инсоляция с приоритетной стороны. С неприоритетной не надо проверять.
-                        resFlats.Add(flats);
-                    }
-                    else
-                    {
-                        // Проверка инсоляции с неприоритетной стороны секции                        
-                        flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
-                        // Проверка однотипной секции
-                        if (!insService.IsIdenticalSection(flats, resFlats))
-                        {                            
-                            if (CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop))
-                            {
-                                // Прошла инсоляция с неприоритетной стороны.
-                                resFlats.Add(flats);
-                            }
-                        }
+                        AddPassedInsFlats(flats, ref resFlats, ref passedFlatsIndenticalHashs);                        
                     }
                 }
 #endif
             }
             return resFlats;
-        }
+        }        
 
         public bool CheckSection (FlatInfo sect, bool isRightOrTopLLu)
         {

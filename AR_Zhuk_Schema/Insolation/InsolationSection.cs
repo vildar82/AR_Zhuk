@@ -34,28 +34,15 @@ namespace AR_Zhuk_Schema.Insolation
         /// <returns>Секции прошедшие инсоляцию</returns>
         public List<FlatInfo> GetInsolationSections (Section section)
         {
-            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                                    
+            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                  
             var resFlats = insCheck.CheckSections(section);
             return resFlats;
         }
 
-        public bool IsIdenticalSection (FlatInfo curSection, List<FlatInfo> resulsSections)
+        public string GetFlatsHash (FlatInfo flats)
         {
-            var res = resulsSections.Any(s => (s.IsInvert == curSection.IsInvert) &&
-                                IsEqualSections(s.Flats, curSection.Flats));
-            return res;
-        }
-
-        private bool IsEqualSections (List<RoomInfo> section1, List<RoomInfo> section2)
-        {
-            if (section1.Count != section2.Count) return false;
-            // Если одной из квартир нет во второй секции, то это разные секции
-            if (section1.Any(s1 => !section2.Any(s2 => s1.ShortType == s2.ShortType)))
-            {
-                return false;
-            }
-            // все квартиры из первой секции есть во второй
-            return true;            
+            var keyRoomsShortTypes = string.Join("_", flats.Flats.Select(f => f.ShortType).OrderBy(r => r));
+            return keyRoomsShortTypes;
         }
 
         public string GetFlatCode(FlatInfo flat)
@@ -151,21 +138,21 @@ namespace AR_Zhuk_Schema.Insolation
             }
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
-            // Временно - подмена индекса освещенностим для боковых квартир!!!???
-            foreach (var itemFlat in resFlats.Flats)
-            {
-                var sideFlat = SideFlatFake.GetSideFlat(itemFlat);
-                if (sideFlat != null)
-                {
-                    itemFlat.LightingTop = sideFlat.LightingTop;
-                    itemFlat.LightingNiz = sideFlat.LightingBot;
-                }
-            }
+            //// Временно - подмена индекса освещенностим для боковых квартир!!!???
+            //foreach (var itemFlat in resFlats.Flats)
+            //{
+            //    var sideFlat = SideFlatFake.GetSideFlat(itemFlat);
+            //    if (sideFlat != null)
+            //    {
+            //        itemFlat.LightingTop = sideFlat.LightingTop;
+            //        itemFlat.LightingNiz = sideFlat.LightingBot;
+            //    }
+            //}
             //#else
             //            resFlats.Flats = flat.Flats;
             //#endif            
             return resFlats;
-        }
+        }        
     }
 
     /// <summary>

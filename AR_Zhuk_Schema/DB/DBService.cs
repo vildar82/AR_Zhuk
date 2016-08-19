@@ -78,7 +78,7 @@ namespace AR_Zhuk_Schema.DB
                     for (int i = 0; i < gg.Count; i++)
                     {
                         var f = gg[i];
-                        fl.IdSection = f.ID_Section;
+                        fl.IdSection = f.ID_Section;                        
 #if TEST
                         isContains = true;
                         isValidSection = false;
@@ -90,7 +90,7 @@ namespace AR_Zhuk_Schema.DB
 
                             foreach (var r in sp.requirments.Where(x => x.CodeZone.Equals(f.SubZone)).ToList())
                             {
-                                if (!(r.MinArea<= f.AreaTotalStandart & r.MaxArea> f.AreaTotalStandart))
+                                if (!(r.MinArea<= f.AreaTotalStandart & r.MaxArea >= f.AreaTotalStandart))
                                     continue;
                                 isContains = true;
                                 break;
@@ -149,7 +149,7 @@ namespace AR_Zhuk_Schema.DB
                 {
                     dictDbFlats.TryAdd(item, LoadFromDbSection(item));
                 }
-               // Parallel.ForEach(ssToLoad, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
+                //Parallel.ForEach(ssToLoad, (s) => dictDbFlats.TryAdd(s, LoadFromDbSection(s)));
             }
         }
 

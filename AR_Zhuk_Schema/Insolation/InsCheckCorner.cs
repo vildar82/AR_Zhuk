@@ -30,27 +30,24 @@ namespace AR_Zhuk_Schema.Insolation
         public override List<FlatInfo> CheckSections (Section section)
         {
             List<FlatInfo> resInsFlats = new List<FlatInfo>();
+            HashSet<string> passedFlatsIndenticalHashs = new HashSet<string>();
             foreach (var sectFlats in section.Sections)
             {
                 sectFlats.Code = insService.GetFlatCode(sectFlats);
 
                 // для угловой - проверка инсоляции в одном ее положении
                 var flats = insService.NewFlats(section, sectFlats, isInvert: false);
-                // Проверка однотипной секции                    
-                if (!insService.IsIdenticalSection(flats, resInsFlats))
+                // Проверка инсоляции угловой секции                        
+                if (CheckSection(flats))
                 {
-                    // Проверка инсоляции угловой секции                        
-                    if (CheckSection(flats))
-                    {
-                        resInsFlats.Add(flats);
-                    }
-#if TEST
-                    else
-                    {
-                        resInsFlats.Add(flats);
-                    }
-#endif
+                    AddPassedInsFlats(flats, ref resInsFlats, ref passedFlatsIndenticalHashs);                    
                 }
+#if TEST
+                else
+                {
+                    resInsFlats.Add(flats);
+                }
+#endif
             }
             return resInsFlats;
         }
@@ -64,15 +61,15 @@ namespace AR_Zhuk_Schema.Insolation
             bottomFlats = insService.GetSideFlatsInSection(sect.Flats, false, section.SectionType);
 
             //// Временно!!! подмена индекса угловой квартиры 2KL2
-            if (section.SectionType == SectionType.CornerLeft || section.SectionType == SectionType.CornerRight)
-            {
-                var cornerFlat = section.SectionType == SectionType.CornerLeft ? bottomFlats.First() : bottomFlats.Last();
-                if (cornerFlat.ShortType == "2KL2")
-                {
-                    cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
-                    cornerFlat.SelectedIndexBottom = 4;
-                }
-            }
+            //if (section.SectionType == SectionType.CornerLeft || section.SectionType == SectionType.CornerRight)
+            //{
+            //    var cornerFlat = section.SectionType == SectionType.CornerLeft ? bottomFlats.First() : bottomFlats.Last();
+            //    if (cornerFlat.ShortType == "2KL2")
+            //    {
+            //        cornerFlat.LightingNiz = cornerFlat.Type == "PIK1_2KL2_A0" ? "2|3,4" : "1,2|3";
+            //        cornerFlat.SelectedIndexBottom = 4;
+            //    }
+            //}
 
             // Проверка инсоляции квартир сверху
             isTop = true;            
