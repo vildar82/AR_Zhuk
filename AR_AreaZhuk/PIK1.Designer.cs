@@ -4468,7 +4468,7 @@ SELECT ID_Section, ID_Flat, SelectedIndexBottom, SelectedIndexTop, ID_FlatInSect
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private void InitCommandCollection() {
-            this._commandCollection = new global::System.Data.SqlClient.SqlCommand[4];
+            this._commandCollection = new global::System.Data.SqlClient.SqlCommand[5];
             this._commandCollection[0] = new global::System.Data.SqlClient.SqlCommand();
             this._commandCollection[0].Connection = this.Connection;
             this._commandCollection[0].CommandText = "SELECT        ID_Section, ID_Flat, SelectedIndexBottom, SelectedIndexTop, ID_Flat" +
@@ -4494,6 +4494,16 @@ SELECT ID_Section, ID_Flat, SelectedIndexBottom, SelectedIndexTop, ID_FlatInSect
             this._commandCollection[3].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID_Flat", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "ID_Flat", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[3].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@SelectedIndexBottom", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "SelectedIndexBottom", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
             this._commandCollection[3].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@SelectedIndexTop", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "SelectedIndexTop", global::System.Data.DataRowVersion.Current, false, null, "", "", ""));
+            this._commandCollection[4] = new global::System.Data.SqlClient.SqlCommand();
+            this._commandCollection[4].Connection = this.Connection;
+            this._commandCollection[4].CommandText = @"UPDATE       F_nn_FlatsInSection
+SET                ID_Flat = 3205
+FROM            F_nn_FlatsInSection INNER JOIN
+                         C_Sections ON F_nn_FlatsInSection.ID_Section = C_Sections.ID_Section
+WHERE        (C_Sections.Type = N'Угловая право') AND (F_nn_FlatsInSection.ID_Flat = 3202); 
+SELECT ID_Section, ID_Flat, SelectedIndexBottom, SelectedIndexTop, ID_FlatInSection FROM F_nn_FlatsInSection WHERE (ID_FlatInSection = @ID_FlatInSection)";
+            this._commandCollection[4].CommandType = global::System.Data.CommandType.Text;
+            this._commandCollection[4].Parameters.Add(new global::System.Data.SqlClient.SqlParameter("@ID_FlatInSection", global::System.Data.SqlDbType.Int, 4, global::System.Data.ParameterDirection.Input, 0, 0, "ID_FlatInSection", global::System.Data.DataRowVersion.Original, false, null, "", "", ""));
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4684,6 +4694,30 @@ SELECT ID_Section, ID_Flat, SelectedIndexBottom, SelectedIndexTop, ID_FlatInSect
             command.Parameters[1].Value = ((int)(ID_Flat));
             command.Parameters[2].Value = ((int)(SelectedIndexBottom));
             command.Parameters[3].Value = ((int)(SelectedIndexTop));
+            global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
+            if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
+                        != global::System.Data.ConnectionState.Open)) {
+                command.Connection.Open();
+            }
+            int returnValue;
+            try {
+                returnValue = command.ExecuteNonQuery();
+            }
+            finally {
+                if ((previousConnectionState == global::System.Data.ConnectionState.Closed)) {
+                    command.Connection.Close();
+                }
+            }
+            return returnValue;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Design.HelpKeywordAttribute("vs.data.TableAdapter")]
+        [global::System.ComponentModel.DataObjectMethodAttribute(global::System.ComponentModel.DataObjectMethodType.Update, false)]
+        public virtual int UpdateQuery(int ID_FlatInSection) {
+            global::System.Data.SqlClient.SqlCommand command = this.CommandCollection[4];
+            command.Parameters[0].Value = ((int)(ID_FlatInSection));
             global::System.Data.ConnectionState previousConnectionState = command.Connection.State;
             if (((command.Connection.State & global::System.Data.ConnectionState.Open) 
                         != global::System.Data.ConnectionState.Open)) {
