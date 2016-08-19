@@ -66,6 +66,8 @@ namespace AR_Zhuk_DataModel
         public int MinArea { get; set; }
         public int MaxArea { get; set; }
         public int Percentage { get; set; }
+        public double NearPercentage { get; set; }
+
 
         public double OffSet { get; set; }
         // public  List<RoomInfo> RoomsGeneral { get; set; }
@@ -86,6 +88,7 @@ namespace AR_Zhuk_DataModel
             this.RealPercentage = realPercentage;
             this.OffSet = offset;
             this.CodeZone = codeZone;
+
 
         }
 

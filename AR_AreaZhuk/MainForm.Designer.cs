@@ -45,7 +45,7 @@ namespace AR_AreaZhuk
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dg = new System.Windows.Forms.DataGridView();
             this.btnViewPercentsge = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -93,12 +93,13 @@ namespace AR_AreaZhuk
             this.label4 = new System.Windows.Forms.Label();
             this.lblMaxArea = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.lblTime = new System.Windows.Forms.Label();
             this.Column1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lblTime = new System.Windows.Forms.Label();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -133,7 +134,8 @@ namespace AR_AreaZhuk
             this.Column3,
             this.Column2,
             this.Column4,
-            this.Column5});
+            this.Column5,
+            this.Column6});
             this.dg.Location = new System.Drawing.Point(1, 25);
             this.dg.Name = "dg";
             this.dg.RowHeadersVisible = false;
@@ -719,6 +721,17 @@ namespace AR_AreaZhuk
             this.label6.TabIndex = 28;
             this.label6.Text = "Макс. продаваемая \r\nплощадь (м2):";
             // 
+            // lblTime
+            // 
+            this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblTime.AutoSize = true;
+            this.lblTime.Location = new System.Drawing.Point(1088, 786);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(40, 13);
+            this.lblTime.TabIndex = 30;
+            this.lblTime.Text = "lblTime";
+            this.lblTime.Visible = false;
+            // 
             // Column1
             // 
             this.Column1.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.Nothing;
@@ -731,47 +744,45 @@ namespace AR_AreaZhuk
             "Четырехкомн."});
             this.Column1.Name = "Column1";
             this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Column1.Width = 80;
             // 
             // Column3
             // 
             this.Column3.HeaderText = "Площадь (м2.)";
             this.Column3.Name = "Column3";
             this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column3.Width = 70;
+            this.Column3.Width = 60;
             // 
             // Column2
             // 
             this.Column2.HeaderText = "Кол-во (%)";
             this.Column2.Name = "Column2";
             this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column2.Width = 70;
+            this.Column2.Width = 45;
             // 
             // Column4
             // 
             this.Column4.HeaderText = "Допуск (%)";
             this.Column4.Name = "Column4";
             this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column4.Width = 70;
+            this.Column4.Width = 55;
             // 
             // Column5
             // 
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightGray;
-            this.Column5.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
+            this.Column5.DefaultCellStyle = dataGridViewCellStyle1;
             this.Column5.HeaderText = "Кол-во квартир, попадающих в диапазон.";
             this.Column5.Name = "Column5";
             this.Column5.ReadOnly = true;
             this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // lblTime
+            // Column6
             // 
-            this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(1088, 786);
-            this.lblTime.Name = "lblTime";
-            this.lblTime.Size = new System.Drawing.Size(40, 13);
-            this.lblTime.TabIndex = 30;
-            this.lblTime.Text = "lblTime";
-            this.lblTime.Visible = false;
+            this.Column6.HeaderText = "Ближайшее значение";
+            this.Column6.Name = "Column6";
+            this.Column6.ReadOnly = true;
+            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column6.Width = 70;
             // 
             // MainForm
             // 
@@ -877,12 +888,13 @@ namespace AR_AreaZhuk
         private Label label4;
         private Label lblMaxArea;
         private Label label6;
+        private Label lblTime;
         private DataGridViewComboBoxColumn Column1;
         private DataGridViewTextBoxColumn Column3;
         private DataGridViewTextBoxColumn Column2;
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column5;
-        private Label lblTime;
+        private DataGridViewTextBoxColumn Column6;
     }
 }
 

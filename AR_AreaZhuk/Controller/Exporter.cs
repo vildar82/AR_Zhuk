@@ -121,28 +121,22 @@ namespace AR_AreaZhuk
            PIK1TableAdapters.F_nn_FlatsInSectionTableAdapter flatInSection = new F_nn_FlatsInSectionTableAdapter();
            PIK1TableAdapters.C_Flats_PIK1TableAdapter flatsISectionDB = new C_Flats_PIK1TableAdapter();
            var allFlats = flatsISectionDB.GetData();
-          
+
            foreach (var section in sections)
            {
                var idSection = sects.InsertSection(countModules / 4, typeSection, floors);
                int idSec = Convert.ToInt32(idSection);
                foreach (var flat in section.Flats)
                {
-                   //try
-                   //{
-                    //
-                   int idF =allFlats.First(x =>x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
-                               x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim()) & x.LinkageOr.Equals(flat.LinkageOR.Trim())).ID_Flat;
-                      // var idFlat = flatsISectionDB.GetIdFlat(flat.Type, flat.LinkageDO.Trim(), flat.LinkagePOSLE.Trim());
-                   flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
-                           flat.SelectedIndexTop);
-                   //}
-                   //catch
-                   //{
-                   //    //var idFlat = flatsISectionDB.GetIdFlat(flat.Type, flat.LinkageDO.Trim(), flat.LinkagePOSLE.Trim());
-                   //    //flatInSection.InsertFlatInSection(Convert.ToInt32(idSection), Convert.ToInt32(idFlat), flat.SelectedIndexBottom,
-                   //    //    flat.SelectedIndexTop);
-                   //}
+                   try
+                   {
+
+                       int idF = allFlats.First(x => x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
+                                   x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim()) & x.LinkageOr.Trim().Equals(flat.LinkageOR.Trim())).ID_Flat;
+                       flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
+                               flat.SelectedIndexTop);
+                   }
+                   catch { }
 
                }
            }

@@ -33,7 +33,6 @@ namespace AR_AreaZhuk
 
             InitializeComponent();
         }
-
         private bool isStop = false;
         public PIK1.C_Flats_PIK1_AreasDataTable flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
 
@@ -62,12 +61,12 @@ namespace AR_AreaZhuk
         {
 
             FrameWork fw = new FrameWork();
-           //string excelPath = @"E:\__ROM_Типы квартир.xlsx";
-           // var roomInfo = fw.GetRoomData(excelPath);
-           // Exporter.ExportSectionsToSQL(14* 4, "Угловая право", 18, false, true, roomInfo);
-           // //Parallel.For(8, 12, (q) => Exporter.ExportSectionsToSQL(q * 4, "Угловая право", 9, false, true, roomInfo)); //Рядовая 2-9
-           // ////  Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Рядовая", 9, false, false, roomInfo)); //Рядовая 10-18
-           // Environment.Exit(48);
+            string excelPath = @"E:\__ROM_Типы квартир.xlsx";
+            var roomInfo = fw.GetRoomData(excelPath);
+            Exporter.ExportSectionsToSQL(10 * 4, "Рядовая", 9, false, false, roomInfo);
+            //Parallel.For(8, 12, (q) => Exporter.ExportSectionsToSQL(q * 4, "Угловая право", 9, false, true, roomInfo)); //Рядовая 2-9
+            ////  Parallel.For(7, 15, (q) => Exporter.ExportSectionsToSQL(q * 4, "Рядовая", 9, false, false, roomInfo)); //Рядовая 10-18
+            Environment.Exit(48);
             if (Environment.UserName.Equals("khisyametdinovvt") | Environment.UserName.Equals("ostaninam") | Environment.UserName.Equals("inkinli"))
             {
                 UpdateDbFlats.Visible = true;
@@ -99,8 +98,9 @@ namespace AR_AreaZhuk
                 var flats =
                     dbFlats.Where(x => x.SubZone.Equals(r.CodeZone)).ToList().Where(x => x.AreaTotalStrong >= r.MinArea & x.AreaTotalStrong <= r.MaxArea).ToList();
                 dg[4, dg.RowCount - 1].Value = flats.Count;
+                dg[5, dg.RowCount - 1].Value = 0;
             }
-
+            dg.Rows.Add();
             FillDgReqs();
             isEvent = true;
         }
@@ -112,7 +112,7 @@ namespace AR_AreaZhuk
             {
                 per += Convert.ToInt16(dg[2, i].Value);
             }
-            dg.Rows.Add();
+           // dg.Rows.Add();
             dg[1, dg.RowCount - 1].Value = "Всего:";
             dg[2, dg.RowCount - 1].Value = per;
             dg.Rows[dg.RowCount - 1].ReadOnly = true;
@@ -427,6 +427,7 @@ namespace AR_AreaZhuk
             sw.Start();
             int counterGood = 0;
             int[] selectedHouse = new int[totalObject.Count];
+            int[] nearReqPercentage = new int[spotInfo.requirments.Count];
             while (isContinue)
             {
                 if (isStop)
@@ -476,7 +477,11 @@ namespace AR_AreaZhuk
                                 Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
                                 SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1);
                             double percentage1 = countFlats * 100 / totalCountFlats;
-
+                            double arround = Math.Abs(percentage1 - rr.Percentage);
+                            double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
+                            if (arround < arround2)
+                                rr.NearPercentage = Math.Round(percentage1,0);
+                            
                             if (rr.Percentage + rr.OffSet < percentage1)
                             {
                                 //selectedSectCode[sections.Count - 1]++;
@@ -532,6 +537,7 @@ namespace AR_AreaZhuk
                         isContinue = true;
                         int countSections = listCodes.Count - 1;
 
+                        string[] strPercent = strP.Split(';');
                         while (true)
                         {
                             GeneralObject go = new GeneralObject();
@@ -543,8 +549,6 @@ namespace AR_AreaZhuk
                             double liveArea = 0;
 
                             int countContainsSections = 0;
-                            //double k1 = levelAreaOffLLU / levelArea;
-                            //double k2 = levelAreaOffLLU / levelAreaOnLLU;
                             double k1 = 0;
                             double k2 = 0;
                             for (int j = 0; j <= countSections; j++)
@@ -611,7 +615,7 @@ namespace AR_AreaZhuk
                             spGo.TotalFlats = countFlats;
                             spGo.TypicalSections = typicalSect;
                             spGo.TotalSections = countSections + 1;
-                            string[] strPercent = strP.Split(';');
+                           
                             for (int k = 0; k < spotInfo.requirments.Count; k++)
                                 spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
                             go.Houses = housesInSpot;
@@ -648,6 +652,10 @@ namespace AR_AreaZhuk
             }
 
             FormManager.ViewDataProcentage(dg2, ob, spotInfo);
+            for (int q = 0; q < spotInfo.requirments.Count; q++)
+            {
+                dg[5, q].Value = spotInfo.requirments[q].NearPercentage;
+            }
             th.Abort();
             lblCountObjects.Text = ob.Count.ToString();
             isEvent = true;
@@ -990,6 +998,8 @@ namespace AR_AreaZhuk
         private void btnAdd_Click(object sender, EventArgs e)
         {
             isEvent = false;
+            if (dg.SelectedCells[0].RowIndex == dg.RowCount - 1)
+                return;
             dg.Rows.Insert(dg.SelectedCells[0].RowIndex+1, 1);
             for (int i = 0; i < dg.Columns.Count; i++)
             {

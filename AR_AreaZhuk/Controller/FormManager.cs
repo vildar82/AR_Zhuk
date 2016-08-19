@@ -111,7 +111,7 @@ namespace AR_AreaZhuk
                   r.CodeZone = "3";
               else if (r.SubZone.StartsWith("Ч"))
                   r.CodeZone = "4";
-
+              r.NearPercentage = 0;
               spotInfo.requirments.Add(r);
           }
         //  return isValid;

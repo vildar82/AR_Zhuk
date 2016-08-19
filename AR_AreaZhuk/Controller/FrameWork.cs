@@ -393,6 +393,7 @@ namespace AR_AreaZhuk
             //spotInfo.requirments.Add(new Requirment("Трехкомн.", 75, 97, 16, 0, 2, 0, 0, 2, "3"));
 
             //spotInfo.requirments.Add(new Requirment("Четырехкомн.", 90, 120, 3, 0, 2, 0, 0, 2, "4"));
+
             return spotInfo;
         }
 
@@ -408,7 +409,7 @@ namespace AR_AreaZhuk
             // double currentSum = 569.95 + 51.84;//spotInfo.SpotArea / 4; //569.95+51.84;//571.5;//+51.84;
             int countIndexes = countModulesInSection / 2;
 
-            int limit =3000000;
+            int limit =5000000;
             int iteration = 0;
             Random random = new Random();
             // bool isContinue = true;
@@ -555,7 +556,7 @@ namespace AR_AreaZhuk
                     lastRoomTemp.SelectedIndexTop = indexTop;
                     lastRoomTemp.SelectedIndexBottom = indexNiz;
                     flatsInSectionTemp.Add(tempRoomInfo[indexRandom]);
-                    if (countFloors == "9" & flatsInSectionTemp.Count > 6)
+                    if (countFloors == "9" & flatsInSectionTemp.Count > 7)
                         break;
                     if (i >= 0)
                     {
