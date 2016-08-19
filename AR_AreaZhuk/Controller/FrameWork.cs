@@ -590,15 +590,15 @@ namespace AR_AreaZhuk
                            
                             if (indexSummNizTemp + indexSummTopTemp == countIndexes & indexSummNizTemp == countIndexes / 2 &
                                 !isCornerLeftNiz & !isCornerRightNiz) //рядовая
-                                AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors);
+                                AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors,isCornerRightNiz);
 
                             else if ((summTemp / 4 - 4) == indexSummTopTemp & (summTemp / 4 - 4) + 7 == indexSummNizTemp &
                                      (isCornerLeftNiz | isCornerRightNiz)) //угловая
                             {
                                 if (isCornerRightNiz & lastRoomTemp.Type.Equals("PIK1_3NL2_A0"))
-                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors);
+                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors, isCornerRightNiz);
                                 else if (isCornerLeftNiz)
-                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors);
+                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors, isCornerRightNiz);
                             }
 
                             break;
@@ -909,7 +909,7 @@ namespace AR_AreaZhuk
 
 
 
-        private void AddToListSections(List<FlatInfo> listSections, List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isLeftCorner, string countFloors)
+        private void AddToListSections(List<FlatInfo> listSections, List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isLeftCorner, string countFloors,bool isCornerRightNiz)
         {
             bool isExist = false;
             //if (listRooms1[listRooms1.Count - 2].ShortType.Equals("2KL2"))
@@ -940,7 +940,7 @@ namespace AR_AreaZhuk
                 return;
             if (!isExist)
             {
-                if (IsValidSmoke(listRooms1, allRooms, isLeftCorner, countFloors, listSections))
+                if (IsValidSmoke(listRooms1, allRooms, isLeftCorner, countFloors, listSections, isCornerRightNiz))
                 {
 
                     FlatInfo fi = new FlatInfo();
@@ -1391,7 +1391,7 @@ namespace AR_AreaZhuk
         }
 
 
-        private bool IsValidSmoke(List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isCorner, string countFloors, List<FlatInfo> allsections)
+        private bool IsValidSmoke(List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isLeftCorner, string countFloors, List<FlatInfo> allsections, bool isRightCorner)
         {
             if(countFloors=="9")
                 return true;
@@ -1409,12 +1409,19 @@ namespace AR_AreaZhuk
                            .Where(x => x.TypeSection.Equals("Рядовая")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => !x.FactorSmoke.Equals(""))
                            .ToList()[0];
                 }
-                if (isCorner)
+                if (isLeftCorner)
                 {
                     rr = allRooms.Where(x => x.SubZone.Equals("0")).Where(x => x.Requirment != "0")
                           .Where(x => x.LevelsSection.Equals("10-18"))
                           .Where(x => x.TypeSection.Equals("Угловая-лево")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => x.Requirment != "0").Where(x => !x.FactorSmoke.Equals(""))
                           .ToList()[0];
+                }
+                else if (isRightCorner)
+                {
+                    rr = allRooms.Where(x => x.SubZone.Equals("0")).Where(x => x.Requirment != "0")
+                         .Where(x => x.LevelsSection.Equals("10-18"))
+                         .Where(x => x.TypeSection.Equals("Угловая-право")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => x.Requirment != "0").Where(x => !x.FactorSmoke.Equals(""))
+                         .ToList()[0];
                 }
                 listRooms1[0] = rr;
                 listRooms1[0].SelectedIndexTop = Convert.ToInt16(rr.IndexLenghtTOP);
@@ -1452,7 +1459,7 @@ namespace AR_AreaZhuk
                         continue;
                     }
                     countBottom += Convert.ToInt16(indexSmoke.Split('|')[0]);
-                    if (isCorner)
+                    if (isLeftCorner)
                         countTop = 7 + Convert.ToInt16(listRooms1[0].FactorSmoke.Split('|')[0]);//только ЛЛУ
                     if (countBottom == countTop)
                     {

@@ -132,7 +132,7 @@ namespace AR_AreaZhuk
                    //{
                     //
                    int idF =allFlats.First(x =>x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
-                               x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim())).ID_Flat;
+                               x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim()) & x.LinkageOr.Equals(flat.LinkageOR.Trim())).ID_Flat;
                       // var idFlat = flatsISectionDB.GetIdFlat(flat.Type, flat.LinkageDO.Trim(), flat.LinkagePOSLE.Trim());
                    flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
                            flat.SelectedIndexTop);
