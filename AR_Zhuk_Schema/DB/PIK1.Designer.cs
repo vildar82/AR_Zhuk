@@ -5386,7 +5386,7 @@ FROM            C_Flats_PIK1 INNER JOIN
             this._commandCollection[1].Connection = this.Connection;
             this._commandCollection[1].CommandText = @"SELECT        C_Sections.ID_Section, C_Sections.CountModules, C_Sections.Type AS TypeSection, C_Sections.Levels, C_Flats_PIK1.Type AS TypeFlat, C_Flats_PIK1.ID_Flat, 
                          F_nn_FlatsInSection.SelectedIndexBottom, F_nn_FlatsInSection.SelectedIndexTop, F_nn_FlatsInSection.ID_FlatInSection, C_Flats_PIK1.LightTop, 
-                         C_Flats_PIK1.LightBottom
+                         C_Flats_PIK1.LightBottom, C_Flats_PIK1.SelectedIndexTop AS Expr1, C_Flats_PIK1.SelectedIndexBottom AS Expr2
 FROM            C_Flats_PIK1 INNER JOIN
                          F_nn_FlatsInSection ON C_Flats_PIK1.ID_Flat = F_nn_FlatsInSection.ID_Flat INNER JOIN
                          C_Sections ON F_nn_FlatsInSection.ID_Section = C_Sections.ID_Section

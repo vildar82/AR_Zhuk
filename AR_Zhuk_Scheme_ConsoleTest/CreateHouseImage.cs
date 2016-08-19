@@ -41,7 +41,48 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             }            
         }
 
-        public void TestCreateImage (List<List<HouseInfo>> houses)
+        public void TestCreateImage (List<List<HouseInfo>> houses, List<List<int>> houseSteps)
+        {
+            List<List<HouseInfo>> filteredHouses = new List<List<HouseInfo>>();
+            for (int i = 0; i < houseSteps.Count; i++)
+            {
+                List<HouseInfo> hiFiltered = new List<HouseInfo>();
+                if (i <= houses.Count)
+                {                    
+                    var f = houseSteps[i];
+                    var h = houses[i];
+                    foreach (var hi in h)
+                    {
+                        if (hi.SectionsBySize.Count == f.Count)
+                        {
+                            bool filterOk = true;
+                            for (int t = 0; t < f.Count; t++)
+                            {
+                                if (hi.SectionsBySize[t].CountStep != f[t])
+                                {
+                                    filterOk = false;
+                                }
+                                foreach (var item in hi.SectionsBySize)
+                                {
+                                    if (item.Sections.Any(a=>a.Flats.Any(r=>!r.IsInsPassed)))
+                                    {
+                                        filterOk = false;
+                                    }
+                                }
+                            }
+                            if (filterOk)
+                            {   
+                                hiFiltered.Add(hi);
+                            }
+                        }
+                    }                    
+                    filteredHouses.Add(hiFiltered);
+                }                
+            }
+            TestCreateImage(filteredHouses);
+        }
+
+        public void TestCreateImage (List<List<HouseInfo>> houses, int countHouseBySize = 0)
         {
             var countHousesVar = houses.Max(h => h.Count);
             for (int i = 0; i < countHousesVar; i++)
@@ -57,11 +98,17 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                     else
                     {
                         hi = house.Last();
-                    }                    
+                    }                              
                     housesVar.Add(hi);
-                }                
-                //var countsectBySize = housesVar.Max(h => h.SectionsBySize.Max(s=>s.Sections.Count));
-                for (int s = 0; s < 2; s++)
+                }
+                int countsectBySize = countHouseBySize;
+                if (countsectBySize == 0)
+                {
+                    countsectBySize = housesVar.Max(h => h.SectionsBySize.Max(s => s.Sections.Count));
+                    if (countsectBySize > 100)
+                        countsectBySize = 100;
+                }
+                for (int s = 0; s < countsectBySize; s++)
                 {
                     List<HouseInfo> hbs = new List<HouseInfo>();                    
                     foreach (var house in housesVar)
@@ -69,12 +116,16 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                         HouseInfo hi = new HouseInfo();
                         hi.SpotInf = house.SpotInf;
 
-                        hi.Sections = new List<FlatInfo>();
+                        hi.Sections = new List<FlatInfo>();                        
 
                         foreach (var sbs in house.SectionsBySize)
                         {
-                            var iSbs = rnd.Next(sbs.Sections.Count - 1);
-                            hi.Sections.Add(sbs.Sections[iSbs]);
+                            int index = s;
+                            if (sbs.Sections.Count< s)
+                            {
+                                index = sbs.Sections.Count - 1;
+                            }                            
+                            hi.Sections.Add(sbs.Sections[index]);
                         }
                         hbs.Add(hi);
                     }

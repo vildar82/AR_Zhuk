@@ -34,7 +34,7 @@ namespace AR_Zhuk_Schema.Insolation
         /// <returns>Секции прошедшие инсоляцию</returns>
         public List<FlatInfo> GetInsolationSections (Section section)
         {
-            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                                    
+            IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                  
             var resFlats = insCheck.CheckSections(section);
             return resFlats;
         }
@@ -151,16 +151,16 @@ namespace AR_Zhuk_Schema.Insolation
             }
 //#if TEST
             resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
-            // Временно - подмена индекса освещенностим для боковых квартир!!!???
-            foreach (var itemFlat in resFlats.Flats)
-            {
-                var sideFlat = SideFlatFake.GetSideFlat(itemFlat);
-                if (sideFlat != null)
-                {
-                    itemFlat.LightingTop = sideFlat.LightingTop;
-                    itemFlat.LightingNiz = sideFlat.LightingBot;
-                }
-            }
+            //// Временно - подмена индекса освещенностим для боковых квартир!!!???
+            //foreach (var itemFlat in resFlats.Flats)
+            //{
+            //    var sideFlat = SideFlatFake.GetSideFlat(itemFlat);
+            //    if (sideFlat != null)
+            //    {
+            //        itemFlat.LightingTop = sideFlat.LightingTop;
+            //        itemFlat.LightingNiz = sideFlat.LightingBot;
+            //    }
+            //}
             //#else
             //            resFlats.Flats = flat.Flats;
             //#endif            
