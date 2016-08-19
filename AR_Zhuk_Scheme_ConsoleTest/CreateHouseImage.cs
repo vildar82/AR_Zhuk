@@ -121,7 +121,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                         foreach (var sbs in house.SectionsBySize)
                         {
                             int index = s;
-                            if (sbs.Sections.Count< s)
+                            if (sbs.Sections.Count<= s)
                             {
                                 index = sbs.Sections.Count - 1;
                             }                            

@@ -39,23 +39,10 @@ namespace AR_Zhuk_Schema.Insolation
             return resFlats;
         }
 
-        public bool IsIdenticalSection (FlatInfo curSection, List<FlatInfo> resulsSections)
+        public string GetFlatsHash (FlatInfo flats)
         {
-            var res = resulsSections.Any(s => (s.IsInvert == curSection.IsInvert) &&
-                                IsEqualSections(s.Flats, curSection.Flats));
-            return res;
-        }
-
-        private bool IsEqualSections (List<RoomInfo> section1, List<RoomInfo> section2)
-        {
-            if (section1.Count != section2.Count) return false;
-            // Если одной из квартир нет во второй секции, то это разные секции
-            if (section1.Any(s1 => !section2.Any(s2 => s1.ShortType == s2.ShortType)))
-            {
-                return false;
-            }
-            // все квартиры из первой секции есть во второй
-            return true;            
+            var keyRoomsShortTypes = string.Join("_", flats.Flats.Select(f => f.ShortType).OrderBy(r => r));
+            return keyRoomsShortTypes;
         }
 
         public string GetFlatCode(FlatInfo flat)
@@ -165,7 +152,7 @@ namespace AR_Zhuk_Schema.Insolation
             //            resFlats.Flats = flat.Flats;
             //#endif            
             return resFlats;
-        }
+        }        
     }
 
     /// <summary>

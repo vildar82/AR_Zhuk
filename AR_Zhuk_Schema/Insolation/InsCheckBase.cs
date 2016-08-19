@@ -47,7 +47,16 @@ namespace AR_Zhuk_Schema.Insolation
             DefineInsSideCells();
         }
 
-        public abstract List<FlatInfo> CheckSections (Section section);                               
+        public abstract List<FlatInfo> CheckSections (Section section);
+
+        protected void AddPassedInsFlats (FlatInfo flats, ref List<FlatInfo> resFlats, ref HashSet<string> passedFlatsIndenticalHashs)
+        {
+            string flatsHash = insService.GetFlatsHash(flats);
+            if (passedFlatsIndenticalHashs.Add(flatsHash))
+            {
+                resFlats.Add(flats);
+            }
+        }
 
         /// <summary>
         /// Это первая торцевая квартира, на текущей стророне

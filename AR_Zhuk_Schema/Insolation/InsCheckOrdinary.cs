@@ -46,6 +46,7 @@ namespace AR_Zhuk_Schema.Insolation
         public override List<FlatInfo> CheckSections (Section section)
         {
             List<FlatInfo> resFlats = new List<FlatInfo>();
+            HashSet<string> passedFlatsIndenticalHashs = new HashSet<string>();
             foreach (var sectFlats in section.Sections)
             {
                 sectFlats.Code = insService.GetFlatCode(sectFlats);
@@ -61,12 +62,7 @@ namespace AR_Zhuk_Schema.Insolation
                 var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);
                 if (CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop))
                 {
-                    // Проверка однотипной секции
-                    if (!insService.IsIdenticalSection(flats, resFlats))
-                    {
-                        // Прошла инсоляция с приоритетной стороны. С неприоритетной не надо проверять.
-                        resFlats.Add(flats);
-                    }
+                    AddPassedInsFlats(flats, ref resFlats, ref passedFlatsIndenticalHashs);                    
                 }
                 else
                 {
@@ -74,18 +70,13 @@ namespace AR_Zhuk_Schema.Insolation
                     flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
                     if (CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop))
                     {
-                        // Проверка однотипной секции
-                        if (!insService.IsIdenticalSection(flats, resFlats))
-                        {
-                            // Прошла инсоляция с неприоритетной стороны.
-                            resFlats.Add(flats);
-                        }
+                        AddPassedInsFlats(flats, ref resFlats, ref passedFlatsIndenticalHashs);                        
                     }
                 }
 #endif
             }
             return resFlats;
-        }
+        }        
 
         public bool CheckSection (FlatInfo sect, bool isRightOrTopLLu)
         {

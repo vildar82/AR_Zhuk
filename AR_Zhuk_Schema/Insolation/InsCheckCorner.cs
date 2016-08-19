@@ -30,6 +30,7 @@ namespace AR_Zhuk_Schema.Insolation
         public override List<FlatInfo> CheckSections (Section section)
         {
             List<FlatInfo> resInsFlats = new List<FlatInfo>();
+            HashSet<string> passedFlatsIndenticalHashs = new HashSet<string>();
             foreach (var sectFlats in section.Sections)
             {
                 sectFlats.Code = insService.GetFlatCode(sectFlats);
@@ -39,11 +40,7 @@ namespace AR_Zhuk_Schema.Insolation
                 // Проверка инсоляции угловой секции                        
                 if (CheckSection(flats))
                 {
-                    // Проверка однотипной секции                    
-                    if (!insService.IsIdenticalSection(flats, resInsFlats))
-                    {
-                        resInsFlats.Add(flats);
-                    }                        
+                    AddPassedInsFlats(flats, ref resInsFlats, ref passedFlatsIndenticalHashs);                    
                 }
 #if TEST
                 else
