@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -46,9 +47,16 @@ namespace AR_Zhuk_Schema.Insolation
         public override List<FlatInfo> CheckSections (Section section)
         {
             List<FlatInfo> resFlats = new List<FlatInfo>();
-            HashSet<string> passedFlatsIndenticalHashs = new HashSet<string>();
+            var passedSections = new HashSet<string>();
+
             foreach (var sectFlats in section.Sections)
             {
+                string flatsHash = insService.GetFlatsHash(sectFlats);
+                if (passedSections.Contains(flatsHash))
+                {
+                    continue;
+                }
+
                 sectFlats.Code = insService.GetFlatCode(sectFlats);
 #if TEST
                 var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);                
@@ -56,13 +64,17 @@ namespace AR_Zhuk_Schema.Insolation
                 resFlats.Add(flats);                
                 flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
                 CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop);
-                resFlats.Add(flats);                
+                resFlats.Add(flats);
+                passedSections.Add(flatsHash);
 #else
-                // Для рядовой секции - проверка инсоляции с приоритетной стороны                    
+                // Для рядовой секции - проверка инсоляции с приоритетной стороны                                    
+
                 var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);
+                
                 if (CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop))
                 {
-                    AddPassedInsFlats(flats, ref resFlats, ref passedFlatsIndenticalHashs);                    
+                    passedSections.Add(flatsHash);
+                    resFlats.Add(flats);                    
                 }
                 else
                 {
@@ -70,7 +82,8 @@ namespace AR_Zhuk_Schema.Insolation
                     flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
                     if (CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop))
                     {
-                        AddPassedInsFlats(flats, ref resFlats, ref passedFlatsIndenticalHashs);                        
+                        passedSections.Add(flatsHash);
+                        resFlats.Add(flats);                        
                     }
                 }
 #endif
