@@ -38,6 +38,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>beetles.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AdvancedDataGridView">
       <HintPath>\\picompany.ru\root\dep_ort\8.САПР\технические данные\source\Dll\ЖУКИ\AdvancedDataGridView.dll</HintPath>
@@ -91,7 +94,6 @@
     <Compile Include="Model\Section.cs" />
     <Compile Include="PIK1.cs">
       <DependentUpon>PIK1.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="PIK1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -170,6 +172,9 @@
       <Project>{61cf9608-66bd-4fd3-81f6-58445c10446b}</Project>
       <Name>BeetlyVisualisation</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="beetles.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

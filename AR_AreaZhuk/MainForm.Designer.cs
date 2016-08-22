@@ -46,7 +46,14 @@ namespace AR_AreaZhuk
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.dg = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnViewPercentsge = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.btnSave = new System.Windows.Forms.Button();
@@ -94,12 +101,6 @@ namespace AR_AreaZhuk
             this.lblMaxArea = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lblTime = new System.Windows.Forms.Label();
-            this.Column1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Column6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -144,6 +145,58 @@ namespace AR_AreaZhuk
             this.dg.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellEndEdit);
             this.dg.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dg_CellValueChanged);
             this.dg.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.dg_CellValueNeeded);
+            // 
+            // Column1
+            // 
+            this.Column1.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.Nothing;
+            this.Column1.HeaderText = "Зона";
+            this.Column1.Items.AddRange(new object[] {
+            "Студия",
+            "Однокомн.",
+            "Двухкомн.",
+            "Трехкомн.",
+            "Четырехкомн."});
+            this.Column1.Name = "Column1";
+            this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.Column1.Width = 80;
+            // 
+            // Column3
+            // 
+            this.Column3.HeaderText = "Площадь (м2.)";
+            this.Column3.Name = "Column3";
+            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column3.Width = 60;
+            // 
+            // Column2
+            // 
+            this.Column2.HeaderText = "Кол-во (%)";
+            this.Column2.Name = "Column2";
+            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column2.Width = 45;
+            // 
+            // Column4
+            // 
+            this.Column4.HeaderText = "Допуск (%)";
+            this.Column4.Name = "Column4";
+            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column4.Width = 55;
+            // 
+            // Column5
+            // 
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
+            this.Column5.DefaultCellStyle = dataGridViewCellStyle1;
+            this.Column5.HeaderText = "Кол-во квартир, попадающих в диапазон.";
+            this.Column5.Name = "Column5";
+            this.Column5.ReadOnly = true;
+            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // Column6
+            // 
+            this.Column6.HeaderText = "Ближайшее значение";
+            this.Column6.Name = "Column6";
+            this.Column6.ReadOnly = true;
+            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.Column6.Width = 70;
             // 
             // btnViewPercentsge
             // 
@@ -732,58 +785,6 @@ namespace AR_AreaZhuk
             this.lblTime.Text = "lblTime";
             this.lblTime.Visible = false;
             // 
-            // Column1
-            // 
-            this.Column1.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.Nothing;
-            this.Column1.HeaderText = "Зона";
-            this.Column1.Items.AddRange(new object[] {
-            "Студия",
-            "Однокомн.",
-            "Двухкомн.",
-            "Трехкомн.",
-            "Четырехкомн."});
-            this.Column1.Name = "Column1";
-            this.Column1.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.Column1.Width = 80;
-            // 
-            // Column3
-            // 
-            this.Column3.HeaderText = "Площадь (м2.)";
-            this.Column3.Name = "Column3";
-            this.Column3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column3.Width = 60;
-            // 
-            // Column2
-            // 
-            this.Column2.HeaderText = "Кол-во (%)";
-            this.Column2.Name = "Column2";
-            this.Column2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column2.Width = 45;
-            // 
-            // Column4
-            // 
-            this.Column4.HeaderText = "Допуск (%)";
-            this.Column4.Name = "Column4";
-            this.Column4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column4.Width = 55;
-            // 
-            // Column5
-            // 
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
-            this.Column5.DefaultCellStyle = dataGridViewCellStyle1;
-            this.Column5.HeaderText = "Кол-во квартир, попадающих в диапазон.";
-            this.Column5.Name = "Column5";
-            this.Column5.ReadOnly = true;
-            this.Column5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // Column6
-            // 
-            this.Column6.HeaderText = "Ближайшее значение";
-            this.Column6.Name = "Column6";
-            this.Column6.ReadOnly = true;
-            this.Column6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.Column6.Width = 70;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -805,6 +806,7 @@ namespace AR_AreaZhuk
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.label3);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(978, 514);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
