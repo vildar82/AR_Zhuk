@@ -68,10 +68,13 @@ namespace BeetlyVisualisation
 
             List<FlatType> fTypes = new List<FlatType>();
 
-            var package = new ExcelPackage(new System.IO.FileInfo(XLSXPath));
-
+            string tempFileXls = Path.GetTempFileName();
             try
-            {
+            {                
+                File.Copy(XLSXPath, tempFileXls, true);
+
+                var package = new ExcelPackage(new FileInfo(tempFileXls));
+
                 ExcelWorksheet wSheet = package.Workbook.Worksheets[1];
 
                 for (int i = wSheet.Dimension.Start.Row + 1;
@@ -94,12 +97,12 @@ namespace BeetlyVisualisation
                 }
             }
             catch {}
-
-            
-           
+            finally
+            {
+                File.Delete(tempFileXls);
+            }
 
             return fTypes;
-
         }
 
         /// <summary>
