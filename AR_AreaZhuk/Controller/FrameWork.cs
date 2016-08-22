@@ -352,7 +352,7 @@ namespace AR_AreaZhuk
             string imagePath = Path.Combine(@"E:\Test\ЖУКИ\");
 
             string sourceImgFlats = @"z:\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
-            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1 -Не трогать.xlsx";
+            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
 
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, sourceImgFlats, 72);
             var img = imgComb.generateGeneralObject();
@@ -947,15 +947,13 @@ namespace AR_AreaZhuk
                     FlatInfo fi = new FlatInfo();
                     fi.Flats = listRooms1;
 
-                    //int a = 0;
-                    //int b = a + 1;
+                    ////Визуализация
                     //HouseInfo h = new HouseInfo();
+
                     //h.Sections.Add(fi);
                     //TestCreateImage(h);
-                    //Serializer ser = new Serializer();
-                    //GeneralObject go = new GeneralObject();
-                    //go.Houses.Add(h);
-                    //ser.SerializeList(go,Guid.NewGuid().ToString());
+                    ////Визуализация
+
                     listSections.Add(fi);
                 }
             }

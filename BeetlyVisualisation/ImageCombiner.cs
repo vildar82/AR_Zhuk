@@ -44,7 +44,7 @@ namespace BeetlyVisualisation
         /// Ширина одного модуля в пикселях
         /// 1 модуль - 3600 мм
         /// </summary>
-        int ModuleWidth { get; }
+        int ModuleWidth { get; set; }
 
         ///// <summary>
         ///// Длина площадки
