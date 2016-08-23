@@ -8,7 +8,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
     public static class CuttingFactory
     {
         static IInsolation insService;
-        static IDBService dbService;
+        static IDBService dbService;       
 
         public static void ResetData()
         {

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AR_Zhuk_Schema.DB;
 using AR_Zhuk_Scheme_ConsoleTest.Scheme;
 
 namespace AR_Zhuk_Scheme_ConsoleTest
@@ -12,6 +13,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest
     {
         static void Main (string[] args)
         {
+            //DBService dbService = new DBService();
+            //dbService.SaveDbFlats();
+
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
             Debug.Listeners.Add(writer);            
 

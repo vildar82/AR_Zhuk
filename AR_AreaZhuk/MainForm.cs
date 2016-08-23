@@ -364,9 +364,10 @@ namespace AR_AreaZhuk
                     subZone = "3";
                 else if (subZone.StartsWith("Ч"))
                     subZone = "4";
+                // Вильдар. 23.08.2016. Площадь квартиры должна быть меньше максимальной требуемой площади. Убрал <=, оставил <.
                 var flats =
                 dbFlats.Where(x => x.SubZone.Equals(subZone)).ToList().
-                Where(x => x.AreaTotalStrong >= Convert.ToInt16(deep[0]) & x.AreaTotalStrong <= Convert.ToInt16(deep[1])).ToList();
+                Where(x => x.AreaTotalStrong >= Convert.ToInt16(deep[0]) & x.AreaTotalStrong < Convert.ToInt16(deep[1])).ToList();
                 dg[4, i].Value = flats.Count;
             }
             dg[2, dg.RowCount - 1].Value = per;
@@ -418,7 +419,7 @@ namespace AR_AreaZhuk
             profectShema.ReadScheme(PathToFileInsolation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(maxHousesBySpot: 10);
             isContinue = true;
             if (totalObject.Count == 0)
                 isContinue=false;
@@ -472,16 +473,18 @@ namespace AR_AreaZhuk
                         var isOverFlow = false;
                         for (int i = 0; i < codeSections.Count; i++)
                         {
-                            countFlats +=
-                                Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
+                            // Вильдар. 23.08.2016 - не понял зачем вычисляется процент от суммы квартир, а не только от квартир текущего требования
+                            var countFlatByReq = Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
                                 SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1);
-                            double percentage1 = countFlats * 100 / totalCountFlats;
+                            countFlats += countFlatByReq;
+
+                            double percentage1 = countFlatByReq * 100 / totalCountFlats;
                             double arround = Math.Abs(percentage1 - rr.Percentage);
                             double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
                             if (arround < arround2)
                                 rr.NearPercentage = Math.Round(percentage1,0);
-                            
-                            if (rr.Percentage + rr.OffSet < percentage1)
+                            // Вильдар. 23.08.2016 - расхождение процентажа в пределах допуска (+/-)
+                            if (rr.Percentage - percentage1 > rr.OffSet )
                             {
                                 //selectedSectCode[sections.Count - 1]++;
                                 //if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
@@ -506,14 +509,15 @@ namespace AR_AreaZhuk
                         double percentage = countFlats * 100 / totalCountFlats;
                         strP += (Math.Round(percentage, 0)).ToString() + ";";
 
-
-                        if (rr.Percentage - rr.OffSet <= percentage & rr.Percentage + rr.OffSet >= percentage)
-                            isValidPercentage = true;
-                        else
-                        {
-                            isValidPercentage = false;
-                            break;
-                        }
+                        // Вильдар. 23.08.2016 - процентаж уже проверен, зачем еще раз проверчть? Не понял. Пока закоменчу.
+                        isValidPercentage = true;
+                        //if (rr.Percentage - rr.OffSet <= percentage & rr.Percentage + rr.OffSet >= percentage)
+                        //    isValidPercentage = true;
+                        //else
+                        //{
+                        //    isValidPercentage = false;
+                        //    break;
+                        //}
                     }
                     //if (counterGood > 500)
                     //{

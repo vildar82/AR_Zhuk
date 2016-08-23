@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DB\DbFlat.cs" />
     <Compile Include="DB\DBService.cs" />
     <Compile Include="DB\IDBService.cs" />
     <Compile Include="DB\PIK1.cs">
@@ -58,6 +59,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PIK1.xsd</DependentUpon>
     </Compile>
+    <Compile Include="DB\XmlDbFlats.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Insolation\IInsCheck.cs" />
     <Compile Include="Insolation\IInsolation.cs" />

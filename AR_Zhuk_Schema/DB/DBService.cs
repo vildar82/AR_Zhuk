@@ -2,9 +2,12 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using AR_Zhuk_DataModel;
 using AR_Zhuk_Schema.DB.SAPRTableAdapters;
 
@@ -19,8 +22,8 @@ namespace AR_Zhuk_Schema.DB
         /// <summary>
         /// Словарь предварительно загруженных секций
         /// </summary>
-        private static ConcurrentDictionary<SelectSectionParam, List<SAPR.FlatsInSectionsRow>> dictDbFlats = 
-                    new ConcurrentDictionary<SelectSectionParam, List<SAPR.FlatsInSectionsRow>>();
+        private static ConcurrentDictionary<SelectSectionParam, List<DbFlat>> dictDbFlats = 
+                    new ConcurrentDictionary<SelectSectionParam, List<DbFlat>>();
         /// <summary>
         /// Виды секций в базе - по шагу, типу и этажности (Type, Levels, CountStep)
         /// </summary>
@@ -34,9 +37,12 @@ namespace AR_Zhuk_Schema.DB
             this.sp = sp;
             this.maxSectionBySize = maxSectionBySize;
             // виды секций в базе
+            LoadDbFlats();
             sectionsTypesInDb = GetSectionsTypesIndDb();
             dictSections = new Dictionary<string, List<FlatInfo>>();
-        }        
+        }
+
+        public DBService () { }   
 
         public List<FlatInfo> GetSections (Section section, SelectSectionParam selecSectParam)
         {
@@ -45,7 +51,7 @@ namespace AR_Zhuk_Schema.DB
 
             if (!dictSections.TryGetValue(key, out sectionsBySyze))
             {
-                List<SAPR.FlatsInSectionsRow> flatsDb;                
+                List<DbFlat> flatsDb;                
                 if (!dictDbFlats.TryGetValue(selecSectParam, out flatsDb))
                 {
                     return null;
@@ -154,41 +160,42 @@ namespace AR_Zhuk_Schema.DB
             }
         }
 
-        private List<SAPR.FlatsInSectionsRow> LoadFromDbSection (SelectSectionParam selectSectParam)
+        private List<DbFlat> LoadFromDbSection (SelectSectionParam selectSectParam)
         {
-            List<SAPR.FlatsInSectionsRow> flatsDb;
+            List<SAPR.FlatsInSectionsRow> flatsDbRows;
             FlatsInSectionsTableAdapter flatsIsSection = new FlatsInSectionsTableAdapter();
             if (maxSectionBySize == 0)
             {
-                flatsDb = flatsIsSection.GetFlatsInTypeSection(selectSectParam.Step,
+                flatsDbRows = flatsIsSection.GetFlatsInTypeSection(selectSectParam.Step,
                             selectSectParam.Type, selectSectParam.Levels).ToList();
             }
             else
             {
-                flatsDb = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize,
+                flatsDbRows = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize,
                             selectSectParam.Step, selectSectParam.Type, selectSectParam.Levels).ToList();
                 // отсекаем первые и последние квартиры секции (она может быть неполной)                
-                if (flatsDb.Count == maxSectionBySize)
+                if (flatsDbRows.Count == maxSectionBySize)
                 {
                     //flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();
-                    var lastDbFlat = flatsDb.Last();
+                    var lastDbFlat = flatsDbRows.Last();
                     var idSectionLast = lastDbFlat.ID_Section;
                     do
                     {
-                        flatsDb.Remove(lastDbFlat);
-                        lastDbFlat = flatsDb.Last();
+                        flatsDbRows.Remove(lastDbFlat);
+                        lastDbFlat = flatsDbRows.Last();
                     } while (lastDbFlat.ID_Section== idSectionLast);
 
-                    var firstDbFlat = flatsDb.First();
+                    var firstDbFlat = flatsDbRows.First();
                     var idSectionFirst = firstDbFlat.ID_Section;
                     do
                     {
-                        flatsDb.Remove(firstDbFlat);
-                        firstDbFlat = flatsDb.First();
+                        flatsDbRows.Remove(firstDbFlat);
+                        firstDbFlat = flatsDbRows.First();
                     } while (firstDbFlat.ID_Section == idSectionFirst);
                 }
             }
-            return flatsDb;            
+            var res = DbFlat.GetFlats(flatsDbRows);
+            return res; 
         }
 
         private List<SelectSectionParam> GetSectionsTypesIndDb ()
@@ -203,13 +210,142 @@ namespace AR_Zhuk_Schema.DB
             }
             return resSectTypesInDb;
         }
+
+        public void SaveDbFlats ()
+        {
+            List<XmlDbFlats> xmlDbFlats = new List<XmlDbFlats>();
+
+            var sectTypes = GetSectionsTypesIndDb();
+            foreach (var secType in sectTypes)
+            {
+                var dbFlats = LoadFromDbSection(secType);                
+                xmlDbFlats.Add(new XmlDbFlats { SelectParam = secType, DbFlats = dbFlats });                
+            }
+
+            try
+            {
+                using (Stream stream = File.Open("data.bin", FileMode.Create))
+                {
+                    //BinaryFormatter bin = new BinaryFormatter();
+                    //bin.Serialize(stream, xmlDbFlats);
+
+                    using (BinaryWriter binWriter = new BinaryWriter(stream))
+                    {
+                        binWriter.Write(xmlDbFlats.Count);
+
+                        foreach (var xmlFlat in xmlDbFlats)
+                        {
+                            binWriter.Write(xmlFlat.SelectParam.Levels);
+                            binWriter.Write(xmlFlat.SelectParam.Step);
+                            binWriter.Write(xmlFlat.SelectParam.Type);
+                            binWriter.Write(xmlFlat.DbFlats.Count);
+                            foreach (var flat in xmlFlat.DbFlats)
+                            {
+                                binWriter.Write(flat.AreaInModule);
+                                binWriter.Write(flat.AreaLive);
+                                binWriter.Write(flat.AreaTotalStandart);
+                                binWriter.Write(flat.AreaTotalStrong);
+                                binWriter.Write(flat.CountModules);
+                                binWriter.Write(flat.Expr1);
+                                binWriter.Write(flat.Expr2);
+                                binWriter.Write(flat.FactorSmoke);
+                                binWriter.Write(flat.ID_Flat);
+                                binWriter.Write(flat.ID_FlatInSection);
+                                binWriter.Write(flat.ID_Section);
+                                binWriter.Write(flat.IndexBottom);
+                                binWriter.Write(flat.IndexTop);
+                                binWriter.Write(flat.Levels);
+                                binWriter.Write(flat.LightBottom);
+                                binWriter.Write(flat.LightTop);
+                                binWriter.Write(flat.LinkageAfter);
+                                binWriter.Write(flat.LinkageBefore);
+                                binWriter.Write(flat.SelectedIndexBottom);
+                                binWriter.Write(flat.SelectedIndexTop);
+                                binWriter.Write(flat.ShortType);
+                                binWriter.Write(flat.SubZone);
+                                binWriter.Write(flat.TypeFlat);
+                                binWriter.Write(flat.TypeSection);
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public void LoadDbFlats ()
+        {
+            try
+            {
+                using (Stream stream = File.Open("data.bin", FileMode.Open))
+                {
+                    //BinaryFormatter bin = new BinaryFormatter();
+                    //var xmlDbFlats = (List<XmlDbFlats>)bin.Deserialize(stream);
+
+                    var xmlDbFlats = new List<XmlDbFlats>();
+                    using (var binaryReader = new BinaryReader(stream))
+                    {
+                        int countXmlFlats = binaryReader.ReadInt32();
+                        for (int i = 0; i < countXmlFlats; i++)
+                        {
+                            XmlDbFlats xmlFlat = new XmlDbFlats();
+                            xmlFlat.SelectParam = new SelectSectionParam();
+                            xmlFlat.SelectParam.Levels = binaryReader.ReadString();
+                            xmlFlat.SelectParam.Step = binaryReader.ReadInt32();
+                            xmlFlat.SelectParam.Type = binaryReader.ReadString();
+                            xmlFlat.DbFlats = new List<DbFlat>();
+                            var countFlats =  binaryReader.ReadInt32();
+                            for (int f = 0; f < countFlats; f++)
+                            {
+                                DbFlat flat = new DbFlat();
+                                flat.AreaInModule = binaryReader.ReadInt32();
+                                flat.AreaLive = binaryReader.ReadDouble();
+                                flat.AreaTotalStandart = binaryReader.ReadDouble();
+                                flat.AreaTotalStrong = binaryReader.ReadDouble();
+                                flat.CountModules = binaryReader.ReadInt32();
+                                flat.Expr1 = binaryReader.ReadInt32();
+                                flat.Expr2  = binaryReader.ReadInt32();
+                                flat.FactorSmoke = binaryReader.ReadString();
+                                flat.ID_Flat = binaryReader.ReadInt32();
+                                flat.ID_FlatInSection= binaryReader.ReadInt32();
+                                flat.ID_Section = binaryReader.ReadInt32();
+                                flat.IndexBottom = binaryReader.ReadString();
+                                flat.IndexTop = binaryReader.ReadString();
+                                flat.Levels = binaryReader.ReadString();
+                                flat.LightBottom = binaryReader.ReadString();
+                                flat.LightTop = binaryReader.ReadString();
+                                flat.LinkageAfter = binaryReader.ReadString();
+                                flat.LinkageBefore = binaryReader.ReadString();
+                                flat.SelectedIndexBottom = binaryReader.ReadInt32();
+                                flat.SelectedIndexTop = binaryReader.ReadInt32();
+                                flat.ShortType = binaryReader.ReadString();
+                                flat.SubZone = binaryReader.ReadString();
+                                flat.TypeFlat = binaryReader.ReadString();
+                                flat.TypeSection = binaryReader.ReadString();
+                                xmlFlat.DbFlats.Add(flat);
+                            }
+                            xmlDbFlats.Add(xmlFlat);
+                        }
+                    }
+
+                    foreach (var xmlDbFlat in xmlDbFlats)
+                    {
+                        dictDbFlats.TryAdd(xmlDbFlat.SelectParam, xmlDbFlat.DbFlats);
+                    }
+                }
+            }
+            catch { }
+        }
     }    
 
+    [Serializable]
     public class SelectSectionParam : IEquatable<SelectSectionParam>
     {
-        public readonly int Step;
-        public readonly string Type;
-        public readonly string Levels;
+        public int Step { get; set; }
+        public string Type { get; set; }
+        public string Levels { get; set; }
+
+        public SelectSectionParam () { }
 
         public SelectSectionParam(int step, string type, string levels)
         {
@@ -226,6 +362,6 @@ namespace AR_Zhuk_Schema.DB
         public override int GetHashCode ()
         {
             return Step.GetHashCode() ^ Type.GetHashCode() ^ Levels.GetHashCode();
-        }
+        }        
     }
 }

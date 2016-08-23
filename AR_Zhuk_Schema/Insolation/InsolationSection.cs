@@ -59,8 +59,8 @@ namespace AR_Zhuk_Schema.Insolation
                             x => x.CodeZone.Equals(flat.Flats[l].SubZone))
                             .Where(
                                 x =>
-                                    x.MaxArea + 5 >= flat.Flats[l].AreaTotal &
-                                    x.MinArea - 5 <= flat.Flats[l].AreaTotal)
+                                    x.MaxArea > flat.Flats[l].AreaTotal &
+                                    x.MinArea <= flat.Flats[l].AreaTotal)
                             .ToList();
                     if (reqs.Count == 0) continue;
                     reqs[0].RealCountFlats++;
