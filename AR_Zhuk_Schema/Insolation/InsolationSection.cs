@@ -19,12 +19,12 @@ namespace AR_Zhuk_Schema.Insolation
             };
 
         private readonly SpotInfo sp;
-
-        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes = new Dictionary<List<RoomInfo>, string> (new FlatComparer ());
+        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes;
 
         public InsolationSection(SpotInfo sp)
         {
             this.sp = sp;
+            dictFlatsCodes = new Dictionary<List<RoomInfo>, string>();
         }
 
         /// <summary>

@@ -85,6 +85,7 @@ namespace AR_Zhuk_Schema
         /// </summary>        
         public List<List<HouseInfo>> GetTotalHouses (int maxSectionBySize = 0, int maxHousesBySpot=0)
         {
+            CuttingFactory.ResetData();
             List<List<HouseInfo>> totalHouses = new List<List<HouseInfo>>();
             foreach (var item in HouseSpots)
             {

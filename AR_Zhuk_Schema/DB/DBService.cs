@@ -15,7 +15,7 @@ namespace AR_Zhuk_Schema.DB
         /// <summary>
         /// Сохранение запрошенных секций - прошедших через фильтр требований
         /// </summary>
-        private static Dictionary<string, List<FlatInfo>> dictSections = new Dictionary<string, List<FlatInfo>>();
+        private static Dictionary<string, List<FlatInfo>> dictSections;
         /// <summary>
         /// Словарь предварительно загруженных секций
         /// </summary>
@@ -35,6 +35,7 @@ namespace AR_Zhuk_Schema.DB
             this.maxSectionBySize = maxSectionBySize;
             // виды секций в базе
             sectionsTypesInDb = GetSectionsTypesIndDb();
+            dictSections = new Dictionary<string, List<FlatInfo>>();
         }        
 
         public List<FlatInfo> GetSections (Section section, SelectSectionParam selecSectParam)

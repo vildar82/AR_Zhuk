@@ -7,11 +7,22 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 {
     public static class CuttingFactory
     {
+        static IInsolation insService;
+        static IDBService dbService;
+
+        public static void ResetData()
+        {
+            insService = null;
+            dbService = null;
+        }
+
         public static ICutting Create (HouseSpot houseSpot, SpotInfo sp, int maxSectionbySize, int maxHousesBySpot)
         {
             ICutting cutting;
-            IInsolation insService = new InsolationSection(sp);
-            IDBService dbService = new DBService(sp, maxSectionbySize);
+            if (insService == null)
+                insService = new InsolationSection(sp);
+            if (dbService == null)
+                dbService = new DBService(sp, maxSectionbySize);
 
             if (houseSpot.IsTower)
             {
