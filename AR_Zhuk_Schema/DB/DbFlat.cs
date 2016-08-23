@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AR_Zhuk_DataModel;
 
 namespace AR_Zhuk_Schema.DB
 {
@@ -62,6 +63,12 @@ namespace AR_Zhuk_Schema.DB
             this.SubZone = dbFlatRow.SubZone;
             this.TypeFlat = dbFlatRow.TypeFlat;
             this.TypeSection = dbFlatRow.TypeSection;
+        }
+
+        public RoomInfo GetRoomInfo ()
+        {
+            RoomInfo ri = DBService.GetRoom(this);
+            return ri;
         }
 
         public static List<DbFlat> GetFlats (List<SAPR.FlatsInSectionsRow> dbFlatsRows)

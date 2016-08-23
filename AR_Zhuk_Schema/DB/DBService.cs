@@ -18,11 +18,11 @@ namespace AR_Zhuk_Schema.DB
         /// <summary>
         /// Сохранение запрошенных секций - прошедших через фильтр требований
         /// </summary>
-        private static Dictionary<string, List<FlatInfo>> dictSections;
+        public static Dictionary<string, List<FlatInfo>> dictSections;
         /// <summary>
         /// Словарь предварительно загруженных секций
         /// </summary>
-        private static ConcurrentDictionary<SelectSectionParam, List<DbFlat>> dictDbFlats = 
+        public static ConcurrentDictionary<SelectSectionParam, List<DbFlat>> dictDbFlats = 
                     new ConcurrentDictionary<SelectSectionParam, List<DbFlat>>();
         /// <summary>
         /// Виды секций в базе - по шагу, типу и этажности (Type, Levels, CountStep)
@@ -39,7 +39,8 @@ namespace AR_Zhuk_Schema.DB
             // виды секций в базе
             LoadDbFlats();
             sectionsTypesInDb = GetSectionsTypesIndDb();
-            dictSections = new Dictionary<string, List<FlatInfo>>();
+            if (dictSections == null)
+                dictSections = new Dictionary<string, List<FlatInfo>>();
         }
 
         public DBService () { }   
@@ -85,7 +86,7 @@ namespace AR_Zhuk_Schema.DB
                     for (int i = 0; i < gg.Count; i++)
                     {
                         var f = gg[i];
-                        fl.IdSection = f.ID_Section;                        
+                        fl.IdSection = f.ID_Section;
 #if TEST
                         isContains = true;
                         isValidSection = false;
@@ -110,16 +111,9 @@ namespace AR_Zhuk_Schema.DB
                             }
                         }
 #endif
-                        var fflat = new RoomInfo(f.ShortType, f.SubZone, f.TypeFlat, "",
-                            "", f.LinkageBefore, f.LinkageAfter, "", "", "", f.Levels, "", "", f.LightBottom, f.LightTop,
-                            "");
-                        fflat.AreaModules = f.AreaInModule;
-                        fflat.AreaTotal = f.AreaTotalStrong;
-                        fflat.AreaTotalStandart = f.AreaTotalStandart;
-                        fflat.SelectedIndexTop = f.SelectedIndexTop;
-                        fflat.SelectedIndexBottom = f.SelectedIndexBottom;
+                        RoomInfo fflat = GetRoom(f);
                         fl.Flats.Add(fflat);
-                        
+
                         if (!isValidSection)
                             continue;
 
@@ -142,6 +136,19 @@ namespace AR_Zhuk_Schema.DB
                 dictSections.Add(key, sectionsBySyze);
             }
             return sectionsBySyze;
+        }
+
+        public static RoomInfo GetRoom (DbFlat f)
+        {
+            var fflat = new RoomInfo(f.ShortType, f.SubZone, f.TypeFlat, "",
+                                        "", f.LinkageBefore, f.LinkageAfter, "", "", "", f.Levels, "", "", f.LightBottom, f.LightTop,
+                                        "");
+            fflat.AreaModules = f.AreaInModule;
+            fflat.AreaTotal = f.AreaTotalStrong;
+            fflat.AreaTotalStandart = f.AreaTotalStandart;
+            fflat.SelectedIndexTop = f.SelectedIndexTop;
+            fflat.SelectedIndexBottom = f.SelectedIndexBottom;
+            return fflat;
         }
 
         public void PrepareLoadSections (List<SelectSectionParam> selectSects)

@@ -101,6 +101,7 @@ namespace AR_AreaZhuk
             this.lblMaxArea = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lblTime = new System.Windows.Forms.Label();
+            this.labelCountSectionsTotal = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -785,6 +786,16 @@ namespace AR_AreaZhuk
             this.lblTime.Text = "lblTime";
             this.lblTime.Visible = false;
             // 
+            // labelCountSectionsTotal
+            // 
+            this.labelCountSectionsTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelCountSectionsTotal.AutoSize = true;
+            this.labelCountSectionsTotal.Location = new System.Drawing.Point(875, 836);
+            this.labelCountSectionsTotal.Name = "labelCountSectionsTotal";
+            this.labelCountSectionsTotal.Size = new System.Drawing.Size(71, 13);
+            this.labelCountSectionsTotal.TabIndex = 4;
+            this.labelCountSectionsTotal.Text = "Кол.секций: ";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -805,6 +816,7 @@ namespace AR_AreaZhuk
             this.Controls.Add(this.btnStartScan);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.btnSave);
+            this.Controls.Add(this.labelCountSectionsTotal);
             this.Controls.Add(this.label3);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(978, 514);
@@ -897,6 +909,7 @@ namespace AR_AreaZhuk
         private DataGridViewTextBoxColumn Column4;
         private DataGridViewTextBoxColumn Column5;
         private DataGridViewTextBoxColumn Column6;
+        private Label labelCountSectionsTotal;
     }
 }
 
