@@ -33,29 +33,28 @@ namespace AR_Zhuk_Schema.Insolation
             HashSet<string> passedSections = new HashSet<string>();
             foreach (var sectFlats in section.Sections)
             {
-                string flatsHash = insService.GetFlatsHash(sectFlats);
-                if (passedSections.Contains(flatsHash))
+                sectFlats.Code = insService.GetFlatCode(sectFlats);
+                //string flatsHash = insService.GetFlatsHash(sectFlats);
+                if (passedSections.Contains(sectFlats.Code))
                 {
                     continue;
-                }
-
-                sectFlats.Code = insService.GetFlatCode(sectFlats);
+                }                
 
                 // для угловой - проверка инсоляции в одном ее положении
                 var flats = insService.NewFlats(section, sectFlats, isInvert: false);
                 // Проверка инсоляции угловой секции                        
                 if (CheckSection(flats))
                 {
-                    passedSections.Add(flatsHash);
+                    passedSections.Add(sectFlats.Code);
                     resInsFlats.Add(flats);
                 }
 #if TEST
                 else
                 {
-                    passedSections.Add(flatsHash);
+                    passedSections.Add(sectFlats.Code);
                     resInsFlats.Add(flats);
                 }                
-#endif
+#endif                
             }
             return resInsFlats;
         }

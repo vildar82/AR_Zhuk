@@ -13,16 +13,20 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         public static void ResetData()
         {
             insService = null;
-            dbService = null;
+            if (dbService != null)
+                dbService.ResetSections();            
         }
 
         public static ICutting Create (HouseSpot houseSpot, SpotInfo sp, int maxSectionbySize, int maxHousesBySpot)
         {
             ICutting cutting;
             if (insService == null)
-                insService = new InsolationSection(sp);
+                insService = new InsolationSection(sp, maxSectionbySize);
+            else
+                InsolationSection.maxSectionbySize = maxSectionbySize;
+            
             if (dbService == null)
-                dbService = new DBService(sp, maxSectionbySize);
+                dbService = new DBService(sp, maxSectionbySize);            
 
             if (houseSpot.IsTower)
             {

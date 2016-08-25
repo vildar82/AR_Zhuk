@@ -10,6 +10,6 @@ namespace AR_Zhuk_Schema.DB
     public class XmlDbFlats
     {
         public SelectSectionParam SelectParam { get; set; }
-        public List<DbFlat> DbFlats { get; set; }        
+        public List<List<DbFlat>> DbFlats { get; set; }        
     }
 }

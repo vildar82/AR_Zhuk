@@ -20,9 +20,11 @@ namespace AR_Zhuk_Schema.Insolation
 
         private readonly SpotInfo sp;
         private static Dictionary<List<RoomInfo>, string> dictFlatsCodes;
+        internal static int maxSectionbySize;
 
-        public InsolationSection(SpotInfo sp)
+        public InsolationSection(SpotInfo sp, int maxSectionbySize)
         {
+            InsolationSection.maxSectionbySize = maxSectionbySize;
             this.sp = sp;
             dictFlatsCodes = new Dictionary<List<RoomInfo>, string>();
         }
@@ -36,7 +38,32 @@ namespace AR_Zhuk_Schema.Insolation
         {
             IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                  
             var resFlats = insCheck.CheckSections(section);
+
+            if (maxSectionbySize != 0)
+            {
+                // Рандомно выбрать заданное кол секций
+                resFlats = GetRandomMaxCountSections(resFlats, maxSectionbySize);
+            }
+
             return resFlats;
+        }
+
+        private List<FlatInfo> GetRandomMaxCountSections (List<FlatInfo> sections, int maxSectionbySize)
+        {
+            List<FlatInfo> res = new List<FlatInfo>();
+            if (sections.Count == 0 || sections.Count < maxSectionbySize)
+                return sections;
+
+            int maxValue = sections.Count-1;
+            Random rnd = new Random();
+
+            for (int i = 0; i < maxSectionbySize; i++)
+            {
+                var r = rnd.Next(maxValue);
+                var s = sections[r];
+                res.Add(s);
+            }
+            return res;
         }
 
         public string GetFlatsHash (FlatInfo flats)
@@ -50,26 +77,15 @@ namespace AR_Zhuk_Schema.Insolation
             string code;
             if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
             {
-                var sp = this.sp.CopySpotInfo(this.sp);
-                for (int l = 0; l < flat.Flats.Count; l++) //Квартиры
-                {
-                    if (flat.Flats[l].SubZone.Equals("0")) continue;
-                    var reqs =
-                        sp.requirments.Where(
-                            x => x.CodeZone.Equals(flat.Flats[l].SubZone))
-                            .Where(
-                                x =>
-                                    x.MaxArea > flat.Flats[l].AreaTotal &
-                                    x.MinArea <= flat.Flats[l].AreaTotal)
-                            .ToList();
-                    if (reqs.Count == 0) continue;
-                    reqs[0].RealCountFlats++;
-                }
                 code = string.Empty;
-                foreach (var r in sp.requirments)
+                var dictCountFlatByReq = flat.Flats.GroupBy(g => g.CodeReqIndex).ToDictionary(k => k.Key, v => v.Count());
+
+                for (int i = 0; i < sp.requirments.Count; i++)
                 {
-                    code += r.RealCountFlats.ToString();
-                }            
+                    int count = 0;
+                    dictCountFlatByReq.TryGetValue(i, out count);
+                    code += count.ToString();
+                }                
                 dictFlatsCodes.Add(flat.Flats, code);
             }
             return code;            
@@ -131,13 +147,14 @@ namespace AR_Zhuk_Schema.Insolation
             resFlats.ImageAngle = section.ImageAngle;
             resFlats.ImageStart = section.ImageStart;
             resFlats.Floors = section.Floors;
-            resFlats.IsDominant = section.IsDominant;            
+            resFlats.IsDominant = section.IsDominant;                
             if (isInvert)
             {
                 resFlats.ImageAngle += 180;
             }
-//#if TEST
-            resFlats.Flats = flat.Flats.Select(f => (RoomInfo)f.Clone()).ToList();
+            resFlats.Flats = flat.Flats;
+            resFlats.Flats = flat.Flats.Select(f => f.Clone()).ToList();
+
             //// Временно - подмена индекса освещенностим для боковых квартир!!!???
             //foreach (var itemFlat in resFlats.Flats)
             //{

@@ -17,8 +17,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             CreateHouseImage testCreateHouse = new CreateHouseImage();
 
             // Исходнве данные
-            string insolationFile = @"z:\Revit_server\13. Settings\02_RoomManager\Жуки\Тесты\Жуки - тест\Бумеранг\Бумеранг.xlsx";
-                                //  @"c:\work\test\АР\ЖУКИ\Задание по инсоляции ПИК1_TEST.xlsx";
+            string insolationFile = @"z:\Revit_server\13. Settings\02_RoomManager\Жуки\Тесты\Жуки - тест\Бумеранг\Бумеранг.xlsx";                                
             List<HouseOptions> options = new List<HouseOptions>() {
                  new HouseOptions("P1", 15, 25, new List<bool> { false, false, false, false,  true}),
                  new HouseOptions("P2", 15, 25, new List<bool> { true, false, false, false, false})
@@ -34,7 +33,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            var totalHouses = projectSpot.GetTotalHouses();
+            var totalHouses = projectSpot.GetTotalHouses(5,5);            
 
             timer.Stop();
             Console.WriteLine("Получение всех домов = " + timer.Elapsed.TotalSeconds);
@@ -51,11 +50,11 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             spotInfo.requirments.Add(new Requirment("Студия", 21, 35, 10, 0, 0, 0, 0, 3, "01"));
             //spotInfo.requirments.Add(new Requirment("Студия", 33, 35, 8, 0, 8, 0, 0, 4, "01"));
             spotInfo.requirments.Add(new Requirment("Однокомн.", 33, 48, 31, 0, 0, 0, 0, 3, "1"));
-            spotInfo.requirments.Add(new Requirment("Двухкомн.", 45, 80, 40, 0, 0, 0, 0, 3, "2"));
+            spotInfo.requirments.Add(new Requirment("Двухкомн.", 56, 90, 40, 0, 0, 0, 0, 3, "2"));
             //spotInfo.requirments.Add(new Requirment("Двухкомн.", 57, 60, 11, 0, 3, 0, 0, 3, "2"));
             //spotInfo.requirments.Add(new Requirment("Двухкомн.", 68, 71, 12, 0, 3, 0, 0, 3, "2"));
-            spotInfo.requirments.Add(new Requirment("Трехкомн.", 75, 95, 16, 0, 0, 0, 0, 3, "3"));
-            spotInfo.requirments.Add(new Requirment("Четырехкомн.", 95, 130, 3, 0, 0, 0, 0, 3, "4"));
+            spotInfo.requirments.Add(new Requirment("Трехкомн.", 86, 95, 16, 0, 0, 0, 0, 3, "3"));
+            spotInfo.requirments.Add(new Requirment("Четырехкомн.", 80, 120, 3, 0, 0, 0, 0, 3, "4"));
             return spotInfo;
         }
     }

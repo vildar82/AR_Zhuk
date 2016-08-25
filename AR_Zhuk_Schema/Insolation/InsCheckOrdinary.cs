@@ -51,13 +51,12 @@ namespace AR_Zhuk_Schema.Insolation
 
             foreach (var sectFlats in section.Sections)
             {
-                string flatsHash = insService.GetFlatsHash(sectFlats);
-                if (passedSections.Contains(flatsHash))
+                sectFlats.Code = insService.GetFlatCode(sectFlats);
+                //string flatsHash = insService.GetFlatsHash(sectFlats);
+                if (passedSections.Contains(sectFlats.Code))
                 {
                     continue;
-                }
-
-                sectFlats.Code = insService.GetFlatCode(sectFlats);
+                }                
 #if TEST
                 var flats = insService.NewFlats(section, sectFlats, isInvert: !section.PriorityLluSideIsTop);                
                 CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop);
@@ -65,7 +64,7 @@ namespace AR_Zhuk_Schema.Insolation
                 flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
                 CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop);
                 resFlats.Add(flats);
-                passedSections.Add(flatsHash);
+                passedSections.Add(sectFlats.Code);
 #else
                 // Для рядовой секции - проверка инсоляции с приоритетной стороны                                    
 
@@ -73,7 +72,7 @@ namespace AR_Zhuk_Schema.Insolation
                 
                 if (CheckSection(flats, isRightOrTopLLu: section.PriorityLluSideIsTop))
                 {
-                    passedSections.Add(flatsHash);
+                    passedSections.Add(sectFlats.Code);
                     resFlats.Add(flats);                    
                 }
                 else
@@ -82,11 +81,11 @@ namespace AR_Zhuk_Schema.Insolation
                     flats = insService.NewFlats(section, sectFlats, isInvert: section.PriorityLluSideIsTop);
                     if (CheckSection(flats, isRightOrTopLLu: !section.PriorityLluSideIsTop))
                     {
-                        passedSections.Add(flatsHash);
+                        passedSections.Add(sectFlats.Code);
                         resFlats.Add(flats);                        
                     }
                 }
-#endif
+#endif          
             }
             return resFlats;
         }        
@@ -231,7 +230,8 @@ namespace AR_Zhuk_Schema.Insolation
                                 stepTop = 0;
                                 stepBot = step;
                             }
-                            lightingRoom.FillIns(stepTop, stepBot, insTopSide, insBotCurFlat, insSideLeftBot, insSideLeftTop, insSideRightBot, insSideRightTop);
+                            lightingRoom.FillIns(stepTop, stepBot, insTopSide, insBotCurFlat, 
+                                insSideLeftBot, insSideLeftTop, insSideRightBot, insSideRightTop);
 
                             // Проверка на затык бокового окна (если есть)
                             flatPassed = false;

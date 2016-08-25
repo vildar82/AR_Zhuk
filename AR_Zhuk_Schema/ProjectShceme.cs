@@ -85,7 +85,7 @@ namespace AR_Zhuk_Schema
         /// </summary>        
         public List<List<HouseInfo>> GetTotalHouses (int maxSectionBySize = 0, int maxHousesBySpot=0)
         {
-            CuttingFactory.ResetData();
+            //CuttingFactory.ResetData();
             List<List<HouseInfo>> totalHouses = new List<List<HouseInfo>>();
             foreach (var item in HouseSpots)
             {
@@ -93,12 +93,6 @@ namespace AR_Zhuk_Schema
                 var houses = cutting.Cut();
                 if (houses.Count != 0)
                 {
-#if !TEST
-                    // Отбор минимальной размерности дома   
-                    if (houses.Count != 0)
-                        houses = houses.GroupBy(h => h.SectionsBySize.Count).OrderBy(o => o.Key).FirstOrDefault().ToList();
-#endif
-
                     totalHouses.Add(houses);
                 }
             }

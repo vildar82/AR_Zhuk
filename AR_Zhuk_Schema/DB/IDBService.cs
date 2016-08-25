@@ -7,5 +7,6 @@ namespace AR_Zhuk_Schema.DB
     {
         List<FlatInfo> GetSections (Section section, SelectSectionParam selSectParam);
         void PrepareLoadSections (List<SelectSectionParam> selectSects);
+        void ResetSections ();
     }
 }

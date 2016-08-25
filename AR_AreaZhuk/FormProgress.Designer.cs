@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormProgress));
             this.progressIndicator = new ProgressControls.ProgressIndicator();
             this.SuspendLayout();
             // 
@@ -52,6 +53,7 @@
             this.ClientSize = new System.Drawing.Size(160, 160);
             this.Controls.Add(this.progressIndicator);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormProgress";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.TransparencyKey = System.Drawing.Color.Lime;

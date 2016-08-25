@@ -390,7 +390,7 @@ namespace AR_AreaZhuk
             double maxArea = 0;
             ob = new List<GeneralObject>();
             lblCountObjects.Text = ob.Count.ToString();
-
+            SetInfoTotalSectionsCount(null);
 
             isEvent = false;
             btnStartScan.Enabled = false;
@@ -419,8 +419,9 @@ namespace AR_AreaZhuk
             profectShema.ReadScheme(PathToFileInsolation);
             Thread th = new Thread(ViewProgress);
             th.Start();
-            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses();
-            labelCountSectionsTotal.Text += GetTotalSectionsCount(totalObject);
+            List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(
+                int.Parse(textBoxMaxCountSectionsBySize.Text), int.Parse(textBoxMaxCountHousesBySpot.Text));
+            SetInfoTotalSectionsCount(totalObject);
             isContinue = true;
             if (totalObject.Count == 0)
                 isContinue=false;
@@ -478,18 +479,19 @@ namespace AR_AreaZhuk
                             // Вильдар - 23.08.2016 по-моему тут была лишняя проверка - проверять процентаж не сложив сумму квартир по всем секциямс                            
                         }
                         //Процентаж определенного типа квартир в объекте
-                        double percentage = countFlats * 100 / totalCountFlats;
-                        strP += (Math.Round(percentage, 0)).ToString() + ";";
+                        double percentage = countFlats * 100 / totalCountFlats;                        
 
-                        // Вильдар. 23.08.2016 - проверка процентажа квартиры
-                        if (Math.Abs(rr.Percentage - percentage) <= rr.OffSet)
+                        // Вильдар. 23.08.2016
+                        // Ближайший процентаж квартиры - если текущий процент квартиры ближе к требуемому, то записываем его как ближайший
+                        double arround = Math.Abs(percentage - rr.Percentage);
+                        double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
+                        if (arround < arround2 || rr.NearPercentage == 0)
+                            rr.NearPercentage = Math.Round(percentage, 0);
+                        // проверка процентажа квартиры
+                        if (arround <= rr.OffSet)
                         {
                             isValidPercentage = true;
-                            // Ближайший процентаж квартиры - если текущий процент квартиры ближе к требуемому, то записываем его как ближайший
-                            double arround = Math.Abs(percentage - rr.Percentage);
-                            double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
-                            if (arround < arround2)
-                                rr.NearPercentage = Math.Round(percentage,0);
+                            strP += (Math.Round(percentage, 0)).ToString() + ";";
                         }
                         else
                         {
@@ -1022,10 +1024,17 @@ namespace AR_AreaZhuk
 
         }
 
-        private int GetTotalSectionsCount (List<List<HouseInfo>> totalObject)
+        private void SetInfoTotalSectionsCount (List<List<HouseInfo>> totalObject)
         {
-            var count = totalObject.Sum(t => t.Sum(h => h.SectionsBySize.Sum(s => s.Sections.Count)));
-            return count;
+            int count = 0;
+            string housesCount = "";
+            if (totalObject != null)
+            {
+                count = totalObject.Sum(t => t.Sum(h => h.SectionsBySize.Sum(s => s.Sections.Count)));
+                housesCount = string.Join(",", totalObject.Select(s => s.Count > 0 ? s[0].SectionsBySize[0].SpotOwner + " " + s.Count : ""));
+            }
+            labelCountSectionsTotal.Text = "Кол. секций: " + count;
+            toolTip1.SetToolTip(labelCountSectionsTotal, housesCount);
         }
     }
 }

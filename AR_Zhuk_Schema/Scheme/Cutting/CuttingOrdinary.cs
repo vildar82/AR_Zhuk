@@ -54,15 +54,18 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
             // Все варианты домов по шагам секций
             List<int> stepsSet;
-            var housesSteps = GetAllSteps(out stepsSet);
+            var housesSteps = GetAllSteps(out stepsSet);           
 
             // Загрузка секций из базы
             InitLoadDBSections(stepsSet);
 
             // Подстановка секций под каждый вариант
+            int countHouseSectionsPassed = 0;
             for (int h = 0; h < housesSteps.Count; h++)
             {
                 var houseSteps = housesSteps[h];
+                if (countHouseSectionsPassed > 0 && houseSteps.Length > countHouseSectionsPassed)
+                    break;
 
                 var houseVar = GetHouseVariant(houseSteps);
 
@@ -73,11 +76,8 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     hi.SectionsBySize = houseVar;
 
                     resHouses.Add(hi);
-
-                    if (maxHousesBySpot != 0 && resHouses.Count == maxHousesBySpot)
-                    {
-                        break;
-                    }
+                    
+                    countHouseSectionsPassed = houseSteps.Length;
                 }
             }
 
@@ -85,7 +85,30 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             Debug.WriteLine("passedSections=" + passedSections.Count);
             Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);           
 
-           return resHouses;
+            if (maxHousesBySpot != 0)
+            {
+                // Рандомно выбрать нужное кол домой из всех вариантов
+                resHouses = GetRandomMaxHauses(resHouses, maxHousesBySpot);
+            }
+
+            return resHouses;
+        }
+
+        private List<HouseInfo> GetRandomMaxHauses (List<HouseInfo> houses, int maxHousesBySpot)
+        {
+            List<HouseInfo> res = new List<HouseInfo>();
+            if (houses.Count == 0 || houses.Count < maxHousesBySpot)
+                return houses;            
+            
+            Random rnd = new Random();
+            int maxValue = houses.Count - 1;
+            for (int i = 0; i < maxHousesBySpot; i++)
+            {
+                var r = rnd.Next(maxValue);
+                var h = houses[r];
+                res.Add(h);
+            }
+            return res;
         }
 
         private List<Section> GetHouseVariant (int[] houseSteps)
@@ -120,9 +143,9 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         List<FlatInfo> flatsCheckedIns = insService.GetInsolationSections(sectionBySize.Section);
                         if (flatsCheckedIns.Count == 0)
                         {
-#if TEST
-                        Debug.WriteLine("fail ins - key=" + sectionBySize.Key);
-#endif
+
+                            Debug.WriteLine("fail ins - key=" + sectionBySize.Key);
+
                             failedSections.Add(sectionBySize.Key);
                             resHouseSections = null;
                             break;
@@ -192,9 +215,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     section = houseSpot.GetSection(curStepInHouse, sectCountStep);
                     if (section == null)
                     {
-#if TEST
                         Debug.WriteLine("fail нарезки - key=" + key);
-#endif
                         fail = true;
                         addToFailed = true;
                         break;
@@ -218,9 +239,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                     section.Sections = dbService.GetSections(section, selSectParam);
                     if (section.Sections == null || section.Sections.Count == 0)
                     {
-#if TEST
                         Debug.WriteLine("fail no in db - key=" + key + "; type=" + type + "; levels=" + levels);
-#endif
                         fail = true;
                         addToFailed =  true;
                         break;
@@ -395,6 +414,8 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 }
             }
             stepsSet = steps.ToList();
+            // Сортировка по возрастанию кол секций в доме
+            houses.Sort((h1, h2) => h1.Length.CompareTo(h2.Length));
             return houses;
         }
 

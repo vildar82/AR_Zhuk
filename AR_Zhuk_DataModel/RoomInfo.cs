@@ -50,6 +50,10 @@ namespace AR_Zhuk_DataModel
         public int CurrentOffsetX { get; set; }
         public string ImageNameSuffix { get; set; }
         public int HorisontalModules { get; set; }
+        /// <summary>
+        /// Индекс требования - которому отвечает эта квартира
+        /// </summary>
+        public int CodeReqIndex { get; set; }
 
         public RoomInfo()
         { }

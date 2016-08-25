@@ -102,6 +102,9 @@ namespace AR_AreaZhuk
             this.label6 = new System.Windows.Forms.Label();
             this.lblTime = new System.Windows.Forms.Label();
             this.labelCountSectionsTotal = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.textBoxMaxCountHousesBySpot = new System.Windows.Forms.TextBox();
+            this.textBoxMaxCountSectionsBySize = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -788,13 +791,33 @@ namespace AR_AreaZhuk
             // 
             // labelCountSectionsTotal
             // 
-            this.labelCountSectionsTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labelCountSectionsTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelCountSectionsTotal.AutoSize = true;
             this.labelCountSectionsTotal.Location = new System.Drawing.Point(875, 836);
             this.labelCountSectionsTotal.Name = "labelCountSectionsTotal";
-            this.labelCountSectionsTotal.Size = new System.Drawing.Size(71, 13);
+            this.labelCountSectionsTotal.Size = new System.Drawing.Size(80, 13);
             this.labelCountSectionsTotal.TabIndex = 4;
-            this.labelCountSectionsTotal.Text = "Кол.секций: ";
+            this.labelCountSectionsTotal.Text = "Кол.секций:  0";
+            // 
+            // textBoxMaxCountHousesBySpot
+            // 
+            this.textBoxMaxCountHousesBySpot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxMaxCountHousesBySpot.Location = new System.Drawing.Point(671, 836);
+            this.textBoxMaxCountHousesBySpot.Name = "textBoxMaxCountHousesBySpot";
+            this.textBoxMaxCountHousesBySpot.Size = new System.Drawing.Size(55, 20);
+            this.textBoxMaxCountHousesBySpot.TabIndex = 31;
+            this.textBoxMaxCountHousesBySpot.Text = "0";
+            this.toolTip1.SetToolTip(this.textBoxMaxCountHousesBySpot, "Макс кол вар. домов на каждое пятно.");
+            // 
+            // textBoxMaxCountSectionsBySize
+            // 
+            this.textBoxMaxCountSectionsBySize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.textBoxMaxCountSectionsBySize.Location = new System.Drawing.Point(742, 836);
+            this.textBoxMaxCountSectionsBySize.Name = "textBoxMaxCountSectionsBySize";
+            this.textBoxMaxCountSectionsBySize.Size = new System.Drawing.Size(55, 20);
+            this.textBoxMaxCountSectionsBySize.TabIndex = 32;
+            this.textBoxMaxCountSectionsBySize.Text = "0";
+            this.toolTip1.SetToolTip(this.textBoxMaxCountSectionsBySize, "Макс кол секций в одном месте");
             // 
             // MainForm
             // 
@@ -802,6 +825,8 @@ namespace AR_AreaZhuk
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1158, 856);
+            this.Controls.Add(this.textBoxMaxCountSectionsBySize);
+            this.Controls.Add(this.textBoxMaxCountHousesBySpot);
             this.Controls.Add(this.lblTime);
             this.Controls.Add(this.lblMaxArea);
             this.Controls.Add(this.label6);
@@ -910,6 +935,9 @@ namespace AR_AreaZhuk
         private DataGridViewTextBoxColumn Column5;
         private DataGridViewTextBoxColumn Column6;
         private Label labelCountSectionsTotal;
+        private ToolTip toolTip1;
+        private TextBox textBoxMaxCountHousesBySpot;
+        private TextBox textBoxMaxCountSectionsBySize;
     }
 }
 
