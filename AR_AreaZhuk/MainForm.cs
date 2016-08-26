@@ -329,9 +329,9 @@ namespace AR_AreaZhuk
                 if (go == null) break;
                 Serializer ser = new Serializer();
                 ser.SerializeList(go, go.SpotInf.TotalStandartArea + "m2 (" + go.SpotInf.TotalFlats.ToString() + ")");
-
             }
-
+            Results.Result result = new Results.Result();
+            result.Save(ob);
         }
 
         private static bool isEvent = false;
