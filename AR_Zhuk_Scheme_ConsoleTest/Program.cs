@@ -6,6 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AR_AreaZhuk;
+using AR_AreaZhuk.Controller;
+using AR_AreaZhuk.PIK1TableAdapters;
 using AR_Zhuk_DataModel;
 using AR_Zhuk_Schema.DB;
 using AR_Zhuk_Scheme_ConsoleTest.Scheme;
@@ -14,25 +17,118 @@ using OfficeOpenXml;
 
 namespace AR_Zhuk_Scheme_ConsoleTest
 {
-    class Program 
+    class Program
     {
         static void Main (string[] args)
         {
             //DBService dbServ = new DBService();
             //dbServ.SaveDbFlats();
-
             //AnalizSectionsSteps();
             //BankSectionsStatistics();
             //BankSectionsStatisticsShortType();
+            //StatisticsSectionsByFlatsCount();
+            StatisticCoefficientK1K2();
 
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
-            Debug.Listeners.Add(writer);            
+            Debug.Listeners.Add(writer);
 
             TestProjectScheme test = new TestProjectScheme();
             test.TestTotalHouses();
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
+        }
+
+        static void StatisticCoefficientK1K2 ()
+        {
+            C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
+            var flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
+            flatsAreas = pikFlats.GetData();
+
+            DBService dbServ = new DBService(null);
+            dbServ.LoadDbFlatsFromFile();
+            var sections = DBService.dictDbFlats.Values.SelectMany(s => s).ToList();
+
+            var sectCoeffsK1K2 = new List<Tuple<string, double, double>>(); 
+
+            foreach (var sect in sections)
+            {
+                double totalArea =0;
+                double liveArea=0;
+                double levelArea=0;
+                double levelAreaOffLLU=0;
+                double levelAreaOnLLU=0;
+
+                string sectString = string.Empty;
+                foreach (var flat in sect)
+                {
+                    var ri = flat.GetRoomInfo();
+                    var currentFlatAreas = flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
+                    var areas = Calculate.GetAreaFlat(15, ri, currentFlatAreas);
+                    totalArea += areas[0];
+                    liveArea += areas[1];
+                    levelArea += areas[2];
+                    levelAreaOffLLU += areas[3];
+                    levelAreaOnLLU += areas[4];
+                    sectString += flat.ShortType + "_";
+                }
+                var k1= levelAreaOffLLU / levelArea;
+                var k2= levelAreaOffLLU / levelAreaOnLLU;
+
+                sectCoeffsK1K2.Add(new Tuple<string, double, double>( sectString, k1, k2));                
+            }
+
+            using (var xlPackage = new ExcelPackage())
+            {
+                var ws = xlPackage.Workbook.Worksheets.Add("Коэффициенты К1 К2 всех секций.");
+
+                int row = 1;
+                ws.Cells[row, 1].Value = "Кол секций по типам квартир в банке секций.";
+                ws.Cells[row, 2].Value = "Общее кол секций в банке:";
+                ws.Cells[row, 3].Value = sections.Count;
+                row++;
+                ws.Cells[row, 1].Value = "Секция";
+                ws.Cells[row, 2].Value = "К1";
+                ws.Cells[row, 3].Value = "К2";
+                row++;
+                foreach (var item in sectCoeffsK1K2)
+                {
+                    ws.Cells[row, 1].Value = item.Item1;
+                    ws.Cells[row, 2].Value = item.Item2;
+                    ws.Cells[row, 3].Value = item.Item3;
+                    row++;
+                }
+                xlPackage.SaveAs(new FileInfo("BankSectionsCoeficientK1K2.xlsx"));
+            }
+        }    
+
+        static void StatisticsSectionsByFlatsCount()
+        {
+            DBService dbServ = new DBService(null);
+            dbServ.LoadDbFlatsFromFile();
+            var sectionsByFlatsCount = DBService.dictDbFlats.Values.SelectMany(s => s).
+                GroupBy(g => g.Count).OrderBy(o => o.Key);
+
+            using (var xlPackage = new ExcelPackage())
+            {
+                var ws = xlPackage.Workbook.Worksheets.Add("Статистика секций по кол-ву квартир.");
+
+                int row = 1;
+                ws.Cells[row, 1].Value = "Кол секций по типам квартир в банке секций.";
+                ws.Cells[row, 2].Value = "Общее кол секций в банке:";
+                ws.Cells[row, 3].Value = sectionsByFlatsCount.Sum(s => s.Count());
+                row++;
+                ws.Cells[row, 1].Value = "Кол квартир";
+                ws.Cells[row, 2].Value = "Кол секций";                
+                row++;                                
+                foreach (var group in sectionsByFlatsCount)
+                {
+                    ws.Cells[row, 1].Value = group.Key;
+                    ws.Cells[row, 2].Value = group.Count();
+                    row++;
+                }
+                xlPackage.SaveAs(new FileInfo("StatisticsCountFlatInSections.xlsx"));
+            }
         }
 
         static void BankSectionsStatistics()

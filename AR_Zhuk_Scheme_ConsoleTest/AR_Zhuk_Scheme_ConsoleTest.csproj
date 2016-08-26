@@ -61,6 +61,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AR_AreaZhuk\AR_AreaZhuk.csproj">
+      <Project>{0815305e-d0a6-43df-a5ca-763541117a3f}</Project>
+      <Name>AR_AreaZhuk</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AR_Zhuk_DataModel\AR_Zhuk_DataModel.csproj">
       <Project>{a9e4c50e-13ce-4c52-8046-8a1a6c503403}</Project>
       <Name>AR_Zhuk_DataModel</Name>
