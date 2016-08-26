@@ -23,6 +23,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
             //AnalizSectionsSteps();
             //BankSectionsStatistics();
+            //BankSectionsStatisticsShortType();
 
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
             Debug.Listeners.Add(writer);            
@@ -36,7 +37,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
         static void BankSectionsStatistics()
         {
-            DBService dbServ = new DBService();
+            DBService dbServ = new DBService(null);
             dbServ.LoadDbFlatsFromFile();
 
             var sections = DBService.dictDbFlats.Values.SelectMany(s=>s).ToList();
@@ -95,6 +96,75 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 xlPackage.SaveAs(new FileInfo("BankSectionsStatistics.xlsx"));
             }
         }
+
+        static void BankSectionsStatisticsShortType ()
+        {
+            DBService dbServ = new DBService(null);
+            dbServ.LoadDbFlatsFromFile();
+
+            var sections = DBService.dictDbFlats.Values.SelectMany(s => s).ToList();
+
+            List<RoomReq> roomType = new List<RoomReq> {
+                new RoomReq ("1NM1"),
+                new RoomReq ("1NM2"),
+                new RoomReq ("1NM3"),
+                new RoomReq ("1NS1"),
+                new RoomReq ("1NS2"),
+                new RoomReq ("1KL1"),
+                new RoomReq ("1KS1"),
+                new RoomReq ("2KL1"),
+                new RoomReq ("2KL2"),
+                new RoomReq ("2KL3"),
+                new RoomReq ("2KL4"),
+                new RoomReq ("2NM1"),
+                new RoomReq ("2NM2"),
+                new RoomReq ("2NS1"),
+                new RoomReq ("3KL1"),
+                new RoomReq ("3KL2"),
+                new RoomReq ("3KL3"),
+                new RoomReq ("3NL1"),
+                new RoomReq ("3NL2"),
+                new RoomReq ("3NL3"),
+                new RoomReq ("4KL1"),
+                new RoomReq ("4KL2"),
+                new RoomReq ("4NL1"),
+                new RoomReq ("4NL2")
+            };
+
+            foreach (var type in roomType)
+            {
+                type.CountSections = sections.Sum(s =>(s.Any(r => r.ShortType == type.Name) ? 1 : 0));
+                type.CountRooms = sections.Sum(s => (s.Sum(r => (r.ShortType == type.Name) ? 1 : 0)));                
+            }
+
+            using (var xlPackage = new ExcelPackage())
+            {
+                var ws = xlPackage.Workbook.Worksheets.Add("Статистика по коротким типам квартир");
+
+                int row = 1;
+                int colType = 1;                
+                int colCountSect = 2;
+                int colCountRooms = 3;
+
+                ws.Cells[row, 1].Value = "Кол секций по коротким типам квартир в банке секций.";
+                ws.Cells[row, 2].Value = "Общее кол секций в банке:";
+                ws.Cells[row, 3].Value = sections.Count;
+                row++;
+                ws.Cells[row, colType].Value = "Тип квартиры";                
+                ws.Cells[row, colCountSect].Value = "Кол-во секций";
+                ws.Cells[row, colCountRooms].Value = "Кол-во квартир";
+                row++;
+                foreach (var type in roomType)
+                {
+                    ws.Cells[row, colType].Value = type.Name;                    
+                    ws.Cells[row, colCountSect].Value = type.CountSections;
+                    ws.Cells[row, colCountRooms].Value = type.CountRooms;
+                    row++;
+                }
+                xlPackage.SaveAs(new FileInfo("ShortTypeRoomStatistics.xlsx"));
+            }
+        }
+
         class RoomReq
         {
             public string Name { get; set; }
@@ -102,6 +172,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             public int MinArea { get; set; }
             public int MaxArea { get; set; }
             public int CountSections { get; set; }
+            public int CountRooms { get; set; }
 
             public RoomReq(string zone, int minArea, int maxArea, string name)
             {
@@ -110,11 +181,15 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 MinArea = minArea;
                 MaxArea = maxArea;
             }
+            public RoomReq(string name)
+            {
+                Name = name;
+            }
         }
 
         static void AnalizSectionsSteps ()
         {
-            DBService dbServ = new DBService();
+            DBService dbServ = new DBService(null);
             dbServ.LoadDbFlatsFromFile();
             var ordinarySects = DBService.dictDbFlats.Where(w => w.Key.Type == "Рядовая");
 

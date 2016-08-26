@@ -47,7 +47,41 @@ namespace AR_Zhuk_Schema.Insolation
             DefineInsSideCells();
         }
 
-        public abstract List<FlatInfo> CheckSections (Section section);        
+        public abstract FlatInfo CheckInsFlatInfo (FlatInfo flatInfo);
+
+        public List<FlatInfo> CheckSections (Section sectionBySize)
+        {
+            var passedSections = new Dictionary<string, Tuple<double, FlatInfo>>();
+            foreach (var section in sectionBySize.Sections)
+            {
+                section.Code = insService.GetFlatCode(section);
+                var area = section.Flats.Sum(r => r.AreaTotalStandart);
+                Tuple <double, FlatInfo> passedSect;
+                if (passedSections.TryGetValue(section.Code, out passedSect))
+                {
+                    if (area <= passedSect.Item1)
+                    {
+                        // Новая серия - меньше по площади идентичной проверенной, пропускаем
+                        continue;
+                    }                    
+                }                
+                FlatInfo insFlat = CheckInsFlatInfo(section);                
+                if (insFlat != null)
+                {
+                    var newPassedSect = new Tuple<double, FlatInfo>(area, insFlat);
+                    if (passedSect!= null && area > passedSect.Item1)
+                    {
+                        // Новая серия больше по площади идентичной проверенной, взять ее
+                        passedSections[section.Code] = newPassedSect;
+                    }
+                    else
+                    {
+                        passedSections.Add(section.Code, newPassedSect);
+                    }
+                }
+            }
+            return passedSections.Values.Select(s => s.Item2).ToList();
+        }
 
         /// <summary>
         /// Это первая торцевая квартира, на текущей стророне

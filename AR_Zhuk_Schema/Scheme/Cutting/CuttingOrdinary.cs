@@ -25,18 +25,13 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         private HouseSpot houseSpot;
         private IDBService dbService;
-        private IInsolation insService;
-        private SpotInfo sp;
-        int maxHousesBySpot;
+        private IInsolation insService;                
 
-        public CuttingOrdinary(HouseSpot houseSpot, IDBService dbService, IInsolation insService,
-                        SpotInfo sp, int maxHousesBySpot)
+        public CuttingOrdinary(HouseSpot houseSpot, IDBService dbService, IInsolation insService)
         {
             this.houseSpot = houseSpot;
             this.dbService = dbService;
-            this.insService = insService;
-            this.sp = sp;
-            this.maxHousesBySpot = maxHousesBySpot;
+            this.insService = insService;                        
 
             // Определение шагов секций
             SectionSteps = GetSectionSteps();
@@ -72,7 +67,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 if (houseVar != null && houseVar.Count > 0)
                 {
                     HouseInfo hi = new HouseInfo();
-                    hi.SpotInf = sp;
+                    hi.SpotInf = ProjectScheme.SpotInfo;
                     hi.SectionsBySize = houseVar;
 
                     resHouses.Add(hi);
@@ -85,10 +80,10 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             Debug.WriteLine("passedSections=" + passedSections.Count);
             Debug.WriteLine("failedHouseSteps=" + failedHouseSteps.Count);           
 
-            if (maxHousesBySpot != 0)
+            if (ProjectScheme.MaxHousesBySpot != 0)
             {
                 // Рандомно выбрать нужное кол домой из всех вариантов
-                resHouses = GetRandomMaxHauses(resHouses, maxHousesBySpot);
+                resHouses = GetRandomMaxHauses(resHouses, ProjectScheme.MaxHousesBySpot);
             }
 
             return resHouses;

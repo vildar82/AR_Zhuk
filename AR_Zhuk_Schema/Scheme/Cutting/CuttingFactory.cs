@@ -8,25 +8,17 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
     public static class CuttingFactory
     {
         static IInsolation insService;
-        static IDBService dbService;       
+        static IDBService dbService;               
 
-        public static void ResetData()
-        {
-            insService = null;
-            if (dbService != null)
-                dbService.ResetSections();            
-        }
-
-        public static ICutting Create (HouseSpot houseSpot, SpotInfo sp, int maxSectionbySize, int maxHousesBySpot)
+        public static ICutting Create (HouseSpot houseSpot)
         {
             ICutting cutting;
-            if (insService == null)
-                insService = new InsolationSection(sp, maxSectionbySize);
-            else
-                InsolationSection.maxSectionbySize = maxSectionbySize;
-            
+            insService = new InsolationSection();
+
             if (dbService == null)
-                dbService = new DBService(sp, maxSectionbySize);            
+                dbService = new DBService();
+            else
+                dbService.ResetSections();
 
             if (houseSpot.IsTower)
             {
@@ -34,7 +26,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             }
             else
             {
-                cutting = new CuttingOrdinary(houseSpot, dbService, insService, sp, maxHousesBySpot);
+                cutting = new CuttingOrdinary(houseSpot, dbService, insService);
             }
             return cutting;
         }

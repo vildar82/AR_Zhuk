@@ -27,36 +27,23 @@ namespace AR_Zhuk_Schema.Insolation
             insBotReverse = insBot.Reverse().ToArray();
         }
 
-        public override List<FlatInfo> CheckSections (Section section)
+        public override FlatInfo CheckInsFlatInfo (FlatInfo flatToIns)
         {
-            List<FlatInfo> resInsFlats = new List<FlatInfo>();
-            HashSet<string> passedSections = new HashSet<string>();
-            foreach (var sectFlats in section.Sections)
+            FlatInfo insFlat = null;
+            // для угловой - проверка инсоляции в одном ее положении
+            var newFlat = insService.NewFlats(section, flatToIns, isInvert: false);
+            // Проверка инсоляции угловой секции                        
+            if (CheckSection(newFlat))
             {
-                sectFlats.Code = insService.GetFlatCode(sectFlats);
-                //string flatsHash = insService.GetFlatsHash(sectFlats);
-                if (passedSections.Contains(sectFlats.Code))
-                {
-                    continue;
-                }                
-
-                // для угловой - проверка инсоляции в одном ее положении
-                var flats = insService.NewFlats(section, sectFlats, isInvert: false);
-                // Проверка инсоляции угловой секции                        
-                if (CheckSection(flats))
-                {
-                    passedSections.Add(sectFlats.Code);
-                    resInsFlats.Add(flats);
-                }
-#if TEST
-                else
-                {
-                    passedSections.Add(sectFlats.Code);
-                    resInsFlats.Add(flats);
-                }                
-#endif                
+                insFlat = newFlat;
             }
-            return resInsFlats;
+#if TEST
+            else
+            {
+                insFlat = newFlat;
+            }
+#endif
+            return insFlat;
         }
 
         public bool CheckSection (FlatInfo sect)

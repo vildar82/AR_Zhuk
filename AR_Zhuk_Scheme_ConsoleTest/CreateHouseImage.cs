@@ -136,8 +136,10 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
         public void TestCreateImageOneHouse (List<HouseInfo> houses)
         {
-            GeneralObject go = new GeneralObject();
-            go.SpotInf = houses[0].SpotInf;
+            GeneralObject go = new GeneralObject();            
+
+            go.SpotInf = CalcSP(houses);            
+
             //double area = GetTotalArea(house);                        
             //go.SpotInf.RealArea = area;
             go.GUID = Guid.NewGuid().ToString();
@@ -171,6 +173,20 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
             // Лог дома
             //LogHouse(house, contFileString);
+        }
+
+        private SpotInfo CalcSP (List<HouseInfo> houses)
+        {
+            var sp = houses[0].SpotInf.CopySpotInfo(houses[0].SpotInf);
+            sp.TotalFlats = houses.Sum(h => h.Sections.Sum(s => s.Flats.Count * (s.Floors-1)));
+
+            for (int i = 0; i < sp.requirments.Count; i++)
+            {
+                var r = sp.requirments[i];
+                r.CountFlats = houses.Sum(h => h.Sections.Sum(s => (int)char.GetNumericValue(s.Code[i]) * (s.Floors-1)));
+                r.RealPercentage = Convert.ToInt32(((double)r.CountFlats / sp.TotalFlats)*100);                
+            }       
+            return sp;
         }
 
         private static void LogHouse (HouseInfo house, string countFileString)

@@ -33,7 +33,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
-            var totalHouses = projectSpot.GetTotalHouses(5,5);            
+            var totalHouses = projectSpot.GetTotalHouses(0,0);            
 
             timer.Stop();
             Console.WriteLine("Получение всех домов = " + timer.Elapsed.TotalSeconds);
@@ -47,14 +47,14 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
         public static SpotInfo GetSpotInformation ()
         {
             SpotInfo spotInfo = new SpotInfo();
-            spotInfo.requirments.Add(new Requirment("Студия", 21, 35, 10, 0, 0, 0, 0, 3, "01"));
+            spotInfo.requirments.Add(new Requirment("Студия", 21, 40, 10, 0, 0, 0, 0, 3, "01"));
             //spotInfo.requirments.Add(new Requirment("Студия", 33, 35, 8, 0, 8, 0, 0, 4, "01"));
-            spotInfo.requirments.Add(new Requirment("Однокомн.", 33, 48, 31, 0, 0, 0, 0, 3, "1"));
-            spotInfo.requirments.Add(new Requirment("Двухкомн.", 56, 90, 40, 0, 0, 0, 0, 3, "2"));
+            spotInfo.requirments.Add(new Requirment("Однокомн.", 33, 48, 30, 0, 0, 0, 0, 3, "1"));
+            spotInfo.requirments.Add(new Requirment("Двухкомн.", 30, 80, 40, 0, 0, 0, 0, 3, "2"));
             //spotInfo.requirments.Add(new Requirment("Двухкомн.", 57, 60, 11, 0, 3, 0, 0, 3, "2"));
             //spotInfo.requirments.Add(new Requirment("Двухкомн.", 68, 71, 12, 0, 3, 0, 0, 3, "2"));
-            spotInfo.requirments.Add(new Requirment("Трехкомн.", 86, 95, 16, 0, 0, 0, 0, 3, "3"));
-            spotInfo.requirments.Add(new Requirment("Четырехкомн.", 80, 120, 3, 0, 0, 0, 0, 3, "4"));
+            spotInfo.requirments.Add(new Requirment("Трехкомн.", 80, 100, 16, 0, 0, 0, 0, 3, "3"));
+            //spotInfo.requirments.Add(new Requirment("Четырехкомн.", 80, 120, 3, 0, 0, 0, 0, 3, "4"));
             return spotInfo;
         }
     }

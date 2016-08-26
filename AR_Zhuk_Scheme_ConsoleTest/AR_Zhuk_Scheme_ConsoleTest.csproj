@@ -33,9 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BeetlyVisualisation, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="BeetlyVisualisation, Version=1.0.232.19, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\BeetlyVisualisation\bin\Debug\BeetlyVisualisation.dll</HintPath>
+      <HintPath>..\..\BeetlyVisualisation\bin\Release\BeetlyVisualisation.dll</HintPath>
     </Reference>
     <Reference Include="EPPlus, Version=4.0.1.1, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -17,7 +17,10 @@ namespace AR_Zhuk_Schema
     public class ProjectScheme
     {
         private List<HouseOptions> houseOptions;
-        private SpotInfo sp;
+        public static SpotInfo SpotInfo { get; private set; }
+        public static int MaxSectionBySize { get; private set; }
+        public static int MaxHousesBySpot { get; private set; }
+
         private RTree<Segment> tree = new RTree<Segment>();
 
         /// <summary>
@@ -28,7 +31,7 @@ namespace AR_Zhuk_Schema
         public ProjectScheme (List<HouseOptions> houseOptions, SpotInfo sp)
         {
             this.houseOptions = houseOptions;
-            this.sp = sp;
+            SpotInfo = sp;
         }
 
         /// <summary>
@@ -45,7 +48,7 @@ namespace AR_Zhuk_Schema
 
             // Размер застройки
             var bounds = tree.getBounds();
-            sp.Size = new Cell(Convert.ToInt32(bounds.max[1]) + 1, Convert.ToInt32(bounds.max[0]) + 1);
+            SpotInfo.Size = new Cell(Convert.ToInt32(bounds.max[1]) + 1, Convert.ToInt32(bounds.max[0]) + 1);
 
             // Инсоляция - все ячейки            
             List<Module> insModulesAll = new List<Module>();
@@ -71,11 +74,11 @@ namespace AR_Zhuk_Schema
                         insModulesAll.AddRange(segment.ModulesSideStart);
                 }
                 // Определение приоритетной стороны для ЛЛУ в доме
-                houseSpot.PriorityLluSide = houseSpot.Segments.First().DefineLluPriority(sp.Size);
+                houseSpot.PriorityLluSide = houseSpot.Segments.First().DefineLluPriority(SpotInfo.Size);
             }
 
             // Инсоляция - все ячейки            
-            sp.InsModulesAll = insModulesAll;                        
+            SpotInfo.InsModulesAll = insModulesAll;                        
         }        
 
         /// <summary>
@@ -85,11 +88,13 @@ namespace AR_Zhuk_Schema
         /// </summary>        
         public List<List<HouseInfo>> GetTotalHouses (int maxSectionBySize = 0, int maxHousesBySpot=0)
         {
+            MaxSectionBySize = maxSectionBySize;
+            MaxHousesBySpot = maxHousesBySpot;
             //CuttingFactory.ResetData();
             List<List<HouseInfo>> totalHouses = new List<List<HouseInfo>>();
             foreach (var item in HouseSpots)
             {
-                ICutting cutting = CuttingFactory.Create(item, sp, maxSectionBySize, maxHousesBySpot);
+                ICutting cutting = CuttingFactory.Create(item);
                 var houses = cutting.Cut();
                 if (houses.Count != 0)
                 {

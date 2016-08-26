@@ -27,22 +27,17 @@ namespace AR_Zhuk_Schema.DB
         /// <summary>
         /// Виды секций в базе - по шагу, типу и этажности (Type, Levels, CountStep)
         /// </summary>
-        private static List<SelectSectionParam> sectionsTypesInDb;
+        private static List<SelectSectionParam> sectionsTypesInDb;                
 
-        SpotInfo sp;
-        int maxSectionBySize;        
-
-        public DBService(SpotInfo sp, int maxSectionBySize)
-        {
-            this.sp = sp;
-            this.maxSectionBySize = maxSectionBySize;
+        public DBService()
+        {   
             // виды секций в базе            
             LoadDbFlatsFromFile();
             sectionsTypesInDb = GetSectionsTypesIndDb();
             dictSections = new Dictionary<string, List<FlatInfo>>();            
         }
 
-        public DBService () { }   
+        public DBService (object nul = null) { }   
 
         public List<FlatInfo> GetSections (Section section, SelectSectionParam selecSectParam)
         {
@@ -87,9 +82,9 @@ namespace AR_Zhuk_Schema.DB
                         RoomInfo room = null;
                         if (f.SubZone != "0")
                         {
-                            for (int r = 0; r < sp.requirments.Count; r++)
+                            for (int r = 0; r < ProjectScheme.SpotInfo.requirments.Count; r++)
                             {
-                                var req = sp.requirments[r];
+                                var req = ProjectScheme.SpotInfo.requirments[r];
                                 if (req.CodeZone == f.SubZone &&
                                     f.AreaTotalStandart >= req.MinArea &&
                                     f.AreaTotalStandart < req.MaxArea)
@@ -166,17 +161,17 @@ namespace AR_Zhuk_Schema.DB
         {
             List<SAPR.FlatsInSectionsRow> flatsDbRows;
             FlatsInSectionsTableAdapter flatsIsSection = new FlatsInSectionsTableAdapter();
-            if (maxSectionBySize == 0)
+            if (ProjectScheme.MaxSectionBySize == 0)
             {
                 flatsDbRows = flatsIsSection.GetFlatsInTypeSection(selectSectParam.Step,
                             selectSectParam.Type, selectSectParam.Levels).ToList();
             }
             else
             {
-                flatsDbRows = flatsIsSection.GetFlatsInTypeSectionMax(maxSectionBySize,
+                flatsDbRows = flatsIsSection.GetFlatsInTypeSectionMax(ProjectScheme.MaxSectionBySize,
                             selectSectParam.Step, selectSectParam.Type, selectSectParam.Levels).ToList();
                 // отсекаем первые и последние квартиры секции (она может быть неполной)                
-                if (flatsDbRows.Count == maxSectionBySize)
+                if (flatsDbRows.Count == ProjectScheme.MaxSectionBySize)
                 {
                     //flatsDb = flatsDb.OrderBy(x => x.ID_FlatInSection).ToList();
                     var lastDbFlat = flatsDbRows.Last();

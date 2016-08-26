@@ -17,15 +17,11 @@ namespace AR_Zhuk_Schema.Insolation
                 new RoomInsolation("Трехкомнатная", 3, new List<string>() { "C", "2B" }),
                 new RoomInsolation ("Четырехкомнатная", 4, new List<string>() { "2C", "C+2B" })
             };
+        
+        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes;        
 
-        private readonly SpotInfo sp;
-        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes;
-        internal static int maxSectionbySize;
-
-        public InsolationSection(SpotInfo sp, int maxSectionbySize)
-        {
-            InsolationSection.maxSectionbySize = maxSectionbySize;
-            this.sp = sp;
+        public InsolationSection()
+        {            
             dictFlatsCodes = new Dictionary<List<RoomInfo>, string>();
         }
 
@@ -38,13 +34,11 @@ namespace AR_Zhuk_Schema.Insolation
         {
             IInsCheck insCheck = InsCheckFactory.CreateInsCheck(this, section);                  
             var resFlats = insCheck.CheckSections(section);
-
-            if (maxSectionbySize != 0)
+            if (ProjectScheme.MaxSectionBySize != 0)
             {
                 // Рандомно выбрать заданное кол секций
-                resFlats = GetRandomMaxCountSections(resFlats, maxSectionbySize);
+                resFlats = GetRandomMaxCountSections(resFlats, ProjectScheme.MaxSectionBySize);
             }
-
             return resFlats;
         }
 
@@ -78,9 +72,10 @@ namespace AR_Zhuk_Schema.Insolation
             if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
             {
                 code = string.Empty;
-                var dictCountFlatByReq = flat.Flats.GroupBy(g => g.CodeReqIndex).ToDictionary(k => k.Key, v => v.Count());
+                var dictCountFlatByReq = flat.Flats.Where(r=>r.SubZone!="0").
+                        GroupBy(g => g.CodeReqIndex).ToDictionary(k => k.Key, v => v.Count());
 
-                for (int i = 0; i < sp.requirments.Count; i++)
+                for (int i = 0; i < ProjectScheme.SpotInfo.requirments.Count; i++)
                 {
                     int count = 0;
                     dictCountFlatByReq.TryGetValue(i, out count);
