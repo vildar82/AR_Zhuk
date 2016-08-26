@@ -52,9 +52,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             var sectCoeffsK1K2 = new List<Tuple<string, double, double>>(); 
 
             foreach (var sect in sections)
-            {
-                double totalArea =0;
-                double liveArea=0;
+            {                
                 double levelArea=0;
                 double levelAreaOffLLU=0;
                 double levelAreaOnLLU=0;
@@ -64,9 +62,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 {
                     var ri = flat.GetRoomInfo();
                     var currentFlatAreas = flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
-                    var areas = Calculate.GetAreaFlat(15, ri, currentFlatAreas);
-                    totalArea += areas[0];
-                    liveArea += areas[1];
+                    var areas = Calculate.GetAreaFlat(15, ri, currentFlatAreas);                    
                     levelArea += areas[2];
                     levelAreaOffLLU += areas[3];
                     levelAreaOnLLU += areas[4];
@@ -75,7 +71,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 var k1= levelAreaOffLLU / levelArea;
                 var k2= levelAreaOffLLU / levelAreaOnLLU;
 
-                sectCoeffsK1K2.Add(new Tuple<string, double, double>( sectString, k1, k2));                
+                sectCoeffsK1K2.Add(new Tuple<string, double, double>( sectString, k1, k2));                                              
             }
 
             using (var xlPackage = new ExcelPackage())

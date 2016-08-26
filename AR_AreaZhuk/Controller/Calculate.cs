@@ -19,7 +19,7 @@ namespace AR_AreaZhuk.Controller
            double areaLiveStrong = 0;
            double areaLevel = 0;
            double areaOffLLULevel = 0;
-           double areaOnLLULevel = 0;
+           double areaOnLLULevel = 0;            
 
            string corrector = currentFlatAreas.Correction_Low18;
            if (floors >= 18)
@@ -140,14 +140,14 @@ namespace AR_AreaZhuk.Controller
            if (!Math.Round(areaTotalStrong, 0).Equals(0))
                areaOnLLULevel = areaTotalStrong + currentFlatAreas.Area_OutFlat_Strong;
            else areaOnLLULevel = areaTotalStandart + currentFlatAreas.Area_OutFlat_Combo;
-           
-           //areaOnLLULevel = areaTotalStrong;
-           //if (Math.Round(areaTotalStrong, 0).Equals(0))
-           //    areaOnLLULevel = areaTotalStandart;
+
+            //areaOnLLULevel = areaTotalStrong;
+            //if (Math.Round(areaTotalStrong, 0).Equals(0))
+            //    areaOnLLULevel = areaTotalStandart;
 
 
-           area[3] = areaOffLLULevel - correctArea;
-           area[4] = areaOnLLULevel - correctArea;
+            area[3] = areaOffLLULevel;// - correctArea;
+            area[4] = areaOnLLULevel;// - correctArea;
            if (floors <= 17)
            {
                area[0] += areaTotalStandart;//Один этаж считается с поправкой на вентблоки
