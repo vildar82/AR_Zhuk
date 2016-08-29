@@ -351,7 +351,7 @@ namespace AR_Zhuk_Schema.DB
     }    
 
     [Serializable]
-    public class SelectSectionParam : IEquatable<SelectSectionParam>
+    public class SelectSectionParam : IEquatable<SelectSectionParam>, IComparable<SelectSectionParam>
     {
         public int Step { get; set; }
         public string Type { get; set; }
@@ -374,6 +374,18 @@ namespace AR_Zhuk_Schema.DB
         public override int GetHashCode ()
         {
             return Step.GetHashCode() ^ Type.GetHashCode() ^ Levels.GetHashCode();
-        }        
+        }
+
+        public int CompareTo (SelectSectionParam other)
+        {
+            var res = Type.CompareTo(other.Type);
+            if (res != 0) return res;
+
+            res = Levels.CompareTo(other.Levels);
+            if (res != 0) return res;
+
+            res = Step.CompareTo(other.Step);
+            return res;
+        }
     }
 }

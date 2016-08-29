@@ -32,5 +32,6 @@ namespace AR_Zhuk_DataModel
             CountFloorsDominant = floorsDominant;
             DominantPositions = dominantPos;
         }
+        public HouseOptions () { }
     }
 }

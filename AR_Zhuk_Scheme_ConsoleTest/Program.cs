@@ -48,57 +48,84 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
             DBService dbServ = new DBService(null);
             dbServ.LoadDbFlatsFromFile();
-            var sections = DBService.dictDbFlats.Values.SelectMany(s => s).ToList();
+            //var sections = DBService.dictDbFlats.Values.SelectMany(s => s).ToList();
 
-            var sectCoeffsK1K2 = new List<Tuple<string, double, double>>(); 
+            // Шагов, этажность , секция, кол квартир, К1, К2
+            var sectCoeffsK1K2 = new List<Tuple<SelectSectionParam,string, int, double, double>>(); 
 
-            foreach (var sect in sections)
-            {                
+            foreach (var item in DBService.dictDbFlats)
+            {
+                var sectBySize = item.Value;
                 double levelArea=0;
                 double levelAreaOffLLU=0;
                 double levelAreaOnLLU=0;
 
-                string sectString = string.Empty;
-                foreach (var flat in sect)
+                foreach (var sect in sectBySize)
                 {
-                    var ri = flat.GetRoomInfo();
-                    var currentFlatAreas = flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
-                    var areas = Calculate.GetAreaFlat(15, ri, currentFlatAreas);                    
-                    levelArea += areas[2];
-                    levelAreaOffLLU += areas[3];
-                    levelAreaOnLLU += areas[4];
-                    sectString += flat.ShortType + "_";
-                }
-                var k1= levelAreaOffLLU / levelArea;
-                var k2= levelAreaOffLLU / levelAreaOnLLU;
+                    string sectString = string.Empty;
+                    foreach (var flat in sect)
+                    {
+                        var ri = flat.GetRoomInfo();
+                        var currentFlatAreas = flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
+                        var areas = Calculate.GetAreaFlat(15, ri, currentFlatAreas);
+                        levelArea += areas[2];
+                        levelAreaOffLLU += areas[3];
+                        levelAreaOnLLU += areas[4];
+                        sectString += flat.ShortType + "_";
+                    }
+                    var k1 = levelAreaOffLLU / levelArea;
+                    var k2 = levelAreaOffLLU / levelAreaOnLLU;
 
-                sectCoeffsK1K2.Add(new Tuple<string, double, double>( sectString, k1, k2));                                              
-            }
+                    sectCoeffsK1K2.Add(new Tuple<SelectSectionParam, string, int, double, double>(
+                            item.Key, sectString, sect.Count - 1, k1, k2));                    
+                }                
+            }            
 
             using (var xlPackage = new ExcelPackage())
             {
-                var ws = xlPackage.Workbook.Worksheets.Add("Коэффициенты К1 К2 всех секций.");
-
-                int row = 1;
-                ws.Cells[row, 1].Value = "Кол секций по типам квартир в банке секций.";
-                ws.Cells[row, 2].Value = "Общее кол секций в банке:";
-                ws.Cells[row, 3].Value = sections.Count;
-                row++;
-                ws.Cells[row, 1].Value = "Секция";
-                ws.Cells[row, 2].Value = "К1";
-                ws.Cells[row, 3].Value = "К2";
-                row++;
-                foreach (var item in sectCoeffsK1K2)
-                {
-                    ws.Cells[row, 1].Value = item.Item1;
-                    ws.Cells[row, 2].Value = item.Item2;
-                    ws.Cells[row, 3].Value = item.Item3;
-                    row++;
-                }
+                DoubleEqualityComparer doubleComparer = new DoubleEqualityComparer(0.01);
+                var wsK1 = xlPackage.Workbook.Worksheets.Add("К1");
+                FillCoefK(sectCoeffsK1K2, wsK1, "К1", (k)=> k.GroupBy(g => g.Item4, doubleComparer));
+                var wsK2 = xlPackage.Workbook.Worksheets.Add("К2");
+                FillCoefK(sectCoeffsK1K2, wsK2, "К2", (k) => k.GroupBy(g => g.Item5, doubleComparer));
                 xlPackage.SaveAs(new FileInfo("BankSectionsCoeficientK1K2.xlsx"));
             }
-        }    
+        }
 
+        private static void FillCoefK (List<Tuple<SelectSectionParam, string, int, double, double>> sectCoeffsK1K2, 
+            ExcelWorksheet ws, string hK, 
+            Func<IGrouping<int, Tuple<SelectSectionParam, string, int, double, double>>,IEnumerable<IGrouping<double, Tuple<SelectSectionParam, string, int, double, double>>>> groupK)
+        {            
+            int row = 1;
+            ws.Cells[row, 1].Value = "Кол секций по типам квартир в банке секций.";
+            ws.Cells[row, 2].Value = "Общее кол секций в банке:";
+            ws.Cells[row, 3].Value = sectCoeffsK1K2.Count;
+            row++;
+            ws.Cells[row, 1].Value = "Тип";
+            ws.Cells[row, 2].Value = "Этажность";
+            ws.Cells[row, 3].Value = "Шаг";
+            ws.Cells[row, 4].Value = "Кол квартир без ЛЛУ";
+            ws.Cells[row, 5].Value = hK;
+            ws.Cells[row, 6].Value = "Кол секций";
+            row++;
+            foreach (var groupType in sectCoeffsK1K2.GroupBy(g => g.Item1).OrderBy(o => o.Key))
+            {
+                foreach (var groupCountFlat in groupType.GroupBy(g => g.Item3).OrderBy(o => o.Key))
+                {                    
+                    foreach (var groupByK1 in groupK(groupCountFlat))
+                    {                        
+                        ws.Cells[row, 1].Value = groupType.Key.Type;
+                        ws.Cells[row, 2].Value = groupType.Key.Levels;
+                        ws.Cells[row, 3].Value = groupType.Key.Step;
+                        ws.Cells[row, 4].Value = groupCountFlat.Key;
+                        ws.Cells[row, 5].Value = groupByK1.Key.ToString("0.00");
+                        ws.Cells[row, 6].Value = groupByK1.Count();
+                        row++;
+                    }
+                }
+            }
+        }
+        
         static void StatisticsSectionsByFlatsCount()
         {
             DBService dbServ = new DBService(null);
@@ -307,5 +334,26 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 }                                
             }
         }        
+    }
+
+    // Сравнение чисел
+    public class DoubleEqualityComparer : IEqualityComparer<double>
+    {
+        private readonly double threshold;
+
+        public DoubleEqualityComparer (double threshold = 1)
+        {
+            this.threshold = threshold;
+        }
+
+        public bool Equals (double x, double y)
+        {
+            return Math.Abs(x - y) < threshold;
+        }
+
+        public int GetHashCode (double obj)
+        {
+            return 0;
+        }
     }
 }

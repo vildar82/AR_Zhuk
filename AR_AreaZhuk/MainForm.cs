@@ -87,7 +87,15 @@ namespace AR_AreaZhuk
             if (newSpotInfo.requirments.Count != 0)
                 spotInfo = newSpotInfo;
             //  spotInfo = s.GetLastSpot() ?? new SpotInfo();
-            foreach (var r in spotInfo.requirments)
+            FillDgReq(spotInfo);
+            FillDgReqsTotal();
+            isEvent = true;
+        }
+
+        private void FillDgReq(SpotInfo sp)
+        {
+            dg.Rows.Clear();
+            foreach (var r in sp.requirments)
             {
                 dg.Rows.Add();
                 dg[0, dg.RowCount - 1].Value = r.SubZone;
@@ -97,14 +105,12 @@ namespace AR_AreaZhuk
                 var flats =
                     dbFlats.Where(x => x.SubZone.Equals(r.CodeZone)).ToList().Where(x => x.AreaTotalStrong >= r.MinArea & x.AreaTotalStrong <= r.MaxArea).ToList();
                 dg[4, dg.RowCount - 1].Value = flats.Count;
-                dg[5, dg.RowCount - 1].Value = 0;
+                dg[5, dg.RowCount - 1].Value = r.NearPercentage;
             }
             dg.Rows.Add();
-            FillDgReqs();
-            isEvent = true;
         }
 
-        private void FillDgReqs()
+        private void FillDgReqsTotal()
         {
             int per = 0;
             for (int i = 0; i < dg.RowCount; i++)
@@ -322,16 +328,23 @@ namespace AR_AreaZhuk
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            List<string> guids = (from DataGridViewRow row in dg2.SelectedRows select dg2[dg2.Columns.Count - 1, row.Index].Value.ToString()).ToList();
-            foreach (var g in guids)
-            {
-                GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
-                if (go == null) break;
-                Serializer ser = new Serializer();
-                ser.SerializeList(go, go.SpotInf.TotalStandartArea + "m2 (" + go.SpotInf.TotalFlats.ToString() + ")");
-            }
+            //List<string> guids = (from DataGridViewRow row in dg2.SelectedRows select dg2[dg2.Columns.Count - 1, row.Index].Value.ToString()).ToList();
+            //foreach (var g in guids)
+            //{
+            //    GeneralObject go = ob.First(x => x != null && x.SpotInf.GUID.Equals(g));
+            //    if (go == null) break;
+            //    Serializer ser = new Serializer();
+            //    ser.SerializeList(go, go.SpotInf.TotalStandartArea + "m2 (" + go.SpotInf.TotalFlats.ToString() + ")");
+            //}
             Results.Result result = new Results.Result();
-            result.Save(ob);
+            try
+            {
+                result.Save(ob, spotInfo, GetOptions(), DominantOffSet);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка сохранения результатов расчета.\n\r" + ex.Message);
+            }            
         }
 
         private static bool isEvent = false;
@@ -402,19 +415,7 @@ namespace AR_AreaZhuk
             FormManager.GetSpotTaskFromDG(spotInfo, dg);//Условия квартирографии 
             Serializer s = new Serializer();
             s.SerializeSpoinfo(spotInfo);
-            List<HouseOptions> options = new List<HouseOptions>();
-            for (int i = 1; i < 5; i++)
-            {
-                List<bool> dominantsPositions = new List<bool>();
-
-                for (int j = 0; j < 5; j++)
-                {
-                    dominantsPositions.Add(
-                        ((CheckedListBox)this.Controls.Find("chkListP" + i.ToString(), true)[0]).GetItemChecked(j));
-                }
-                HouseOptions houseOption = new HouseOptions("P" + i.ToString(), Convert.ToInt16(numMainCountFloor.Value), Convert.ToInt16(numDomCountFloor.Value), dominantsPositions);
-                options.Add(houseOption);
-            }
+            List<HouseOptions> options = GetOptions();
             ProjectScheme profectShema = new ProjectScheme(options, spotInfo);
             profectShema.ReadScheme(PathToFileInsolation);
             Thread th = new Thread(ViewProgress);
@@ -424,7 +425,7 @@ namespace AR_AreaZhuk
             SetInfoTotalSectionsCount(totalObject);
             isContinue = true;
             if (totalObject.Count == 0)
-                isContinue=false;
+                isContinue = false;
             System.Diagnostics.Stopwatch sw = new Stopwatch();
             sw.Start();
             int counterGood = 0;
@@ -456,7 +457,7 @@ namespace AR_AreaZhuk
                 //Обход сформированных секций с уникальными кодами на объект
                 while (isContinue2)
                 {
-                   
+
                     Application.DoEvents();
                     if (isStop)
                         break;
@@ -471,15 +472,15 @@ namespace AR_AreaZhuk
                     for (int q = 0; q < spotInfo.requirments.Count; q++)
                     {
                         var rr = spotInfo.requirments[q];
-                        int countFlats = 0;                        
+                        int countFlats = 0;
                         for (int i = 0; i < codeSections.Count; i++)
-                        {                            
+                        {
                             countFlats += Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
                                 SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1); ;
                             // Вильдар - 23.08.2016 по-моему тут была лишняя проверка - проверять процентаж не сложив сумму квартир по всем секциямс                            
                         }
                         //Процентаж определенного типа квартир в объекте
-                        double percentage = countFlats * 100 / totalCountFlats;                        
+                        double percentage = countFlats * 100 / totalCountFlats;
 
                         // Вильдар. 23.08.2016
                         // Ближайший процентаж квартиры - если текущий процент квартиры ближе к требуемому, то записываем его как ближайший
@@ -574,7 +575,7 @@ namespace AR_AreaZhuk
                             k1 = k1 / (countSections + 1);
                             k2 = k2 / (countSections + 1);
 
-                            
+
                             var objectByHouses =
                                 hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
                             List<HouseInfo> housesInSpot = new List<HouseInfo>();
@@ -598,7 +599,7 @@ namespace AR_AreaZhuk
                             spGo.TotalFlats = countFlats;
                             spGo.TypicalSections = typicalSect;
                             spGo.TotalSections = countSections + 1;
-                           
+
                             for (int k = 0; k < spotInfo.requirments.Count; k++)
                                 spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
                             go.Houses = housesInSpot;
@@ -646,13 +647,47 @@ namespace AR_AreaZhuk
             sw.Stop();
             //MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
             lblTime.Visible = true;
-            lblTime.Text = (sw.ElapsedMilliseconds/1000).ToString();
+            lblTime.Text = (sw.ElapsedMilliseconds / 1000).ToString();
             bs.DataSource = dg2.DataSource;
             lblMaxArea.Text = maxArea.ToString();
             lblTotalCount.Text = ob.Count.ToString();
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
-        }        
+        }
+
+        private List<HouseOptions> GetOptions ()
+        {
+            List<HouseOptions> options = new List<HouseOptions>();
+            for (int i = 1; i < 5; i++)
+            {
+                List<bool> dominantsPositions = new List<bool>();
+                for (int j = 0; j < 5; j++)
+                {
+                    dominantsPositions.Add(
+                        ((CheckedListBox)this.Controls.Find("chkListP" + i.ToString(), true)[0]).GetItemChecked(j));
+                }
+                HouseOptions houseOption = new HouseOptions("P" + i.ToString(), Convert.ToInt16(numMainCountFloor.Value), Convert.ToInt16(numDomCountFloor.Value), dominantsPositions);
+                options.Add(houseOption);
+            }
+
+            return options;
+        }
+
+        private void SetOptions (List<HouseOptions> options)
+        {            
+            for (int i = 0; i < 4; i++)
+            {
+                var opt = options[i];
+                for (int j = 0; j < 5; j++)
+                {
+                    var dom = opt.DominantPositions[j];
+                    ((CheckedListBox)this.Controls.Find("chkListP" + (i+1).ToString(), true)[0]).SetItemChecked(j, dom);
+                }
+            }
+            numMainCountFloor.Value = options[0].CountFloorsMain;
+            numDomCountFloor.Value = options[0].CountFloorsDominant;            
+            chkEnableDominant.Checked = true;
+        }
 
         private static List<CodeSection> GetSectionsByCode(List<List<FlatInfo>> sections, int counter)
         {
@@ -992,7 +1027,7 @@ namespace AR_AreaZhuk
             }
 
             isEvent = true;
-            FillDgReqs();
+            FillDgReqsTotal();
         }
 
         private void btnRemove_Click(object sender, EventArgs e)
@@ -1035,6 +1070,51 @@ namespace AR_AreaZhuk
             }
             labelCountSectionsTotal.Text = "Кол. секций: " + count;
             toolTip1.SetToolTip(labelCountSectionsTotal, housesCount);
+        }
+
+        private void dg2_Click (object sender, EventArgs e)
+        {
+            if (dg2.SelectedRows.Count>0)
+                dg2_SelectionChanged(sender, e);
+        }
+
+        private void btnLoad_Click (object sender, EventArgs e)
+        {            
+            try
+            {
+                Results.Result res = new Results.Result();
+                SpotInfo sp;
+                List<HouseOptions> options;
+                int dominantOffSet;
+
+                var gos = res.Load(dbFlats, out sp, out options, out dominantOffSet);
+                
+                // Заполнение DataGrid домов
+                isEvent = false;
+                FormManager.ViewDataProcentage(dg2, gos, sp);
+                isEvent = true;
+                // Запись требования
+                FillDgReq(sp);
+                FillDgReqsTotal();
+                // Условия
+                SetOptions(options);
+                // Разность доминант
+                DominantOffSet = dominantOffSet;
+                if (dominantOffSet != 0)
+                {
+                    chkDominant.Checked = true;
+                    txtOffsetDominants.Text = dominantOffSet.ToString();
+                }
+                else
+                {
+                    chkDominant.Checked = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Не удалось загрузить результаты.\n\r" + ex.Message);
+                return;
+            }            
         }
     }
 }

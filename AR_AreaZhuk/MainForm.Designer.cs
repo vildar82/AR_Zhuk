@@ -82,7 +82,6 @@ namespace AR_AreaZhuk
             this.pnlMenu = new System.Windows.Forms.Panel();
             this.pnlMenuGroup3 = new System.Windows.Forms.Panel();
             this.btnMenuGroup3 = new System.Windows.Forms.Button();
-            this.pb = new System.Windows.Forms.PictureBox();
             this.contextMenuStripImage = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.сохранитьКакToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlMenuGroup2 = new System.Windows.Forms.Panel();
@@ -105,6 +104,8 @@ namespace AR_AreaZhuk
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.textBoxMaxCountHousesBySpot = new System.Windows.Forms.TextBox();
             this.textBoxMaxCountSectionsBySize = new System.Windows.Forms.TextBox();
+            this.pb = new System.Windows.Forms.PictureBox();
+            this.btnLoad = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -121,11 +122,11 @@ namespace AR_AreaZhuk
             ((System.ComponentModel.ISupportInitialize)(this.numMainCountFloor)).BeginInit();
             this.pnlMenu.SuspendLayout();
             this.pnlMenuGroup3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pb)).BeginInit();
             this.contextMenuStripImage.SuspendLayout();
             this.pnlMenuGroup2.SuspendLayout();
             this.panel5.SuspendLayout();
             this.pnlMenuGroup1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pb)).BeginInit();
             this.SuspendLayout();
             // 
             // dg
@@ -229,14 +230,16 @@ namespace AR_AreaZhuk
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnSave.BackgroundImage = global::AR_AreaZhuk.Properties.Resources.save;
+            this.btnSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSave.Location = new System.Drawing.Point(529, 814);
+            this.btnSave.Location = new System.Drawing.Point(561, 814);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.Size = new System.Drawing.Size(26, 23);
             this.btnSave.TabIndex = 9;
-            this.btnSave.Text = "Сохранить";
+            this.toolTip1.SetToolTip(this.btnSave, "Сохранить результаты расчета в файл");
             this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Visible = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // groupBox2
@@ -270,6 +273,7 @@ namespace AR_AreaZhuk
             this.dg2.SortStringChanged += new System.EventHandler(this.dg2_SortStringChanged);
             this.dg2.FilterStringChanged += new System.EventHandler(this.dg2_FilterStringChanged);
             this.dg2.SelectionChanged += new System.EventHandler(this.dg2_SelectionChanged);
+            this.dg2.Click += new System.EventHandler(this.dg2_Click);
             // 
             // btnStartScan
             // 
@@ -574,17 +578,6 @@ namespace AR_AreaZhuk
             this.btnMenuGroup3.UseVisualStyleBackColor = false;
             this.btnMenuGroup3.Click += new System.EventHandler(this.btnMenuGroup3_Click);
             // 
-            // pb
-            // 
-            this.pb.ContextMenuStrip = this.contextMenuStripImage;
-            this.pb.Location = new System.Drawing.Point(50, 31);
-            this.pb.Name = "pb";
-            this.pb.Size = new System.Drawing.Size(307, 239);
-            this.pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pb.TabIndex = 13;
-            this.pb.TabStop = false;
-            this.pb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pb_MouseClick);
-            // 
             // contextMenuStripImage
             // 
             this.contextMenuStripImage.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -819,6 +812,32 @@ namespace AR_AreaZhuk
             this.textBoxMaxCountSectionsBySize.Text = "0";
             this.toolTip1.SetToolTip(this.textBoxMaxCountSectionsBySize, "Макс кол секций в одном месте");
             // 
+            // pb
+            // 
+            this.pb.ContextMenuStrip = this.contextMenuStripImage;
+            this.pb.Location = new System.Drawing.Point(50, 31);
+            this.pb.Name = "pb";
+            this.pb.Size = new System.Drawing.Size(307, 239);
+            this.pb.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pb.TabIndex = 13;
+            this.pb.TabStop = false;
+            this.pb.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pb_MouseClick);
+            // 
+            // btnLoad
+            // 
+            this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnLoad.BackgroundImage = global::AR_AreaZhuk.Properties.Resources.open;
+            this.btnLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnLoad.FlatAppearance.BorderSize = 0;
+            this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLoad.Location = new System.Drawing.Point(529, 814);
+            this.btnLoad.Name = "btnLoad";
+            this.btnLoad.Size = new System.Drawing.Size(26, 23);
+            this.btnLoad.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.btnLoad, "Загрузить результаты расчета из файла");
+            this.btnLoad.UseVisualStyleBackColor = true;
+            this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -840,6 +859,7 @@ namespace AR_AreaZhuk
             this.Controls.Add(this.lblCountObjects);
             this.Controls.Add(this.btnStartScan);
             this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.btnLoad);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.labelCountSectionsTotal);
             this.Controls.Add(this.label3);
@@ -867,11 +887,11 @@ namespace AR_AreaZhuk
             ((System.ComponentModel.ISupportInitialize)(this.numMainCountFloor)).EndInit();
             this.pnlMenu.ResumeLayout(false);
             this.pnlMenuGroup3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pb)).EndInit();
             this.contextMenuStripImage.ResumeLayout(false);
             this.pnlMenuGroup2.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.pnlMenuGroup1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pb)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -938,6 +958,7 @@ namespace AR_AreaZhuk
         private ToolTip toolTip1;
         private TextBox textBoxMaxCountHousesBySpot;
         private TextBox textBoxMaxCountSectionsBySize;
+        private Button btnLoad;
     }
 }
 
