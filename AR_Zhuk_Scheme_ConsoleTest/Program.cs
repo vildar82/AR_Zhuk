@@ -28,6 +28,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             //BankSectionsStatisticsShortType();
             //StatisticsSectionsByFlatsCount();
             StatisticCoefficientK1K2();
+            return;
 
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
             Debug.Listeners.Add(writer);
