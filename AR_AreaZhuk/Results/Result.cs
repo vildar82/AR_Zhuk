@@ -21,7 +21,7 @@ namespace AR_AreaZhuk.Results
             if (gos == null || gos.Count == 0)
                 return;
             // файл для сохранения расчета
-            var fileResult = GetFileResult(sp);
+            var fileResult = GetFileResult(sp);            
             if (string.IsNullOrEmpty(fileResult))
                 return;
             if (File.Exists(fileResult))

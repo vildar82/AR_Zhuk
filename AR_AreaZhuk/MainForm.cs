@@ -1088,6 +1088,8 @@ namespace AR_AreaZhuk
                 int dominantOffSet;
 
                 var gos = res.Load(dbFlats, out sp, out options, out dominantOffSet);
+                if (gos.Count == 0)
+                    return;
                 
                 // Заполнение DataGrid домов
                 isEvent = false;
