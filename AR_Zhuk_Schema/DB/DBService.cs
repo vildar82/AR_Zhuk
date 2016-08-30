@@ -387,5 +387,10 @@ namespace AR_Zhuk_Schema.DB
             res = Step.CompareTo(other.Step);
             return res;
         }
+
+        public override string ToString ()
+        {
+            return Type + "_" + Levels + "_" + Step;
+        }
     }
 }

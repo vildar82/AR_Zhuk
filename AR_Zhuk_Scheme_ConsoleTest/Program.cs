@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AR_AreaZhuk;
@@ -19,6 +20,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 {
     class Program
     {
+        static string curDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         static void Main (string[] args)
         {
             //DBService dbServ = new DBService();
@@ -28,6 +30,8 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             //BankSectionsStatisticsShortType();
             //StatisticsSectionsByFlatsCount();
             //StatisticCoefficientK1K2();            
+            GenerateImagesBankSection();
+            return;
 
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
             Debug.Listeners.Add(writer);
@@ -37,6 +41,76 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
+        }
+
+        private static void GenerateImagesBankSection ()
+        {
+            Console.WriteLine("GenerateImagesBankSection");
+            DBService dbServ = new DBService(null);
+            dbServ.LoadDbFlatsFromFile();
+            ImageCombiner imgComb = new ImageCombiner();
+            int count = 0;
+            foreach (var type in DBService.dictDbFlats)
+            {
+                foreach (var sect in type.Value)
+                {
+                    var fi = GetSectinByDbFlats(sect, type.Key);                    
+                    var img = imgComb.GenerateImageOneSection(fi);
+                    string file = Path.Combine(curDir, $@"Секции\{(count++).ToString("000000")}_id-{fi.IdSection}_code-{fi.Code}_{type.Key.ToString()}.png");
+                    Console.WriteLine(file);
+                    img.Save(file, ImageFormat.Png);                    
+                }
+            }
+        }
+
+        private static FlatInfo GetSectinByDbFlats (List<DbFlat> dbFlats, SelectSectionParam ssp)
+        {
+            var rooms = dbFlats.Select(s =>
+            {
+                var r = s.GetRoomInfo();
+                r.CodeReqIndex = GetRoomCode(r);
+                return r;
+            }).ToList();
+            var fi = new FlatInfo();
+            fi.IdSection = dbFlats[0].ID_Section;
+            fi.Flats = rooms;
+            fi.Code = GetCodeSection(fi.Flats);
+            if (ssp.Type != "Рядовая")
+                fi.IsCorner = true;                        
+            return fi;
+        }
+
+        private static string GetCodeSection (List<RoomInfo> rooms)
+        {
+            string code = "";
+            var dictCodesReq = rooms.Where(f => f.SubZone != "0").
+                GroupBy(g => g.CodeReqIndex).ToDictionary(t=>t.Key, v=>v.Count());
+            for (int i = 0; i < 5; i++)
+            {
+                int count = 0;
+                dictCodesReq.TryGetValue(i, out count);
+                code += count;
+            }
+            return code;
+        }
+
+        private static int GetRoomCode (RoomInfo r)
+        {            
+            switch (r.SubZone)
+            {
+                case "01":
+                    return 0;
+                case "1":
+                    return 1;
+                case "2":
+                    return 2;
+                case "3":
+                    return 3;
+                case "4":
+                    return 4;
+                default:
+                    return 0;
+            }            
         }
 
         static void StatisticCoefficientK1K2 ()
@@ -50,7 +124,7 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             //var sections = DBService.dictDbFlats.Values.SelectMany(s => s).ToList();
 
             // Шагов, этажность , секция, кол квартир, К1, К2
-            var sectCoeffsK1K2 = new List<Tuple<SelectSectionParam,string, int, double, double>>(); 
+            var sectCoeffsK1K2 = new List<Tuple<SelectSectionParam,string, int, double, double, string>>(); 
 
             foreach (var item in DBService.dictDbFlats)
             {
@@ -62,9 +136,12 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                 foreach (var sect in sectBySize)
                 {
                     string sectString = string.Empty;
+                    List<RoomInfo> rooms = new List<RoomInfo>();
                     foreach (var flat in sect)
                     {
                         var ri = flat.GetRoomInfo();
+                        ri.CodeReqIndex = GetRoomCode(ri);
+                        rooms.Add(ri);
                         var currentFlatAreas = flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
                         var areas = Calculate.GetAreaFlat(15, ri, currentFlatAreas);
                         levelArea += areas[2];
@@ -75,8 +152,10 @@ namespace AR_Zhuk_Scheme_ConsoleTest
                     var k1 = levelAreaOffLLU / levelArea;
                     var k2 = levelAreaOffLLU / levelAreaOnLLU;
 
-                    sectCoeffsK1K2.Add(new Tuple<SelectSectionParam, string, int, double, double>(
-                            item.Key, sectString, sect.Count - 1, k1, k2));                    
+                    string code = GetCodeSection(rooms);
+
+                    sectCoeffsK1K2.Add(new Tuple<SelectSectionParam, string, int, double, double, string>(
+                            item.Key, sectString, sect.Count - 1, k1, k2, code));                    
                 }                
             }            
 
@@ -91,9 +170,10 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             }
         }
 
-        private static void FillCoefK (List<Tuple<SelectSectionParam, string, int, double, double>> sectCoeffsK1K2, 
+        private static void FillCoefK (List<Tuple<SelectSectionParam, string, int, double, double, string>> sectCoeffsK1K2, 
             ExcelWorksheet ws, string hK, 
-            Func<IGrouping<int, Tuple<SelectSectionParam, string, int, double, double>>,IEnumerable<IGrouping<double, Tuple<SelectSectionParam, string, int, double, double>>>> groupK)
+            Func<IGrouping<int, Tuple<SelectSectionParam, string, int, double, double, string>>,
+                 IEnumerable<IGrouping<double, Tuple<SelectSectionParam, string, int, double, double, string>>>> groupK)
         {            
             int row = 1;
             ws.Cells[row, 1].Value = "Кол секций по типам квартир в банке секций.";
@@ -104,22 +184,27 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             ws.Cells[row, 2].Value = "Этажность";
             ws.Cells[row, 3].Value = "Шаг";
             ws.Cells[row, 4].Value = "Кол квартир без ЛЛУ";
-            ws.Cells[row, 5].Value = hK;
-            ws.Cells[row, 6].Value = "Кол секций";
+            ws.Cells[row, 5].Value = "Код";
+            ws.Cells[row, 6].Value = hK;
+            ws.Cells[row, 7].Value = "Кол секций";
             row++;
             foreach (var groupType in sectCoeffsK1K2.GroupBy(g => g.Item1).OrderBy(o => o.Key))
             {
                 foreach (var groupCountFlat in groupType.GroupBy(g => g.Item3).OrderBy(o => o.Key))
                 {                    
                     foreach (var groupByK1 in groupK(groupCountFlat))
-                    {                        
-                        ws.Cells[row, 1].Value = groupType.Key.Type;
-                        ws.Cells[row, 2].Value = groupType.Key.Levels;
-                        ws.Cells[row, 3].Value = groupType.Key.Step;
-                        ws.Cells[row, 4].Value = groupCountFlat.Key;
-                        ws.Cells[row, 5].Value = groupByK1.Key.ToString("0.00");
-                        ws.Cells[row, 6].Value = groupByK1.Count();
-                        row++;
+                    {
+                        foreach (var groupCode in groupByK1.GroupBy(g => g.Item6))
+                        {
+                            ws.Cells[row, 1].Value = groupType.Key.Type;
+                            ws.Cells[row, 2].Value = groupType.Key.Levels;
+                            ws.Cells[row, 3].Value = groupType.Key.Step;
+                            ws.Cells[row, 4].Value = groupCountFlat.Key;
+                            ws.Cells[row, 5].Value = groupCode.Key;
+                            ws.Cells[row, 6].Value = groupByK1.Key.ToString("0.00");
+                            ws.Cells[row, 7].Value = groupByK1.Count();
+                            row++;
+                        }
                     }
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace BeetlyVisualisation
 
         public ImgFlat(string dir, string name, int coordX)
         {
-            this.ImgPath = dir + name + ".png";
+            this.ImgPath = Path.Combine(dir, name + ".png");
             this.CoordX = coordX;
             this.CoordY = -1;
         }

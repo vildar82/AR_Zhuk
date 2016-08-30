@@ -11,6 +11,8 @@ namespace BeetlyVisualisation
 {
     public static class Utils
     {
+        
+
         public static GeneralObject getHouseInfo(string XmlPath)
         {
             Serializer ser = new Serializer();
@@ -21,8 +23,8 @@ namespace BeetlyVisualisation
         internal static void AddInfoForVisualisation(GeneralObject GenObject, string ExcelDataPath)
         {
 
-
             List<FlatType> fTypes = Utils.getFlatTypesFromXLSX(ExcelDataPath);
+
 
             foreach (HouseInfo hi in GenObject.Houses)
             {
@@ -39,7 +41,16 @@ namespace BeetlyVisualisation
             }
         }
 
-
+        internal static void AddRoomInfoForViz(FlatInfo fi, string ExcelDataPath)
+        {
+            List<FlatType> fTypes = Utils.getFlatTypesFromXLSX(ExcelDataPath);
+            foreach (RoomInfo ri in fi.Flats)
+            {
+                // Получение данных по типу квартиры
+                FlatType ft = fTypes.Find(x => x.Type == ri.Type);
+                ft.SetRoominFoParameters(ri);
+            }
+        }
 
         /// <summary>
         /// Получение дополнительной информации из XLSX для построения изображений

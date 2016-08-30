@@ -5,21 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-//using AR_AreaZhuk;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using AR_Zhuk_DataModel;
 
-
-
-
-
 namespace BeetlyVisualisation
 {
     public class ImageCombiner
     {
-
         int SectionIndex = 1;
 
         /// <summary>
@@ -27,36 +21,33 @@ namespace BeetlyVisualisation
         /// </summary>
         GeneralObject genObj;
 
-
         /// <summary>
         /// Список изображений секций
         /// </summary>
         List<ImgSection> imgSections;
 
-
         /// <summary>
         /// Путь к папке c исходными изображениями
         /// </summary>
-        string ImagePath;
-
+        string ImagePath = @"z:\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1";
 
         /// <summary>
         /// Ширина одного модуля в пикселях
         /// 1 модуль - 3600 мм
         /// </summary>
-        int ModuleWidth { get; set; }
+        int ModuleWidth { get; set; } = 72;
 
         ///// <summary>
         ///// Длина площадки
         ///// </summary>
         //int genObjectLength { get; }
 
-
         ///// <summary>
         ///// Ширина площадки
         ///// </summary>
         //int genObjectWidth { get; }
 
+        public ImageCombiner () { }
 
         /// <summary>
         /// Построение вариантов по файлу XML
@@ -66,7 +57,7 @@ namespace BeetlyVisualisation
         /// <param name="imageSourcePath">Путь к папке с изображениями квартир</param>
         /// <param name="imageOutPutPath">Путь к папке для генерации изображений домов</param>
         /// <param name="moduleWidth">Ширина одного модуля в пикселях</param>
-        public ImageCombiner(string XMLPath, string excelDataPath, string imageSourcePath, int moduleWidth)
+        public ImageCombiner (string XMLPath, string excelDataPath, string imageSourcePath, int moduleWidth)
         {
 
             Serializer ser = new Serializer();
@@ -79,8 +70,8 @@ namespace BeetlyVisualisation
 
             this.ImagePath = imageSourcePath.TrimEnd('\\') + "\\";
 
-           // Utils.cashImages(this.ImagePath, tempPath);
-            
+            // Utils.cashImages(this.ImagePath, tempPath);
+
 
             //this.ImagePath = tempPath.TrimEnd('\\') + "\\";
 
@@ -115,7 +106,7 @@ namespace BeetlyVisualisation
         /// <param name="imageSourcePath">Путь к папке с изображениями квартир</param>        
         /// <param name="moduleWidth">Ширина одного модуля в пикселях</param>
         /// <param name="GeneralObject"></param>
-        public ImageCombiner(GeneralObject GenObj, string excelDataPath, string imageSourcePath, int moduleWidth)
+        public ImageCombiner (GeneralObject GenObj, string excelDataPath, string imageSourcePath, int moduleWidth)
         {
             this.genObj = GenObj;
 
@@ -149,9 +140,9 @@ namespace BeetlyVisualisation
                 //string imgHDir = imageOutPutPath;
 
                 //SaveImage(imgH.BmpImageHouse, imgHDir, imgHName);
-                  //  GC.Collect();
-                                
-                    HouseIndex++;
+                //  GC.Collect();
+
+                HouseIndex++;
             }
         }
 
@@ -159,7 +150,7 @@ namespace BeetlyVisualisation
         /// Генерация изображения в указанную папку
         /// </summary>
         /// <param name="imageOutPutPath">Путь к папке, в которой будет сохранено изображение</param>
-        public void generateGeneralObject(string imageOutPutPath)
+        public void generateGeneralObject (string imageOutPutPath)
         {
             Bitmap bmpImageGO = _generateGeneralObject();
 
@@ -173,262 +164,219 @@ namespace BeetlyVisualisation
         /// Генерация изображения
         /// </summary>
         /// <returns>Bitmap</returns>
-        public Bitmap generateGeneralObject()
+        public Bitmap generateGeneralObject ()
         {
             Bitmap bmpImageGO = _generateGeneralObject();
             return bmpImageGO;
         }
 
+        public Bitmap GenerateImageOneSection(FlatInfo section)
+        {
+            var ExcelDataPath = @"z:\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
+            Utils.AddRoomInfoForViz(section, ExcelDataPath);
+            var res = GetImgSection(section);
+            return res.BmpSection;
+        }
 
-        private Bitmap _generateGeneralObject()
+        private Bitmap _generateGeneralObject ()
         {
             ImgGeneralObject imgGO = new ImgGeneralObject(ModuleWidth, genObj.SpotInf, ImagePath);
             //ImgGeneralObject imgGO = new ImgGeneralObject(ModuleWidth, 35, 31);
 
-
             foreach (HouseInfo hi in this.genObj.Houses)
-            {                
-
+            {
                 ImgHouse imgH = generateOneHouse(hi);
                 imgGO.ImgHouses.Add(imgH);
             }
 
-
-
-            Bitmap bmpImageGO  = imgGO.Generate();
-
+            Bitmap bmpImageGO = imgGO.Generate();
             return bmpImageGO;
         }
 
         /// <summary>
         /// Построение изображений отдельных домов
         /// </summary>
-        private ImgHouse generateOneHouse(HouseInfo hi)
+        private ImgHouse generateOneHouse (HouseInfo hi)
         {
-               
-
-            
-
-                ImgHouse imgHouse = new ImgHouse();
-
-                List<Bitmap> bmpSections = new List<Bitmap>();
-
-                foreach (FlatInfo fi in hi.Sections)
-                {
-
-
-
-
-                    ImgSection imgSection = new ImgSection();
-
-                //if (hi.SectionsBySize[0].)
-                //{
-                //    imgSection.Angle += 90;
-                //}
-
-                //if (fi.IsInvert)
-                //{
-                //    imgSection.Angle += 180;
-                //}
-
-                imgSection.Angle = fi.ImageAngle;
-
-                    // Корректировка точки вставки секций
-                if (fi.IsCorner)
-                    {
-                        imgSection.CoordYCorrection = 0;
-                        imgHouse.IsCorner = true;
-                    }
-
-
-                    // Определение положения дома - вертикальный/горизонтальный
-                    if (!fi.IsVertical)
-                    {
-                        imgHouse.IsVertical = false;
-                    }
-
-
-                    int SelectedDownPrev = 0;
-                    int offset = 0;
-                    int minX = 0;
-
-                    int X = 0;
-
-                    bool prev3NL2 = false;
-
-                    int FlatIndex = 0;
-
-                    
-
-                    foreach (RoomInfo ri in fi.Flats)
-                    {                      
-
-
-                        // Корректировка неверно выданных данных
-                        if (ri.Type.Contains("3NL2"))
-                        {
-                            ri.SelectedIndexTop = 4;
-                            ri.SelectedIndexBottom = 0;
-                            imgSection.Height = 5;
-
-                        }
-
-                        // Корректировка неверно выданных данных
-                        if (ri.Type == "PIK1U_BS_A_10-17_A_2")
-                        {
-                            ri.SelectedIndexTop = 3;
-                        }
-
-                        // Корректировка положения квартиры 2KL2 и 2NM1
-
-
-                        if (ri.Type.Contains("2KL2") || ri.Type.Contains("2NM1"))
-                        {
-
-                             
-                            
-                            if (prev3NL2 || (fi.Flats.Any(x => x.Type.Contains("3NL2")) && (fi.Flats.Count == FlatIndex + 2)))
-                        {
-                                ri.ImageNameSuffix = "_U";
-
-                                if (ri.Type.Contains("2NM1"))
-                                    ri.SelectedIndexBottom = 1;
-                                if (ri.Type.Contains("2KL2"))
-                                    ri.SelectedIndexBottom = 2;
-                                ri.HorisontalModules = 2;
-                                prev3NL2 = false;
-                            }
-                            else
-                            {
-                                ri.ImageNameSuffix = "";
-                                ri.SelectedIndexBottom = 3;
-                                ri.HorisontalModules = 3;
-                            }
-
-                            if(fi.Flats.Any(x => x.Type.Contains("3NL2")) && (fi.Flats.Count == FlatIndex + 2))
-                        {
-                            ri.NextOffsetX = 1;
-                        }
-
-                        }
-
-
-
-
-
-
-
-
-
-                        if (ri.Type.Contains("3NL2"))
-                        {
-                            // Флаг предыдущей секции 3NL2
-                            prev3NL2 = true;
-
-                            // Если после ЛЛУ идёт квартира типа 3NL2, то дом L-ориентирован
-                            if (FlatIndex == 1)
-                            {
-                                imgHouse.LOrientation = true;
-                            }
-
-
-
-                            // Если встретилась повёрнутая секция, то дом не является горизонтально ориентированным
-                            // TODO: неясно, для чего было условие, разобраться
-
-                            //if (fi.IsVertical)
-                            //{
-
-                            //}
-                        }
-                        else
-                        {
-                            prev3NL2 = false;
-                        }
-                        FlatIndex++;
-
-
-
-
-
-
-
-                        ImgFlat imgFlat = new ImgFlat(ImagePath, ri.Type + ri.ImageNameSuffix, 0);
-                        imgFlat.Width = ri.HorisontalModules + 2;
-                        imgFlat.Heigth = 6;
-
-
-                        // Определение точки вставки квартиры
-                        if (ri.SelectedIndexTop > 0 && ri.SelectedIndexBottom > 0 && SelectedDownPrev > 0)
-                        {
-                            offset = SelectedDownPrev;
-                            SelectedDownPrev = 0;
-                        }
-                        else
-                        {
-                            offset = SelectedDownPrev - ri.SelectedIndexTop;
-                            if (ri.SelectedIndexBottom > 0)
-                            {
-                                SelectedDownPrev = ri.HorisontalModules + ri.NextOffsetX;
-                            }
-                            else
-                            {
-                                SelectedDownPrev = ri.SelectedIndexBottom;
-                            }
-                        }
-
-
-
-                        X = X + offset + ri.CurrentOffsetX;
-
-                        if (X < minX)
-                            minX = X;
-
-                        imgFlat.CoordX = X;
-
-                        imgSection.Lenght += ri.SelectedIndexBottom;
-
-                        imgSection.ImgFlats.Add(imgFlat);
-                    }
-
-
-
-
-                    foreach (ImgFlat imgFlat in imgSection.ImgFlats)
-                    {
-                        imgFlat.CoordX -= minX;
-                    }
-
-
-                     imgSection.SectionInfo = fi;
-
-
-                    //imgSection.BmpSectionPath = imgDir + imgName;
-
-                    imgSection.BmpSection = generateOneSection(imgSection);
-
-                // Сохранение отдельных секций для отладки
-                //string imgName = "Секция" + SectionIndex + ".png";
-                //string imgDir = @"C:\Users\fazleevaa\Links\Desktop\RRR" + "\\";
-                //SaveImage(imgSection.BmpSection, imgDir, imgName);
+            ImgHouse imgHouse = new ImgHouse();
+            List<Bitmap> bmpSections = new List<Bitmap>();
+
+            foreach (FlatInfo fi in hi.Sections)
+            {
+                ImgSection imgSection = GetImgSection(fi, imgHouse);
 
                 imgHouse.ImgSections.Add(imgSection);
-                    SectionIndex++;
-                  
-                }
+                SectionIndex++;
 
-
-
-         //   GC.Collect();
+            }
+            //   GC.Collect();
 
             return imgHouse;
         }
 
+        private ImgSection GetImgSection (FlatInfo fi, ImgHouse imgHouse =null)
+        {
+            ImgSection imgSection = new ImgSection();
 
+            //if (hi.SectionsBySize[0].)
+            //{
+            //    imgSection.Angle += 90;
+            //}
 
+            //if (fi.IsInvert)
+            //{
+            //    imgSection.Angle += 180;
+            //}
 
+            imgSection.Angle = fi.ImageAngle;
 
-        private Bitmap generateOneSection(ImgSection section)
+            // Корректировка точки вставки секций
+            if (fi.IsCorner)
+            {
+                imgSection.CoordYCorrection = 0;
+                if (imgHouse != null) imgHouse.IsCorner = true;
+            }
+
+            // Определение положения дома - вертикальный/горизонтальный
+            if (!fi.IsVertical)
+            {
+                if (imgHouse != null) imgHouse.IsVertical = false;
+            }
+
+            int SelectedDownPrev = 0;
+            int offset = 0;
+            int minX = 0;
+
+            int X = 0;
+
+            bool prev3NL2 = false;
+            int FlatIndex = 0;
+
+            foreach (RoomInfo ri in fi.Flats)
+            {
+                // Корректировка неверно выданных данных
+                if (ri.Type.Contains("3NL2"))
+                {
+                    ri.SelectedIndexTop = 4;
+                    ri.SelectedIndexBottom = 0;
+                    imgSection.Height = 5;
+
+                }
+
+                // Корректировка неверно выданных данных
+                if (ri.Type == "PIK1U_BS_A_10-17_A_2")
+                {
+                    ri.SelectedIndexTop = 3;
+                }
+
+                // Корректировка положения квартиры 2KL2 и 2NM1
+
+                if (ri.Type.Contains("2KL2") || ri.Type.Contains("2NM1"))
+                {
+                    if (prev3NL2 || (fi.Flats.Any(x => x.Type.Contains("3NL2")) && (fi.Flats.Count == FlatIndex + 2)))
+                    {
+                        ri.ImageNameSuffix = "_U";
+
+                        if (ri.Type.Contains("2NM1"))
+                            ri.SelectedIndexBottom = 1;
+                        if (ri.Type.Contains("2KL2"))
+                            ri.SelectedIndexBottom = 2;
+                        ri.HorisontalModules = 2;
+                        prev3NL2 = false;
+                    }
+                    else
+                    {
+                        ri.ImageNameSuffix = "";
+                        ri.SelectedIndexBottom = 3;
+                        ri.HorisontalModules = 3;
+                    }
+
+                    if (fi.Flats.Any(x => x.Type.Contains("3NL2")) && (fi.Flats.Count == FlatIndex + 2))
+                    {
+                        ri.NextOffsetX = 1;
+                    }
+
+                }
+
+                if (ri.Type.Contains("3NL2"))
+                {
+                    // Флаг предыдущей секции 3NL2
+                    prev3NL2 = true;
+
+                    // Если после ЛЛУ идёт квартира типа 3NL2, то дом L-ориентирован
+                    if (FlatIndex == 1)
+                    {
+                        if (imgHouse != null) imgHouse.LOrientation = true;
+                    }
+
+                    // Если встретилась повёрнутая секция, то дом не является горизонтально ориентированным
+                    // TODO: неясно, для чего было условие, разобраться
+
+                    //if (fi.IsVertical)
+                    //{
+
+                    //}
+                }
+                else
+                {
+                    prev3NL2 = false;
+                }
+                FlatIndex++;
+
+                ImgFlat imgFlat = new ImgFlat(ImagePath, ri.Type + ri.ImageNameSuffix, 0);
+                imgFlat.Width = ri.HorisontalModules + 2;
+                imgFlat.Heigth = 6;
+
+                // Определение точки вставки квартиры
+                if (ri.SelectedIndexTop > 0 && ri.SelectedIndexBottom > 0 && SelectedDownPrev > 0)
+                {
+                    offset = SelectedDownPrev;
+                    SelectedDownPrev = 0;
+                }
+                else
+                {
+                    offset = SelectedDownPrev - ri.SelectedIndexTop;
+                    if (ri.SelectedIndexBottom > 0)
+                    {
+                        SelectedDownPrev = ri.HorisontalModules + ri.NextOffsetX;
+                    }
+                    else
+                    {
+                        SelectedDownPrev = ri.SelectedIndexBottom;
+                    }
+                }
+
+                X = X + offset + ri.CurrentOffsetX;
+
+                if (X < minX)
+                    minX = X;
+
+                imgFlat.CoordX = X;
+
+                imgSection.Lenght += ri.SelectedIndexBottom;
+
+                imgSection.ImgFlats.Add(imgFlat);
+            }
+
+            foreach (ImgFlat imgFlat in imgSection.ImgFlats)
+            {
+                imgFlat.CoordX -= minX;
+            }
+
+            imgSection.SectionInfo = fi;
+
+            //imgSection.BmpSectionPath = imgDir + imgName;
+
+            imgSection.BmpSection = generateOneSection(imgSection);
+
+            // Сохранение отдельных секций для отладки
+            //string imgName = "Секция" + SectionIndex + ".png";
+            //string imgDir = @"C:\Users\fazleevaa\Links\Desktop\RRR" + "\\";
+            //SaveImage(imgSection.BmpSection, imgDir, imgName);
+            return imgSection;
+        }
+
+        private Bitmap generateOneSection (ImgSection section)
         {
             int width = section.Lenght * ModuleWidth + ModuleWidth / 9;
             int height = section.Height * ModuleWidth;
@@ -439,9 +387,7 @@ namespace BeetlyVisualisation
             {
                 //canvas.Clear(Color.White);
                 canvas.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-
-
+                
                 foreach (ImgFlat imgFlat in section.ImgFlats)
                 {
 
@@ -462,8 +408,6 @@ namespace BeetlyVisualisation
                         }
                     }
 
-
-
                     imgFlat.CoordX = --imgFlat.CoordX * ModuleWidth + ModuleWidth / 18;
 
                     Image frame;
@@ -475,12 +419,12 @@ namespace BeetlyVisualisation
                     catch (Exception ex)
 
                     {
-//#if DEBUG
-//                        //throw new Exception("Не найдено изображение: \n" + imgFlat.ImgPath);
+                        //#if DEBUG
+                        //                        //throw new Exception("Не найдено изображение: \n" + imgFlat.ImgPath);
 
 
-//                      System.Windows.Forms.MessageBox.Show("Не найдено изображение: \n" + imgFlat.ImgPath);
-//#endif
+                        //                      System.Windows.Forms.MessageBox.Show("Не найдено изображение: \n" + imgFlat.ImgPath);
+                        //#endif
 
                         string emptyImage = System.IO.Path.GetDirectoryName(imgFlat.ImgPath) + "\\PIK1_empty.png";
 
@@ -493,9 +437,6 @@ namespace BeetlyVisualisation
                             frame = new Bitmap(width, height);
                         }
                     }
-
-
-
                     canvas.DrawImage(frame,
                                      new Rectangle(imgFlat.CoordX,
                                                    yCorrection,
@@ -510,25 +451,13 @@ namespace BeetlyVisualisation
                                                    frame.Width,
                                                    frame.Height),
                                      GraphicsUnit.Pixel);
-
-
-
-
-
-
-
                     //canvas.Save();                        
                 }
-
                 // canvas.RotateTransform(7);
                 canvas.Save();
             }
             try
             {
-
-
-                
-
                 switch (section.Angle)
                 {
                     case 90:
@@ -544,60 +473,34 @@ namespace BeetlyVisualisation
                         break;
 
                     default:
-
                         break;
                 }
-
-
-
-
             }
             catch (Exception ex)
-
             {
                 return null;
             }
-
             return bitmap;
-
         }
-
-
-
-
 
         /// <summary>
         /// Сохранение изображения
         /// </summary>
         /// <param name="bitmap">Изображение</param>
         /// <param name="i">Индекс</param>
-        private void SaveImage(Bitmap bitmap, string DirImage, string ImageName)
+        private void SaveImage (Bitmap bitmap, string DirImage, string ImageName)
         {
-
             try
             {
-
-
-                if (!System.IO.Directory.Exists(DirImage))
+                if (!Directory.Exists(DirImage))
                 {
-                    System.IO.Directory.CreateDirectory(DirImage);
+                    Directory.CreateDirectory(DirImage);
                 }
-
                 string imgPath = DirImage + ImageName;
-
                 bitmap.Save(imgPath,
-                System.Drawing.Imaging.ImageFormat.Png);
+                ImageFormat.Png);
             }
-            catch (Exception ex)
-            {
-
-            }
+            catch { }
         }
-
     }
-
-
-
-
-
 }
