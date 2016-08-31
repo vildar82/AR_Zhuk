@@ -110,9 +110,12 @@ namespace AR_Zhuk_Schema.DB
 
                     if (!isValidSection)
                         continue;
-                                        
-                    if (fl.Flats.Count>3)
+
+                    if (fl.Flats.Count > 3)
+                    {
+                        fl.DefineIdenticalCodeSection();
                         sectionsBySyze.Add(fl);
+                    }
                     else
                     {
                         Trace.TraceWarning("Секция меньше 3 квартир, idSection = " + fl.IdSection);
@@ -140,6 +143,8 @@ namespace AR_Zhuk_Schema.DB
             fflat.SelectedIndexBottom = f.SelectedIndexBottom;
             return fflat;
         }
+
+        
 
         public void PrepareLoadSections (List<SelectSectionParam> selectSects)
         {

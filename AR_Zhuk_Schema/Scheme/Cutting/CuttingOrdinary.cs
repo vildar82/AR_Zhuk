@@ -25,7 +25,11 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         private HouseSpot houseSpot;
         private IDBService dbService;
-        private IInsolation insService;                
+        private IInsolation insService;
+
+        bool failCutting = true;
+        bool failFilterReqs = true;
+        bool failins = true;
 
         public CuttingOrdinary(HouseSpot houseSpot, IDBService dbService, IInsolation insService)
         {
@@ -39,7 +43,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         public List<HouseInfo> Cut()
         {
-            Console.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
+            Debug.WriteLine("Нарезка дома - " + houseSpot.SpotName + ", Дата = " + DateTime.Now);
 
             failedSections = new List<string>();
             passedSections = new Dictionary<string, Section>();
@@ -86,8 +90,15 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 resHouses = GetRandomMaxHauses(resHouses, ProjectScheme.MaxHousesBySpot);
             }
 
+            if (resHouses.Count==0)
+            {
+                // Нет вариантов дома - определить причину и выдать сообщение
+                DefineFailReason();
+            }
             return resHouses;
         }
+
+        
 
         private List<HouseInfo> GetRandomMaxHauses (List<HouseInfo> houses, int maxHousesBySpot)
         {
@@ -138,15 +149,14 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         List<FlatInfo> flatsCheckedIns = insService.GetInsolationSections(sectionBySize.Section);
                         if (flatsCheckedIns.Count == 0)
                         {
-
                             Debug.WriteLine("fail ins - key=" + sectionBySize.Key);
-
                             failedSections.Add(sectionBySize.Key);
                             resHouseSections = null;
                             break;
                         }
                         sectionBySize.Section.Sections = flatsCheckedIns;
                         passedSections.Add(sectionBySize.Key, sectionBySize.Section);
+                        failins = false;
                     }
                     resHouseSections.Add(sectionBySize.Section);                    
                 }                
@@ -215,6 +225,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         addToFailed = true;
                         break;
                     }
+                    failCutting = false;
 
                     section.NumberInSpot = numberSect;
                     section.SpotOwner = houseSpot.SpotName;
@@ -239,6 +250,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         addToFailed =  true;
                         break;
                     }
+                    failFilterReqs = false;
                 }
                 else
                 {
@@ -540,6 +552,27 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 resSectSteps.AddRange(Enumerable.Range(6, 9));
             }
             return resSectSteps;
+        }
+
+        private void DefineFailReason ()
+        {
+            string failReason = "Не удалось подобрать варианты домов для пятна " + houseSpot.SpotName + ": \n";
+            // через инсоляцию не прошло ничего
+            if (failins)
+            {
+                failReason += "Требования раскладки секций по серии ПИК1 не совместимы с инсоляцией. Попробуйте изменить габариты пятна или этажность (доминанту)";
+            }
+            // Через фильтр ничего не прошло
+            else if (failFilterReqs)
+            {
+                failReason += "Требования квартирографии не пропускают секции. Измените требования - диапазоны площадей.";
+            }
+            // Файл при нарезке
+            else
+            {
+                failReason += "Габариты пятна не соответствуют требованиям раскладки секций по серии ПИК1. Измените пятно.";
+            }
+            AR_Zhuk_DataModel.Messages.Informer.AddMessage(failReason);
         }
     }
 }

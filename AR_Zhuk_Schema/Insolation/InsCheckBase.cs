@@ -51,36 +51,21 @@ namespace AR_Zhuk_Schema.Insolation
 
         public List<FlatInfo> CheckSections (Section sectionBySize)
         {
-            var passedSections = new Dictionary<string, Tuple<double, FlatInfo>>();
+            var passedSections = new Dictionary<string, FlatInfo>();
             foreach (var section in sectionBySize.Sections)
             {
-                section.Code = insService.GetFlatCode(section);
-                var area = section.Flats.Sum(r => r.AreaTotalStandart);
-                Tuple <double, FlatInfo> passedSect;
-                if (passedSections.TryGetValue(section.Code, out passedSect))
+                section.Code = insService.GetFlatCode(section);                                
+                FlatInfo passedSect;
+                if (!passedSections.TryGetValue(section.IdenticalCode, out passedSect))
                 {
-                    if (area <= passedSect.Item1)
+                    FlatInfo insFlat = CheckInsFlatInfo(section);
+                    if (insFlat != null)
                     {
-                        // Новая серия - меньше по площади идентичной проверенной, пропускаем
-                        continue;
-                    }                    
-                }                
-                FlatInfo insFlat = CheckInsFlatInfo(section);                
-                if (insFlat != null)
-                {
-                    var newPassedSect = new Tuple<double, FlatInfo>(area, insFlat);
-                    if (passedSect!= null && area > passedSect.Item1)
-                    {
-                        // Новая серия больше по площади идентичной проверенной, взять ее
-                        passedSections[section.Code] = newPassedSect;
+                        passedSections.Add(section.IdenticalCode, insFlat);
                     }
-                    else
-                    {
-                        passedSections.Add(section.Code, newPassedSect);
-                    }
-                }
+                }                                
             }
-            return passedSections.Values.Select(s => s.Item2).ToList();
+            return passedSections.Values.ToList();
         }
 
         /// <summary>

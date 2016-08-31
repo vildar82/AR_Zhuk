@@ -53,6 +53,7 @@ namespace AR_Zhuk_DataModel
             }
             s.InsModulesAll = sp.InsModulesAll;
             s.Size = sp.Size;
+            s.PathInsolation = sp.PathInsolation;
             return s;
         }
     }

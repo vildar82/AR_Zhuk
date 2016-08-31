@@ -17,10 +17,12 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             CreateHouseImage testCreateHouse = new CreateHouseImage();
 
             // Исходнве данные
-            string insolationFile = @"z:\Revit_server\13. Settings\02_RoomManager\Жуки\Тесты\Жуки - тест\Бумеранг\Бумеранг.xlsx";                                
+            string insolationFile = @"c:\work\test\АР\ЖУКИ\Саларьево 3 вар 2-Задание по инсоляции ПИК1.xlsx";                                
             List<HouseOptions> options = new List<HouseOptions>() {
                  new HouseOptions("P1", 15, 25, new List<bool> { false, false, false, false,  true}),
-                 new HouseOptions("P2", 15, 25, new List<bool> { true, false, false, false, false})
+                 new HouseOptions("P2", 15, 25, new List<bool> { true, false, false, false, false}),
+                 new HouseOptions("P3", 15, 25, new List<bool> { true, false, false, false, false}),
+                 new HouseOptions("P4", 15, 25, new List<bool> { true, false, false, false, false})
             };
             SpotInfo sp = GetSpotInformation();
 
@@ -49,11 +51,11 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             SpotInfo spotInfo = new SpotInfo();
             spotInfo.requirments.Add(new Requirment("Студия", 21, 40, 10, 0, 0, 0, 0, 3, "01"));
             //spotInfo.requirments.Add(new Requirment("Студия", 33, 35, 8, 0, 8, 0, 0, 4, "01"));
-            spotInfo.requirments.Add(new Requirment("Однокомн.", 33, 48, 30, 0, 0, 0, 0, 3, "1"));
+            spotInfo.requirments.Add(new Requirment("Однокомн.", 30, 50, 30, 0, 0, 0, 0, 3, "1"));
             spotInfo.requirments.Add(new Requirment("Двухкомн.", 30, 80, 40, 0, 0, 0, 0, 3, "2"));
             //spotInfo.requirments.Add(new Requirment("Двухкомн.", 57, 60, 11, 0, 3, 0, 0, 3, "2"));
             //spotInfo.requirments.Add(new Requirment("Двухкомн.", 68, 71, 12, 0, 3, 0, 0, 3, "2"));
-            spotInfo.requirments.Add(new Requirment("Трехкомн.", 80, 100, 16, 0, 0, 0, 0, 3, "3"));
+            spotInfo.requirments.Add(new Requirment("Трехкомн.", 60, 100, 16, 0, 0, 0, 0, 3, "3"));
             //spotInfo.requirments.Add(new Requirment("Четырехкомн.", 80, 120, 3, 0, 0, 0, 0, 3, "4"));
             return spotInfo;
         }

@@ -8,6 +8,7 @@ namespace AR_Zhuk_DataModel
 {
     public class FlatInfo
     {
+        public string IdenticalCode { get; set; }
         public bool IsDominant { get; set; }
         /// <summary>
         /// Стартовая ячейка секции - левый верхний угол
@@ -37,6 +38,11 @@ namespace AR_Zhuk_DataModel
         {
             var res = (FlatInfo)MemberwiseClone();
             return res;
+        }
+
+        public void DefineIdenticalCodeSection ()
+        {
+            IdenticalCode = string.Join("_", Flats.Select(f => f.ShortType).OrderBy(r => r));            
         }
     }
 }

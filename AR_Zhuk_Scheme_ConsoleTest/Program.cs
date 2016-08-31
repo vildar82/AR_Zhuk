@@ -21,8 +21,11 @@ namespace AR_Zhuk_Scheme_ConsoleTest
     class Program
     {
         static string curDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        [STAThread]
         static void Main (string[] args)
         {
+            TestMessage();
+            return;
             //DBService dbServ = new DBService();
             //dbServ.SaveDbFlats();
             //AnalizSectionsSteps();
@@ -30,20 +33,28 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             //BankSectionsStatisticsShortType();
             //StatisticsSectionsByFlatsCount();
             //StatisticCoefficientK1K2();            
-            GenerateImagesBankSection();
-            return;
+            //GenerateImagesBankSection();
+            //return;
 
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
             Debug.Listeners.Add(writer);
 
-            TestProjectScheme test = new TestProjectScheme();
-            test.TestTotalHouses();
+            TestProjectScheme Test = new TestProjectScheme();
+            Test.TestTotalHouses();
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
         }
 
-        private static void GenerateImagesBankSection ()
+        private static void TestMessage ()
+        {
+            AR_Zhuk_DataModel.Messages.Informer.AddMessage("sdfs sdfg sdfg dsfg sdfg sdfg sdfg dsfg fg sdfg dfsg sdfg dsfg dsfg fag sdfg dsafg dfsag dfsg sd dsgh ag afg sdfg dsfg sdfg sdfg");
+            AR_Zhuk_DataModel.Messages.Informer.AddMessage("sdfs sdfg sdfg dsfg sdfg sdfg sdfg dsfg fg sdfg dfsg sdfg dsfg dsfg fag sdfg dsafg dfsag dfsg sd dsgh ag afg sdfg dsfg sdfg sdfg");
+            AR_Zhuk_DataModel.Messages.Informer.AddMessage("sdfs sdfg sdfg dsfg sdfg sdfg sdfg dsfg fg sdfg dfsg sdfg dsfg dsfg fag sdfg dsafg dfsag dfsg sd dsgh ag afg sdfg dsfg sdfg sdfg");
+            AR_Zhuk_DataModel.Messages.Informer.Show();
+        }
+
+    private static void GenerateImagesBankSection ()
         {
             Console.WriteLine("GenerateImagesBankSection");
             DBService dbServ = new DBService(null);
@@ -54,8 +65,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             {
                 foreach (var sect in type.Value)
                 {
-                    var fi = GetSectinByDbFlats(sect, type.Key);                    
-                    var img = imgComb.GenerateImageOneSection(fi);
+                    var fi = GetSectinByDbFlats(sect, type.Key);
+                    string pathFlatsImg = Path.Combine(curDir, "00_PNG_ПИК1");
+                    var img = imgComb.GenerateImageOneSection(fi, pathFlatsImg);
                     string file = Path.Combine(curDir, $@"Секции\{(count++).ToString("000000")}_id-{fi.IdSection}_code-{fi.Code}_{type.Key.ToString()}.png");
                     Console.WriteLine(file);
                     img.Save(file, ImageFormat.Png);                    

@@ -170,9 +170,10 @@ namespace BeetlyVisualisation
             return bmpImageGO;
         }
 
-        public Bitmap GenerateImageOneSection(FlatInfo section)
+        public Bitmap GenerateImageOneSection(FlatInfo section, string pathFlatImages)
         {
-            var ExcelDataPath = @"z:\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
+            ImagePath = pathFlatImages;
+            var ExcelDataPath = @"БД_Параметрические данные квартир ПИК1.xlsx";
             Utils.AddRoomInfoForViz(section, ExcelDataPath);
             var res = GetImgSection(section);
             return res.BmpSection;

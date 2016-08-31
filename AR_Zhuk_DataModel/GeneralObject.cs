@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace AR_Zhuk_DataModel
         public string GUID { get; set; }
         public List<HouseInfo> Houses = new List<HouseInfo>();
         public SpotInfo SpotInf { get; set; }
+        public Bitmap Image { get; set; }
         public GeneralObject() { }
 
     }

@@ -58,13 +58,7 @@ namespace AR_Zhuk_Schema.Insolation
                 res.Add(s);
             }
             return res;
-        }
-
-        public string GetFlatsHash (FlatInfo flats)
-        {
-            var keyRoomsShortTypes = string.Join("_", flats.Flats.Select(f => f.ShortType).OrderBy(r => r));
-            return keyRoomsShortTypes;
-        }
+        }        
 
         public string GetFlatCode(FlatInfo flat)
         {

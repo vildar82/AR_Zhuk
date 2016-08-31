@@ -30,7 +30,6 @@ namespace AR_AreaZhuk
     {
         public MainForm()
         {
-
             InitializeComponent();
         }
         private bool isStop = false;
@@ -242,7 +241,6 @@ namespace AR_AreaZhuk
             return totalArea;
         }
 
-
         public bool SetIndexesSection(int[] indexes, int[] sizes, int index, List<HouseInfo> listSections)
         {
             if (index == 0)
@@ -276,7 +274,6 @@ namespace AR_AreaZhuk
             }
             return isContinue;
         }
-
 
         public void GetHousePercentage(ref HouseInfo houseInfo, SpotInfo sp1)
         {
@@ -323,8 +320,6 @@ namespace AR_AreaZhuk
             FormManager.ViewDataProcentage(dg2, ob, spotInfo);
             lblCountObjects.Text = ob.Count.ToString();
         }
-
-
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -389,12 +384,7 @@ namespace AR_AreaZhuk
             {
                 MessageBox.Show("Сумма указанных значений не равна 100!", "Ошибка!!!");
                 dg[2, dg.RowCount - 1].Style.BackColor = Color.Red;
-            }
-
-
-
-
-
+            }            
         }
 
         private void btnStartScan_Click(object sender, EventArgs e)
@@ -425,8 +415,10 @@ namespace AR_AreaZhuk
             SetInfoTotalSectionsCount(totalObject);
             isContinue = true;
             if (totalObject.Count == 0)
+            {
                 isContinue = false;
-            System.Diagnostics.Stopwatch sw = new Stopwatch();
+            }
+            Stopwatch sw = new Stopwatch();
             sw.Start();
             int counterGood = 0;
             int[] selectedHouse = new int[totalObject.Count];
@@ -457,7 +449,6 @@ namespace AR_AreaZhuk
                 //Обход сформированных секций с уникальными кодами на объект
                 while (isContinue2)
                 {
-
                     Application.DoEvents();
                     if (isStop)
                         break;
@@ -487,7 +478,7 @@ namespace AR_AreaZhuk
                         double arround = Math.Abs(percentage - rr.Percentage);
                         double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
                         if (arround < arround2 || rr.NearPercentage == 0)
-                            rr.NearPercentage = Math.Round(percentage, 0);
+                            rr.NearPercentage = Math.Round( percentage, 1);
                         // проверка процентажа квартиры
                         if (arround <= rr.OffSet)
                         {
@@ -506,7 +497,6 @@ namespace AR_AreaZhuk
                     //}
                     if (isValidPercentage)  //Процентаж прошел
                     {
-
                         counterGood++;
                         //сбор секций
                         for (int i = 0; i < sections.Count; i++)
@@ -653,6 +643,8 @@ namespace AR_AreaZhuk
             lblTotalCount.Text = ob.Count.ToString();
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
+            // Показать сообщения если они есть.
+            AR_Zhuk_DataModel.Messages.Informer.Show();
         }
 
         private List<HouseOptions> GetOptions ()
@@ -947,15 +939,17 @@ namespace AR_AreaZhuk
 
             GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
             if (go == null) return;
-            string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
+            if (go.Image != null)
+            {
+                string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
+                string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
 
-            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
-
-            BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
-            //Serializer ser = new Serializer();
-            //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
-            var im = imgComb.generateGeneralObject();
-            pb.Image = im;
+                BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
+                //Serializer ser = new Serializer();
+                //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
+                go.Image = imgComb.generateGeneralObject();
+            }
+            pb.Image = go.Image;
         }
 
         private void txtOffsetDominants_ValueChanged(object sender, EventArgs e)

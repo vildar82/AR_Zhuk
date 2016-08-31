@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,10 +89,8 @@ namespace BeetlyVisualisation
 
         public Bitmap Generate()
         {
-
             Bitmap table = drawResultTable();
             Bitmap legend = drawLegend();
-
 
             int width = this.Width * this.moduleWidth;
             int height = this.Height * this.moduleWidth;
@@ -105,15 +104,6 @@ namespace BeetlyVisualisation
 
             var bitmap = new Bitmap(width, height);
 
-
-
-
-
-
-
-
-
-
             using (var canvas = Graphics.FromImage(bitmap))
             {
                 canvas.Clear(Color.White);
@@ -121,9 +111,6 @@ namespace BeetlyVisualisation
 
 
                 DrawSpotInfo(canvas);
-
-
-
 
                 foreach (ImgHouse imgHouse in this.ImgHouses)
                 {
@@ -226,37 +213,24 @@ namespace BeetlyVisualisation
 
                                 // floorsTextY -= moduleWidth/2;
                             }
-
                         }
-
-
-
                         //floorsTextX *= moduleWidth;
                         //floorsTextY *= moduleWidth;
 
-
                         canvas.DrawString(floors, new Font("Tahoma", 40), Brushes.Black, floorsTextX, floorsTextY);
-
                     }
-
-
-
-
-
-
-
-
                 }
 
 #if (DEBUG)
-
                 DrawDebugInfo(canvas);
-
 #endif                
-
                 DrawGrid(canvas);
 
-                placeResultTable(canvas, table, (GOWidth + 3) * moduleWidth, moduleWidth);
+                // Наименование расчета - по имени файла инсоляции                                
+                string title = Path.GetFileNameWithoutExtension(Spotinfo.PathInsolation) + ", " + DateTime.Now;
+                canvas.DrawString(title, new Font("Tahoma", 40), Brushes.Black, (GOWidth + 3) * moduleWidth, 0);
+
+                placeResultTable(canvas, table, (GOWidth + 3) * moduleWidth, moduleWidth*2);
 
                 placeLegend(canvas, legend, (GOWidth + 3) * moduleWidth, moduleWidth * 18);
 
@@ -280,10 +254,6 @@ namespace BeetlyVisualisation
             {
                 DrawIns(canvas, 0, item[2], item[1], item[0]);
             }
-
-
-
-
         }
 
         /// <summary>
@@ -501,9 +471,6 @@ namespace BeetlyVisualisation
         private Bitmap drawResultTable()
         {
             List<int> ws = new List<int> { 0, 9, 5, 5, 5 };
-
-
-
 
             int[] rh = new int[] { 2, 1 };
 
