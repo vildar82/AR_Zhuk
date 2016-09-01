@@ -396,7 +396,7 @@ namespace AR_AreaZhuk
             SetInfoTotalSectionsCount(null);
 
             isEvent = false;
-            btnStartScan.Enabled = false;
+            //btnStartScan.Enabled = false;
             btnViewPercentsge.Enabled = true;
             Requirment requirment = new Requirment();
             FrameWork fw = new FrameWork();
@@ -405,6 +405,8 @@ namespace AR_AreaZhuk
             FormManager.GetSpotTaskFromDG(spotInfo, dg);//Условия квартирографии 
             Serializer s = new Serializer();
             s.SerializeSpoinfo(spotInfo);
+            // Сброс ближайшего процентажа
+            ResetNearPercentage();
             List<HouseOptions> options = GetOptions();
             ProjectScheme profectShema = new ProjectScheme(options, spotInfo);
             profectShema.ReadScheme(PathToFileInsolation);
@@ -428,17 +430,15 @@ namespace AR_AreaZhuk
                 if (isStop)
                     break;
                 List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
-                //Получение cекций из домов
+                //Получение cекций из домов                
                 if (GetHouseSections(selectedHouse, totalObject, sections)) continue;
-                if (!isContinue)
-                    break;
+                
                 int counter = 0;
                 //Группировка и сортировка секций
                 List<CodeSection> codeSections = GetSectionsByCode(sections, counter);
                 int[] selectedSectSize = new int[40];                                    //Выбранная размерность дома
                 int[] selectedSectCode = new int[40];                                    //Выбранный код секций
                 isContinue2 = true;
-
 
                 double totalCountFlats = 0;
                 //Общее кол-во квартир в объекте
@@ -467,13 +467,11 @@ namespace AR_AreaZhuk
                         for (int i = 0; i < codeSections.Count; i++)
                         {
                             countFlats += Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
-                                SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1); ;
-                            // Вильдар - 23.08.2016 по-моему тут была лишняя проверка - проверять процентаж не сложив сумму квартир по всем секциямс                            
+                                SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1);                         
                         }
                         //Процентаж определенного типа квартир в объекте
                         double percentage = countFlats * 100 / totalCountFlats;
-
-                        // Вильдар. 23.08.2016
+                        
                         // Ближайший процентаж квартиры - если текущий процент квартиры ближе к требуемому, то записываем его как ближайший
                         double arround = Math.Abs(percentage - rr.Percentage);
                         double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
@@ -508,7 +506,7 @@ namespace AR_AreaZhuk
                         List<HouseInfo> hoyses = new List<HouseInfo>();
                         int[] indexSelectedId = new int[listCodes.Count];
 
-                        isContinue = true;
+                        //isContinue = true;
                         int countSections = listCodes.Count - 1;
 
                         string[] strPercent = strP.Split(';');
@@ -558,13 +556,10 @@ namespace AR_AreaZhuk
                                     k2 += levelAreaOffLLU / levelAreaOnLLU;
                                     break;
                                 }
-
-
                                 countFlats += listCodes[j].CountFlats;
                             }
                             k1 = k1 / (countSections + 1);
                             k2 = k2 / (countSections + 1);
-
 
                             var objectByHouses =
                                 hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
@@ -599,7 +594,6 @@ namespace AR_AreaZhuk
                             if (maxArea < totalArea)
                                 maxArea = totalArea;
                             Application.DoEvents();
-
 
                             indexSelectedId[countSections]++;
                             if (listCodes[countSections].IdSections.Count <= indexSelectedId[countSections])
@@ -646,6 +640,8 @@ namespace AR_AreaZhuk
             // Показать сообщения если они есть.
             AR_Zhuk_DataModel.Messages.Informer.Show();
         }
+
+        
 
         private List<HouseOptions> GetOptions ()
         {
@@ -939,7 +935,7 @@ namespace AR_AreaZhuk
 
             GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
             if (go == null) return;
-            if (go.Image != null)
+            if (go.Image == null)
             {
                 string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
                 string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
@@ -1006,6 +1002,20 @@ namespace AR_AreaZhuk
             if (PathToFileInsolation == "")
                 btnStartScan.Enabled = false;
             else btnStartScan.Enabled = true;
+
+            labelInsolationFile.Links.Clear();
+            if (File.Exists(PathToFileInsolation))
+            {
+                labelInsolationFile.Text = Path.GetFileNameWithoutExtension(PathToFileInsolation);
+                LinkLabel.Link link = new LinkLabel.Link();
+                link.LinkData = PathToFileInsolation;
+                labelInsolationFile.Links.Add(link);
+                labelInsolationFile.LinkClicked += (o, l) => Process.Start(l.Link.LinkData as string);
+            }
+            else
+            {
+                labelInsolationFile.Text = "-";                
+            }                        
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -1110,6 +1120,14 @@ namespace AR_AreaZhuk
             {
                 MessageBox.Show("Не удалось загрузить результаты.\n\r" + ex.Message);
                 return;
+            }            
+        }
+
+        private void ResetNearPercentage ()
+        {
+            for (int i = 0; i < dg.Rows.Count; i++)
+            {
+                dg[5, i].Value = 0;
             }            
         }
     }

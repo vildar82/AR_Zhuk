@@ -106,6 +106,7 @@ namespace AR_AreaZhuk
             this.textBoxMaxCountHousesBySpot = new System.Windows.Forms.TextBox();
             this.textBoxMaxCountSectionsBySize = new System.Windows.Forms.TextBox();
             this.btnLoad = new System.Windows.Forms.Button();
+            this.labelInsolationFile = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -248,9 +249,9 @@ namespace AR_AreaZhuk
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.dg2);
-            this.groupBox2.Location = new System.Drawing.Point(416, 0);
+            this.groupBox2.Location = new System.Drawing.Point(416, 25);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(738, 782);
+            this.groupBox2.Size = new System.Drawing.Size(738, 757);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Подробная информация";
@@ -268,7 +269,7 @@ namespace AR_AreaZhuk
             this.dg2.Name = "dg2";
             this.dg2.ReadOnly = true;
             this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dg2.Size = new System.Drawing.Size(726, 757);
+            this.dg2.Size = new System.Drawing.Size(726, 732);
             this.dg2.TabIndex = 0;
             this.dg2.SortStringChanged += new System.EventHandler(this.dg2_SortStringChanged);
             this.dg2.FilterStringChanged += new System.EventHandler(this.dg2_FilterStringChanged);
@@ -795,7 +796,7 @@ namespace AR_AreaZhuk
             // 
             // labelCountSectionsTotal
             // 
-            this.labelCountSectionsTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelCountSectionsTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelCountSectionsTotal.AutoSize = true;
             this.labelCountSectionsTotal.Location = new System.Drawing.Point(875, 836);
             this.labelCountSectionsTotal.Name = "labelCountSectionsTotal";
@@ -838,12 +839,24 @@ namespace AR_AreaZhuk
             this.btnLoad.UseVisualStyleBackColor = true;
             this.btnLoad.Click += new System.EventHandler(this.btnLoad_Click);
             // 
+            // labelInsolationFile
+            // 
+            this.labelInsolationFile.AutoSize = true;
+            this.labelInsolationFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.labelInsolationFile.Location = new System.Drawing.Point(431, 6);
+            this.labelInsolationFile.Name = "labelInsolationFile";
+            this.labelInsolationFile.Size = new System.Drawing.Size(12, 16);
+            this.labelInsolationFile.TabIndex = 33;
+            this.labelInsolationFile.TabStop = true;
+            this.labelInsolationFile.Text = "-";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1158, 856);
+            this.Controls.Add(this.labelInsolationFile);
             this.Controls.Add(this.textBoxMaxCountSectionsBySize);
             this.Controls.Add(this.textBoxMaxCountHousesBySpot);
             this.Controls.Add(this.lblTime);
@@ -959,6 +972,7 @@ namespace AR_AreaZhuk
         private TextBox textBoxMaxCountHousesBySpot;
         private TextBox textBoxMaxCountSectionsBySize;
         private Button btnLoad;
+        private LinkLabel labelInsolationFile;
     }
 }
 
