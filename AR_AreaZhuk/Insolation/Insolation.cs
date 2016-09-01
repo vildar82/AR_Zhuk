@@ -42,7 +42,7 @@ namespace AR_AreaZhuk
 
 
         public Section GetInsulationSections(List<FlatInfo> sections, bool isRightOrTopLLu, bool isVertical, int indexRowStart,
-          int indexColumnStart, Insolation insulation, bool isCorner, int numberSection, SpotInfo sp)
+          int indexColumnStart, Insolation insulation, bool isCorner, int numberSection, ProjectInfo sp)
         {
             
             Section s = new Section();

@@ -71,7 +71,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 if (houseVar != null && houseVar.Count > 0)
                 {
                     HouseInfo hi = new HouseInfo();
-                    hi.SpotInf = ProjectScheme.SpotInfo;
+                    hi.SpotInf = ProjectScheme.ProjectInfo;
                     hi.SectionsBySize = houseVar;
 
                     resHouses.Add(hi);
@@ -282,8 +282,8 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                 types.Add(SectionCornerRightName);
             }
             List<string> levels = new List<string>();
-            levels.Add(GetSectionLevels(houseSpot.HouseOptions.CountFloorsMain));
-            levels.Add(GetSectionLevels(houseSpot.HouseOptions.CountFloorsDominant));
+            levels.Add(GetSectionLevels(houseSpot.CountFloorsMain));
+            levels.Add(GetSectionLevels(houseSpot.CountFloorsDominant));
 
             List<SelectSectionParam> selectSects = new List<SelectSectionParam>();
 
@@ -309,13 +309,13 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         private int GetSectionFloors(ref Section section,List<int> dominantsNumberSect)
         {            
-            int floors = houseSpot.HouseOptions.CountFloorsMain;
+            int floors = houseSpot.CountFloorsMain;
             if (!section.IsCorner)
             {
                 bool isDominant = dominantsNumberSect.Contains(section.NumberInSpot);
                 if (isDominant)
                 {
-                    floors = houseSpot.HouseOptions.CountFloorsDominant;
+                    floors = houseSpot.CountFloorsDominant;
                 }
                 section.IsDominant = isDominant;
             }
@@ -327,20 +327,20 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             List<int> dominantsNumSect = new List<int>();
             var sectNums = Enumerable.Range(1, sectionsInHouse);
             // Первая
-            if (houseSpot.HouseOptions.DominantPositions[0])            
+            if (houseSpot.SpotOptions.DominantPositions[0])            
                 dominantsNumSect.Add(1);
             // Вторая
-            if (houseSpot.HouseOptions.DominantPositions[1])
+            if (houseSpot.SpotOptions.DominantPositions[1])
                 dominantsNumSect.Add(2);
             // Третья
-            if (houseSpot.HouseOptions.DominantPositions[2])
+            if (houseSpot.SpotOptions.DominantPositions[2])
                 dominantsNumSect.Add(3);
             sectNums = sectNums.Reverse();
             // предпоследняя
-            if (houseSpot.HouseOptions.DominantPositions[3])
+            if (houseSpot.SpotOptions.DominantPositions[3])
                 dominantsNumSect.Add(sectNums.Skip(1).FirstOrDefault());
             // последняя
-            if (houseSpot.HouseOptions.DominantPositions[4])
+            if (houseSpot.SpotOptions.DominantPositions[4])
                 dominantsNumSect.Add(sectNums.First());
             return dominantsNumSect;
         }        
@@ -538,12 +538,12 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         {
             List<int> resSectSteps = new List<int>();
             // Если нет этажности больше 9 - то шаги от 6 до 11
-            if (houseSpot.HouseOptions.CountFloorsMain < 10 && 
-                !houseSpot.HouseOptions.DominantPositions.Any(d=>d))
+            if (houseSpot.CountFloorsMain < 10 && 
+                !houseSpot.SpotOptions.DominantPositions.Any(d=>d))
             {
                 resSectSteps.AddRange(Enumerable.Range(6, 6));
             }
-            else if (houseSpot.HouseOptions.CountFloorsMain > 9)
+            else if (houseSpot.CountFloorsMain > 9)
             {
                 resSectSteps.AddRange(Enumerable.Range(7, 8));
             }

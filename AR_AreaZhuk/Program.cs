@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AR_AreaZhuk.Model;
@@ -11,8 +13,6 @@ namespace AR_AreaZhuk
 {
     static class Program
     {
-
-
         private static List<RoomInfo> GetTopFlatsInSection(List<RoomInfo> section, bool isTop)
         {
             List<RoomInfo> topFlats = new List<RoomInfo>();
@@ -97,7 +97,7 @@ namespace AR_AreaZhuk
             }
             return r;
         }
-        public static SpotInfo spotInfo = new SpotInfo();
+        public static ProjectInfo spotInfo = new ProjectInfo();
 
         /// <summary>
         /// Главная точка входа для приложения.
@@ -108,6 +108,9 @@ namespace AR_AreaZhuk
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Application.ThreadException += Application_ThreadException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             //MainForm mf = new MainForm();
             //// MainForm mf = new MainForm();
             //Requirment requirment = new Requirment();
@@ -240,7 +243,7 @@ namespace AR_AreaZhuk
             //                            if (list.Count == 0)
             //                                break;
             //                            sectionsGood.Add(list[0]);
-                                 
+
             //                        }
             //                    }
             //                    if (sectionsGood.Count != i + 1)
@@ -294,7 +297,7 @@ namespace AR_AreaZhuk
             //                    List<HouseInfo> sectionInfos = new List<HouseInfo>();
             //                    foreach (var sectionGood in sectionsGood)
             //                    {
-                                   
+
 
 
             //                        isCorner = sectionGood.IsLeftBottomCorner | sectionGood.IsRightBottomCorner;
@@ -353,7 +356,7 @@ namespace AR_AreaZhuk
 
 
 
-                                
+
             //                    indexSelectedSection = new int[15];
             //                    while (isContinue2)
             //                    {
@@ -420,7 +423,49 @@ namespace AR_AreaZhuk
             //    totalObject.Add(housesTemp);
             //}
             //mf.GetAllSectionPercentage(totalObject, requirment);
-             Application.Run(new MainForm());
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch (Exception ex)
+            {
+                Error(ex);                
+            }             
         }
+
+        private static void CurrentDomain_UnhandledException (object sender, UnhandledExceptionEventArgs e)
+        {
+            Error((Exception)e.ExceptionObject);
+        }
+
+        private static void Application_ThreadException (object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            Error(e.Exception);
+        }
+
+        private static void Error (Exception ex)
+        {
+            if (MainForm.th != null && MainForm.th.ThreadState == System.Threading.ThreadState.Running)
+                MainForm.th.Abort();            
+            SendMail(ex);
+            MessageBox.Show("Ошибка в программе.\n\r" + ex.Message, "Жуки", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }        
+
+        public static void SendMail (Exception ex)
+        {
+            try
+            {
+                MailMessage mail = new MailMessage(Environment.UserName + "@pik.ru", "vildar82@gmail.com, inkinleo@gmail.com");
+                mail.Subject = "Жуки. Ошибка у " + Environment.UserName;
+                mail.Body = ex.ToString();
+                SmtpClient client = new SmtpClient();
+                client.Port = 25;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                client.Host = "ex20pik.picompany.ru";
+                client.Send(mail);
+            }
+            catch { }
+        }        
     }
 }

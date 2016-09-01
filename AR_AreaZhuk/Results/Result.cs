@@ -16,12 +16,12 @@ namespace AR_AreaZhuk.Results
         private BinaryReader reader;
         private Dictionary<string, PIK1.C_Flats_PIK1Row> dictDbFlats;
 
-        public void Save (List<GeneralObject> gos, SpotInfo sp, List<HouseOptions> options, int dominantOffSet)
+        public void Save (List<GeneralObject> gos, ProjectInfo pi)
         {
             if (gos == null || gos.Count == 0)
                 return;
             // файл для сохранения расчета
-            var fileResult = GetFileResult(sp);            
+            var fileResult = GetFileResult(pi);            
             if (string.IsNullOrEmpty(fileResult))
                 return;
             if (File.Exists(fileResult))
@@ -31,11 +31,10 @@ namespace AR_AreaZhuk.Results
             {
                 var entryGos = archive.CreateEntry("gos");                                
                 using (writer = new BinaryWriter(entryGos.Open()))
-                {
-                    WriteOptions(options);
-                    writer.Write(dominantOffSet);
-                    WriteSpotInfo(sp);
-                    WriteInsModules(sp.InsModulesAll);
+                {                    
+                    WriteProjectInfo(pi);
+                    WriteSpotOptions(pi.SpotOptions);
+                    WriteInsModules(pi.InsModulesAll);
                     writer.Write(gos.Count);
                     foreach (var go in gos)
                     {
@@ -46,17 +45,16 @@ namespace AR_AreaZhuk.Results
                             WriteSections(house.Sections);
                             //WriteSpotInfo(house.SpotInf);
                         }
-                        WriteSpotInfo(go.SpotInf);
+                        WriteProjectInfo(go.SpotInf);
                     }
                 }                
             }            
         }        
 
-        public List<GeneralObject> Load(PIK1.C_Flats_PIK1DataTable dbFlats, out SpotInfo sp, 
-            out List<HouseOptions> options, out int dominantOffSet)
+        public List<GeneralObject> Load(PIK1.C_Flats_PIK1DataTable dbFlats, out ProjectInfo pi)
         {            
             List<GeneralObject> gos = new List<GeneralObject>();
-            sp = null;
+            pi = null;
 
             dictDbFlats = new Dictionary<string, PIK1.C_Flats_PIK1Row>();
             foreach (var dbFlat in dbFlats)
@@ -74,10 +72,10 @@ namespace AR_AreaZhuk.Results
                 {
                     using (reader = new BinaryReader(stream))
                     {
-                        options = ReadOptions();
-                        dominantOffSet = reader.ReadInt32();
-                        sp = ReadSpotInfo();
-                        sp.InsModulesAll = ReadInsModules();
+                        pi = ReadProjectInfo();
+                        pi.SpotOptions = ReadSpotOptions();                                                
+                        pi.InsModulesAll = ReadInsModules();
+
                         var countGos = reader.ReadInt32();
                         for (int i=0; i<countGos; i++)
                         {
@@ -92,15 +90,15 @@ namespace AR_AreaZhuk.Results
                                 //hi.SpotInf = ReadSpotInfo();                                
                                 go.Houses.Add(hi);
                             }
-                            go.SpotInf = ReadSpotInfo();
-                            go.SpotInf.InsModulesAll = sp.InsModulesAll;
+                            go.SpotInf = ReadProjectInfo();
+                            go.SpotInf.InsModulesAll = pi.InsModulesAll;
                             gos.Add(go);
                         }
                     }
                 }
             }            
             return gos;
-        }
+        }       
 
         private string PromptFileResult ()
         {
@@ -120,7 +118,7 @@ namespace AR_AreaZhuk.Results
             return fileRes;
         }
 
-        private string GetFileResult (SpotInfo sp)
+        private string GetFileResult (ProjectInfo sp)
         {
             var schema = Path.GetFileNameWithoutExtension(sp.PathInsolation);
             string fileRes = "Жуки_Расчет_" + schema + DateTime.Now.ToString("dd.MM.yyyy HH.mm") + Extension;
@@ -136,42 +134,6 @@ namespace AR_AreaZhuk.Results
                 return saveFiledialog.FileName;
             }
             return null;
-        }
-
-        private void WriteOptions (List<HouseOptions> options)
-        {
-            writer.Write(options.Count);
-            foreach (var opt in options)
-            {
-                writer.Write(opt.CountFloorsDominant);
-                writer.Write(opt.CountFloorsMain);
-                writer.Write(opt.DominantPositions.Count);
-                foreach (var dom in opt.DominantPositions)
-                {
-                    writer.Write(dom);
-                }
-                writer.Write(opt.HouseName);
-            }
-        }
-        private List<HouseOptions> ReadOptions ()
-        {
-            List<HouseOptions> options = new List<HouseOptions>();
-            var count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
-            {
-                HouseOptions opt = new HouseOptions();
-                opt.CountFloorsDominant = reader.ReadInt32();
-                opt.CountFloorsMain = reader.ReadInt32();
-                var countDom = reader.ReadInt32();
-                opt.DominantPositions = new List<bool>();
-                for (int d = 0; d < countDom; d++)
-                {
-                    opt.DominantPositions.Add(reader.ReadBoolean());
-                }
-                opt.HouseName = reader.ReadString();
-                options.Add(opt);
-            }
-            return options;
         }
 
         private void WriteSections (List<FlatInfo> sections)
@@ -255,41 +217,83 @@ namespace AR_AreaZhuk.Results
             return flats;
         }
 
-        private void WriteSpotInfo (SpotInfo sp)
-        {            
-            writer.Write(sp.CountContainsSections);
-            writer.Write(sp.GUID?? "");
-            writer.Write(sp.K1);
-            writer.Write(sp.K2);
-            writer.Write(sp.LevelArea);
-            WriteRequirements(sp.requirments);
-            WriteCell(sp.Size);
-            writer.Write(sp.SpotArea);
-            writer.Write(sp.TotalArea);
-            writer.Write(sp.TotalFlats);
-            writer.Write(sp.TotalLiveArea);
-            writer.Write(sp.TotalSections);
-            writer.Write(sp.TotalStandartArea);
-            writer.Write(sp.TypicalSections ?? "");
+        private void WriteProjectInfo (ProjectInfo pi)
+        {   
+            writer.Write(pi.CountContainsSections);
+            writer.Write(pi.CountFloorsDominant);
+            writer.Write(pi.CountFloorsMain);
+            writer.Write(pi.DominantOffSet);
+            writer.Write(pi.IsEnabledDominant);
+            writer.Write(pi.IsRemainingDominants);
+            writer.Write(pi.GUID?? "");
+            writer.Write(pi.K1);
+            writer.Write(pi.K2);
+            writer.Write(pi.LevelArea);
+            WriteRequirements(pi.requirments);
+            WriteCell(pi.Size);
+            writer.Write(pi.SpotArea);
+            writer.Write(pi.TotalArea);
+            writer.Write(pi.TotalFlats);
+            writer.Write(pi.TotalLiveArea);
+            writer.Write(pi.TotalSections);
+            writer.Write(pi.TotalStandartArea);
+            writer.Write(pi.TypicalSections ?? "");
         }
-        private SpotInfo ReadSpotInfo ()
+        private ProjectInfo ReadProjectInfo ()
         {
-            var sp = new SpotInfo();
-            sp.CountContainsSections = reader.ReadInt32();
-            sp.GUID = reader.ReadString();
-            sp.K1 = reader.ReadDouble();
-            sp.K2 = reader.ReadDouble();            
-            sp.LevelArea = reader.ReadDouble();
-            sp.requirments = ReadRequirements();
-            sp.Size = ReadCell();
-            sp.SpotArea = reader.ReadDouble();
-            sp.TotalArea = reader.ReadDouble();
-            sp.TotalFlats = reader.ReadInt32();
-            sp.TotalLiveArea = reader.ReadDouble();
-            sp.TotalSections = reader.ReadInt32();
-            sp.TotalStandartArea = reader.ReadDouble();
-            sp.TypicalSections = reader.ReadString();
-            return sp;
+            var pi = new ProjectInfo();
+            pi.CountContainsSections = reader.ReadInt32();
+            pi.CountFloorsDominant=reader.ReadInt32();
+            pi.CountFloorsMain=reader.ReadInt32();
+            pi.DominantOffSet=reader.ReadInt32();
+            pi.IsEnabledDominant = reader.ReadBoolean();
+            pi.IsRemainingDominants = reader.ReadBoolean();            
+            pi.GUID = reader.ReadString();
+            pi.K1 = reader.ReadDouble();
+            pi.K2 = reader.ReadDouble();            
+            pi.LevelArea = reader.ReadDouble();
+            pi.requirments = ReadRequirements();
+            pi.Size = ReadCell();
+            pi.SpotArea = reader.ReadDouble();
+            pi.TotalArea = reader.ReadDouble();
+            pi.TotalFlats = reader.ReadInt32();
+            pi.TotalLiveArea = reader.ReadDouble();
+            pi.TotalSections = reader.ReadInt32();
+            pi.TotalStandartArea = reader.ReadDouble();
+            pi.TypicalSections = reader.ReadString();
+            return pi;
+        }
+        
+        private void WriteSpotOptions (List<SpotOption> spotOptions)
+        {
+            writer.Write(spotOptions.Count);
+            foreach (var opt in spotOptions)
+            {                
+                writer.Write(opt.DominantPositions.Count);
+                foreach (var dom in opt.DominantPositions)
+                {
+                    writer.Write(dom);
+                }
+                writer.Write(opt.Name);
+            }
+        }
+        private List<SpotOption> ReadSpotOptions ()
+        {
+            List<SpotOption> options = new List<SpotOption>();
+            var count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                SpotOption opt = new SpotOption();                
+                var countDom = reader.ReadInt32();
+                opt.DominantPositions = new List<bool>();
+                for (int d = 0; d < countDom; d++)
+                {
+                    opt.DominantPositions.Add(reader.ReadBoolean());
+                }
+                opt.Name = reader.ReadString();
+                options.Add(opt);
+            }
+            return options;
         }
 
         private void WriteRequirements (List<Requirment> requirements)

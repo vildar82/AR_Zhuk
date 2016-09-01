@@ -324,7 +324,7 @@ namespace AR_AreaZhuk
         public static void TestCreateImage(HouseInfo house)
         {
             GeneralObject go = new GeneralObject();
-            go.SpotInf = new SpotInfo();
+            go.SpotInf = new ProjectInfo();
             go.SpotInf.Size = new Cell(20,20);
             go.SpotInf.InsModulesAll = new List<Module>();
             //double area = GetTotalArea(house);            
@@ -362,11 +362,9 @@ namespace AR_AreaZhuk
             //  LogHouse(house, contFileString);
         }
 
-
-
-        public SpotInfo GetSpotInformation()
+        public ProjectInfo GetDefaultSpotInfo()
         {
-            SpotInfo spotInfo = new SpotInfo();
+            ProjectInfo spotInfo = new ProjectInfo();
             spotInfo.requirments.Add(new Requirment("Студия", 21, 25, 15, 15, 3, 0, 0, 1, "01"));
             spotInfo.requirments.Add(new Requirment("Студия", 33, 36, 8, 0, 8, 0, 0, 4, "01"));
             spotInfo.requirments.Add(new Requirment("Однокомн.", 33, 48, 17, 0, 4, 0, 0, 1, "1"));

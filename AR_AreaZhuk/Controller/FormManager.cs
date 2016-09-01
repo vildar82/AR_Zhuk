@@ -83,9 +83,9 @@ namespace AR_AreaZhuk
           }
       }
 
-      public static void GetSpotTaskFromDG(SpotInfo spotInfo, DataGridView dg)
+      public static List<Requirment> GetSpotTaskFromDG (DataGridView dg)
       {
-          spotInfo.requirments = new List<Requirment>();
+          var resReqs = new List<Requirment>();
          // bool isValid = true;
           for (int i = 0; i < dg.RowCount - 1; i++)
           {
@@ -112,11 +112,12 @@ namespace AR_AreaZhuk
               else if (r.SubZone.StartsWith("Ч"))
                   r.CodeZone = "4";
               r.NearPercentage = 0;
-              spotInfo.requirments.Add(r);
+                resReqs.Add(r);
           }
-        //  return isValid;
+            //  return isValid;
+            return resReqs;
       }
-      public static void ViewDataProcentage(DataGridView dg2,List<GeneralObject> ob,SpotInfo sp)
+      public static void ViewDataProcentage(DataGridView dg2,List<GeneralObject> ob,ProjectInfo sp)
       {
         //  if (spinfos.Count == 0) return;
           DataSet dataSet = new DataSet();

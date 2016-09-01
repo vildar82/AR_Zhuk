@@ -32,7 +32,7 @@ namespace AR_Zhuk_Schema.Scheme
         public string SpotName { get; private set; }
         public bool IsTower { get; private set; }
         public List<Segment> Segments = new List<Segment>();
-        public HouseOptions HouseOptions { get; set; }
+        public SpotOption SpotOptions { get; set; }
         /// <summary>
         /// Кол-во шагов в доме
         /// </summary>
@@ -42,9 +42,20 @@ namespace AR_Zhuk_Schema.Scheme
         /// </summary>
         public Side PriorityLluSide { get; internal set; }
 
+        /// <summary>
+        /// Основная этажность секций
+        /// </summary>
+        public int CountFloorsMain { get; set; }
+        /// <summary>
+        /// Этажность доминантных секций
+        /// </summary>
+        public int CountFloorsDominant { get; set; }
+
         public HouseSpot (string spotName, Cell cellStart, ISchemeParser parser)
         {
-            this.project = parser.Project;
+            project = parser.Project;
+            CountFloorsMain = ProjectScheme.ProjectInfo.CountFloorsMain;
+            CountFloorsDominant = ProjectScheme.ProjectInfo.CountFloorsDominant;
             SpotName = spotName;
             this.cellStart = cellStart;
             this.parser = parser;

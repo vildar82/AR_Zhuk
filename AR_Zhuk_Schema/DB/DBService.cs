@@ -82,9 +82,9 @@ namespace AR_Zhuk_Schema.DB
                         RoomInfo room = null;
                         if (f.SubZone != "0")
                         {
-                            for (int r = 0; r < ProjectScheme.SpotInfo.requirments.Count; r++)
+                            for (int r = 0; r < ProjectScheme.ProjectInfo.requirments.Count; r++)
                             {
-                                var req = ProjectScheme.SpotInfo.requirments[r];
+                                var req = ProjectScheme.ProjectInfo.requirments[r];
                                 if (req.CodeZone == f.SubZone &&
                                     f.AreaTotalStandart >= req.MinArea &&
                                     f.AreaTotalStandart < req.MaxArea)

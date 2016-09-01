@@ -52,12 +52,12 @@ namespace BeetlyVisualisation
 
         private List<Requirment> req;
 
-        private SpotInfo Spotinfo;
+        private ProjectInfo Spotinfo;
 
         private string imgPath;
 
 
-        public ImgGeneralObject(int ModuleWidth, SpotInfo spi, string imgPath)
+        public ImgGeneralObject(int ModuleWidth, ProjectInfo spi, string imgPath)
         {
             this.ImgHouses = new List<ImgHouse>();
 

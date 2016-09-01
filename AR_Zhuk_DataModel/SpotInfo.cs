@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AR_Zhuk_DataModel
 {
 
-    public class SpotInfo
+    public class ProjectInfo
     {
         public string PathInsolation { get; set; }
 
@@ -15,22 +15,25 @@ namespace AR_Zhuk_DataModel
         public string GUID { get; set; }
         public int TotalFlats { get; set; }
         public int TotalSections { get; set; }
-        public string TypicalSections { get; set; }
-
-        //Общая площадь с учетом ЛЛУ       
+        public string TypicalSections { get; set; }        
+        /// <summary>
+        /// Общая площадь с учетом ЛЛУ       
+        /// </summary>
         public double TotalStandartArea { get; set; }
         /// <summary>
-        //Общая площадь без учета ЛЛУ
+        /// Общая площадь без учета ЛЛУ
         /// </summary>
         public double TotalArea { get; set; }
         public double TotalLiveArea { get; set; }
         public double LevelArea { get; set; }
         public int CountContainsSections { get; set; }
-
-        //Коэф TotalStandartArea/S этажа
-        public double K1 { get; set; }
-
-        //Коэф TotalStandartArea/TotalArea
+        /// <summary>
+        /// Коэф TotalStandartArea/S этажа
+        /// </summary>
+        public double K1 { get; set; }        
+        /// <summary>
+        /// Коэф TotalStandartArea/TotalArea
+        /// </summary>
         public double K2 { get; set; }
         /// <summary>
         /// Размер объекта застройки
@@ -43,17 +46,30 @@ namespace AR_Zhuk_DataModel
         /// </summary>
         public List<Module> InsModulesAll { get; set; }
         public List<Requirment> requirments = new List<Requirment>();
+        public List<SpotOption> SpotOptions { get; set; }
+        public int DominantOffSet { get; set; }
+        public bool IsRemainingDominants { get; set; }
+        /// <summary>
+        /// Основная этажность секций
+        /// </summary>
+        public int CountFloorsMain { get; set; }
+        /// <summary>
+        /// Этажность доминантных секций
+        /// </summary>
+        public int CountFloorsDominant { get; set; }
+        public bool IsEnabledDominant { get; set; }
 
-        public SpotInfo CopySpotInfo(SpotInfo sp)
+        public ProjectInfo Copy()
         {
-            SpotInfo s = new SpotInfo();
-            foreach (var r in sp.requirments)
+            ProjectInfo s = (ProjectInfo)MemberwiseClone();
+            s.requirments = new List<Requirment>();
+            foreach (var r in requirments)
             {
-                s.requirments.Add(new Requirment(r.SubZone, r.MinArea, r.MaxArea, r.Percentage, r.MinCountFlat, r.MaxCountFlat, 0, 0, r.OffSet,r.CodeZone));
-            }
-            s.InsModulesAll = sp.InsModulesAll;
-            s.Size = sp.Size;
-            s.PathInsolation = sp.PathInsolation;
+                var newR = r.Clone();
+                newR.RealCountFlats = 0;
+                newR.RealPercentage = 0;
+                s.requirments.Add(newR);
+            }            
             return s;
         }
     }
@@ -68,13 +84,13 @@ namespace AR_Zhuk_DataModel
         public int MaxArea { get; set; }
         public int Percentage { get; set; }
         public double NearPercentage { get; set; }
-
-
         public double OffSet { get; set; }
         // public  List<RoomInfo> RoomsGeneral { get; set; }
         public int CountFlats { get; set; }
         public int MaxCountFlat { get; set; }
         public int MinCountFlat { get; set; }
+
+        public Requirment () { }
 
         public Requirment(string subZone, int minArea, int maxArea, int percentage, int minCountFlats, int maxCountFlats, int realCount, double realPercentage, double offset,string codeZone)
         {
@@ -89,25 +105,21 @@ namespace AR_Zhuk_DataModel
             this.RealPercentage = realPercentage;
             this.OffSet = offset;
             this.CodeZone = codeZone;
-
-
         }
-
-
 
         public List<Requirment> Copy(List<Requirment> reqTemp)
         {
             List<Requirment> reqs = new List<Requirment>();
             foreach (var r in reqTemp)
             {
-                reqs.Add(new Requirment(r.SubZone, r.MinArea, r.MaxArea, r.Percentage, r.MinCountFlat, r.MaxCountFlat, r.RealCountFlats, r.RealPercentage, r.OffSet,r.CodeZone));
+                reqs.Add(r.Clone());
             }
             return reqs;
         }
-
-        public Requirment()
+        
+        public Requirment Clone()
         {
+            return (Requirment)MemberwiseClone();
         }
-
     }
 }

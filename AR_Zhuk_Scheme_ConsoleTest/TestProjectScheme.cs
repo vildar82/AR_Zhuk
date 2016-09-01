@@ -18,18 +18,20 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
 
             // Исходнве данные
             string insolationFile = @"c:\work\test\АР\ЖУКИ\Саларьево 3 вар 2-Задание по инсоляции ПИК1.xlsx";                                
-            List<HouseOptions> options = new List<HouseOptions>() {
-                 new HouseOptions("P1", 15, 25, new List<bool> { false, false, false, false,  true}),
-                 new HouseOptions("P2", 15, 25, new List<bool> { true, false, false, false, false}),
-                 new HouseOptions("P3", 15, 25, new List<bool> { true, false, false, false, false}),
-                 new HouseOptions("P4", 15, 25, new List<bool> { true, false, false, false, false})
+            List<SpotOption> options = new List<SpotOption>() {
+                 new SpotOption("P1", new List<bool> { false, false, false, false,  true}),
+                 new SpotOption("P2", new List<bool> { true, false, false, false, false}),
+                 new SpotOption("P3", new List<bool> { true, false, false, false, false}),
+                 new SpotOption("P4", new List<bool> { true, false, false, false, false})
             };
-            SpotInfo sp = GetSpotInformation();
+            ProjectInfo sp = GetSpotInformation();
+            sp.CountFloorsMain = 15;
+            sp.CountFloorsDominant = 25;            
 
             // схема проекта
-            ProjectScheme projectSpot = new ProjectScheme(options, sp);
+            ProjectScheme projectSpot = new ProjectScheme(sp);
             // Чтение файла схемы объекта
-            projectSpot.ReadScheme(insolationFile);
+            projectSpot.ReadScheme();
 
             // Получение всех домов
             Stopwatch timer = new Stopwatch();
@@ -46,9 +48,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             testCreateHouse.TestCreateImage(totalHouses);//, new List<List<int>> { new List<int> { 9,14,9,12 } });
         }
 
-        public static SpotInfo GetSpotInformation ()
+        public static ProjectInfo GetSpotInformation ()
         {
-            SpotInfo spotInfo = new SpotInfo();
+            ProjectInfo spotInfo = new ProjectInfo();
             spotInfo.requirments.Add(new Requirment("Студия", 21, 40, 10, 0, 0, 0, 0, 3, "01"));
             //spotInfo.requirments.Add(new Requirment("Студия", 33, 35, 8, 0, 8, 0, 0, 4, "01"));
             spotInfo.requirments.Add(new Requirment("Однокомн.", 30, 50, 30, 0, 0, 0, 0, 3, "1"));

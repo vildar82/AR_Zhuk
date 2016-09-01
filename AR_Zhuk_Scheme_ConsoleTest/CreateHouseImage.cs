@@ -175,9 +175,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             //LogHouse(house, contFileString);
         }
 
-        private SpotInfo CalcSP (List<HouseInfo> houses)
+        private ProjectInfo CalcSP (List<HouseInfo> houses)
         {
-            var sp = houses[0].SpotInf.CopySpotInfo(houses[0].SpotInf);
+            var sp = houses[0].SpotInf.Copy();
             sp.TotalFlats = houses.Sum(h => h.Sections.Sum(s => s.Flats.Count * (s.Floors-1)));
 
             for (int i = 0; i < sp.requirments.Count; i++)

@@ -24,7 +24,7 @@ namespace AR_AreaZhuk
     public class Serializer
     {
 
-        public void SerializeSpoinfo(SpotInfo sp)
+        public void SerializeSpoinfo(ProjectInfo sp)
         {
             string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Zhuk_Config.cfg";
            
@@ -35,34 +35,25 @@ namespace AR_AreaZhuk
             }
         }
 
-        public SpotInfo GetLastSpot()
+        public ProjectInfo LoadSpotInfoFromFile()
         {
-
-            SpotInfo sp = new SpotInfo();
+            ProjectInfo sp = new ProjectInfo();
             string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Zhuk_Config.cfg";
             if (!File.Exists(path))
-                return new SpotInfo();
+                return null;
             try
             {
                 XmlSerializer ser = new XmlSerializer(sp.GetType());
                 using (XmlReader reader = XmlReader.Create(path))
                 {
-                    try
-                    {
-                        sp = (SpotInfo)ser.Deserialize(reader);
-                    }
-                    catch
-                    {
-                    }
+                    sp = (ProjectInfo)ser.Deserialize(reader);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-
                 //  MessageBox.Show(ex.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                sp = null;
             }
-
-
             return sp;
         }
         public void SerializeList(GeneralObject go,string mark)

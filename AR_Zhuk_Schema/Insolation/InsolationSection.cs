@@ -69,7 +69,7 @@ namespace AR_Zhuk_Schema.Insolation
                 var dictCountFlatByReq = flat.Flats.Where(r=>r.SubZone!="0").
                         GroupBy(g => g.CodeReqIndex).ToDictionary(k => k.Key, v => v.Count());
 
-                for (int i = 0; i < ProjectScheme.SpotInfo.requirments.Count; i++)
+                for (int i = 0; i < ProjectScheme.ProjectInfo.requirments.Count; i++)
                 {
                     int count = 0;
                     dictCountFlatByReq.TryGetValue(i, out count);

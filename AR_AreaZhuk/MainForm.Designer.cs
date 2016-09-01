@@ -61,7 +61,7 @@ namespace AR_AreaZhuk
             this.dg2 = new Zuby.ADGV.AdvancedDataGridView();
             this.btnStartScan = new System.Windows.Forms.Button();
             this.lblCountObjects = new System.Windows.Forms.Label();
-            this.chkDominant = new System.Windows.Forms.CheckBox();
+            this.chkDominantOffset = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -216,7 +216,7 @@ namespace AR_AreaZhuk
             this.btnViewPercentsge.Text = "Показать";
             this.btnViewPercentsge.UseVisualStyleBackColor = true;
             this.btnViewPercentsge.Visible = false;
-            this.btnViewPercentsge.Click += new System.EventHandler(this.button1_Click);
+            this.btnViewPercentsge.Click += new System.EventHandler(this.btnViewPercentsge_Click);
             // 
             // label3
             // 
@@ -300,23 +300,23 @@ namespace AR_AreaZhuk
             this.lblCountObjects.TabIndex = 14;
             this.lblCountObjects.Text = "0";
             // 
-            // chkDominant
+            // chkDominantOffset
             // 
-            this.chkDominant.AutoSize = true;
-            this.chkDominant.Location = new System.Drawing.Point(267, 11);
-            this.chkDominant.Name = "chkDominant";
-            this.chkDominant.Size = new System.Drawing.Size(128, 30);
-            this.chkDominant.TabIndex = 2;
-            this.chkDominant.Text = "Разность шагов \r\nвысотных доминант";
-            this.chkDominant.UseVisualStyleBackColor = true;
-            this.chkDominant.CheckedChanged += new System.EventHandler(this.chkDominant_CheckedChanged);
+            this.chkDominantOffset.AutoSize = true;
+            this.chkDominantOffset.Location = new System.Drawing.Point(267, 11);
+            this.chkDominantOffset.Name = "chkDominantOffset";
+            this.chkDominantOffset.Size = new System.Drawing.Size(128, 30);
+            this.chkDominantOffset.TabIndex = 2;
+            this.chkDominantOffset.Text = "Разность шагов \r\nвысотных доминант";
+            this.chkDominantOffset.UseVisualStyleBackColor = true;
+            this.chkDominantOffset.CheckedChanged += new System.EventHandler(this.chkDominantOffset_CheckedChanged);
             // 
             // groupBox3
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Controls.Add(this.txtOffsetDominants);
-            this.groupBox3.Controls.Add(this.chkDominant);
+            this.groupBox3.Controls.Add(this.chkDominantOffset);
             this.groupBox3.Controls.Add(this.groupBox4);
             this.groupBox3.Controls.Add(this.btnViewPercentsge);
             this.groupBox3.Location = new System.Drawing.Point(3, 1);
@@ -920,7 +920,7 @@ namespace AR_AreaZhuk
         private System.Windows.Forms.Button btnStartScan;
         private Label lblCountObjects;
       //  private AdvancedDataGridView dg2;
-        private CheckBox chkDominant;
+        private CheckBox chkDominantOffset;
         private GroupBox groupBox3;
         private GroupBox groupBox4;
         private Label label1;

@@ -9,29 +9,19 @@ namespace AR_Zhuk_DataModel
     /// <summary>
     /// Параметры дома
     /// </summary>
-    public class HouseOptions
+    public class SpotOption
     {
-        public string HouseName { get; set; }
-        /// <summary>
-        /// Основная этажность секций
-        /// </summary>
-        public int CountFloorsMain { get; set; }
-        /// <summary>
-        /// Этажность доминантных секций
-        /// </summary>
-        public int CountFloorsDominant { get; set; }
+        public string Name { get; set; }        
         /// <summary>
         /// Позиции доминантных секций - 1,2,3, предпоследняя, последняя
         /// </summary>
         public List<bool> DominantPositions { get; set; }
 
-        public HouseOptions(string houseName, int floorsMain, int floorsDominant, List<bool> dominantPos)
+        public SpotOption(string houseName, List<bool> dominantPos)
         {
-            HouseName = houseName;
-            CountFloorsMain = floorsMain;
-            CountFloorsDominant = floorsDominant;
+            Name = houseName;            
             DominantPositions = dominantPos;
         }
-        public HouseOptions () { }
+        public SpotOption () { }
     }
 }

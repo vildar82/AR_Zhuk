@@ -16,8 +16,8 @@ namespace AR_Zhuk_Schema
     /// </summary>
     public class ProjectScheme
     {
-        private List<HouseOptions> houseOptions;
-        public static SpotInfo SpotInfo { get; private set; }
+        private List<SpotOption> spotOptions;
+        public static ProjectInfo ProjectInfo { get; private set; }
         public static int MaxSectionBySize { get; private set; }
         public static int MaxHousesBySpot { get; private set; }
 
@@ -28,40 +28,39 @@ namespace AR_Zhuk_Schema
         /// </summary>
         public List<HouseSpot> HouseSpots { get; private set; }        
 
-        public ProjectScheme (List<HouseOptions> houseOptions, SpotInfo sp)
+        public ProjectScheme (ProjectInfo sp)
         {
-            this.houseOptions = houseOptions;
-            SpotInfo = sp;
+            this.spotOptions = sp.SpotOptions;
+            ProjectInfo = sp;
         }
 
         /// <summary>
         /// Чтенее файла схемы инсоляции и определение пятен домов
-        /// </summary>
-        /// <param name="schemeFile">Excel файл схемы объекта застройки и инсоляции</param>
+        /// </summary>        
         /// <exception cref="Exception">Недопустимое имя пятна дома.</exception>
-        public void ReadScheme (string schemeFile)
+        public void ReadScheme ()
         {
             // Чтение матрицы ячеек первого листа в Excel файле
             ISchemeParser parserExcel = new ParserExcel(this);
-            parserExcel.Parse(schemeFile);
+            parserExcel.Parse(ProjectInfo.PathInsolation);
             HouseSpots = parserExcel.HouseSpots;
 
             // Размер застройки
             var bounds = tree.getBounds();
-            SpotInfo.Size = new Cell(Convert.ToInt32(bounds.max[1]) + 1, Convert.ToInt32(bounds.max[0]) + 1);
+            ProjectInfo.Size = new Cell(Convert.ToInt32(bounds.max[1]) + 1, Convert.ToInt32(bounds.max[0]) + 1);
 
             // Инсоляция - все ячейки            
             List<Module> insModulesAll = new List<Module>();
 
             foreach (var houseSpot in HouseSpots)
             {
-                var houseOpt = houseOptions.Find(o => o.HouseName == houseSpot.SpotName);
+                var houseOpt = spotOptions.Find(o => o.Name == houseSpot.SpotName);
                 if (houseOpt == null)
                 {
-                    string allowedHouseNames = string.Join(",", houseOptions.Select(h => h.HouseName));
+                    string allowedHouseNames = string.Join(",", spotOptions.Select(h => h.Name));
                     throw new Exception("Имя пятна дома определенное в файле инсоляции - '" + houseSpot.SpotName + "' не соответствует одному из допустимых значений: " + allowedHouseNames);
                 }
-                houseSpot.HouseOptions = houseOpt;
+                houseSpot.SpotOptions = houseOpt;
 
                 // добавление ячеек инсоляции
                 foreach (var segment in houseSpot.Segments)
@@ -74,11 +73,11 @@ namespace AR_Zhuk_Schema
                         insModulesAll.AddRange(segment.ModulesSideStart);
                 }
                 // Определение приоритетной стороны для ЛЛУ в доме
-                houseSpot.PriorityLluSide = houseSpot.Segments.First().DefineLluPriority(SpotInfo.Size);
+                houseSpot.PriorityLluSide = houseSpot.Segments.First().DefineLluPriority(ProjectInfo.Size);
             }
 
             // Инсоляция - все ячейки            
-            SpotInfo.InsModulesAll = insModulesAll;                        
+            ProjectInfo.InsModulesAll = insModulesAll;                        
         }        
 
         /// <summary>
