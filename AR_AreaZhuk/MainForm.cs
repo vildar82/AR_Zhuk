@@ -953,7 +953,6 @@ namespace AR_AreaZhuk
             DominantOffSet = Convert.ToInt16(txtOffsetDominants.Value);
         }
 
-
         private void btnMenuGroup1_Click_1(object sender, EventArgs e)
         {
             FormManager.Panel_Show(pnlMenuGroup1, btnMenuGroup1, 25, 315);
