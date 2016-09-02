@@ -1041,36 +1041,36 @@ namespace AR_AreaZhuk
             return spotInfo;
         }
 
-        private void FillSpotInfoControls (ProjectInfo sp)
+        private void FillSpotInfoControls (ProjectInfo pi)
         {
             // Файл инсоляции
-            SetLinkFileInsolation(sp.PathInsolation);
+            SetLinkFileInsolation(pi.PathInsolation);
 
             //
             // Квартирография
             //
-            FillDgReq(sp);
+            FillDgReq(pi);
             FillDgReqsTotal();
 
             //
             // Условия
             //
             // Пятна
-            FillSpotControls(sp.SpotOptions);
+            FillSpotControls(pi.SpotOptions);
             // Разность доминант            
-            if (sp.DominantOffSet != 0)
+            if (pi.DominantOffSet != 0)
             {
-                chkDominantOffset.Checked = true;
-                txtOffsetDominants.Text = sp.DominantOffSet.ToString();
+                txtOffsetDominants.Value = pi.DominantOffSet;
+                chkDominantOffset.Checked = true;                
             }
             else
             {
                 chkDominantOffset.Checked = false;
             }
             // Этажночсти
-            numMainCountFloor.Value = sp.CountFloorsMain;
-            numDomCountFloor.Value = sp.CountFloorsDominant;
-            chkEnableDominant.Checked = sp.CountFloorsDominant != sp.CountFloorsMain;            
+            numMainCountFloor.Value = pi.CountFloorsMain;
+            numDomCountFloor.Value = pi.CountFloorsDominant;
+            chkEnableDominant.Checked = pi.CountFloorsDominant != pi.CountFloorsMain;            
         }
 
         private void FillDgReq (ProjectInfo sp)
