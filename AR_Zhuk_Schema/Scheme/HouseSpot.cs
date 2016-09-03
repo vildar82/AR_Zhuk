@@ -55,7 +55,14 @@ namespace AR_Zhuk_Schema.Scheme
         {
             project = parser.Project;
             CountFloorsMain = ProjectScheme.ProjectInfo.CountFloorsMain;
-            CountFloorsDominant = ProjectScheme.ProjectInfo.CountFloorsDominant;
+            if (ProjectScheme.ProjectInfo.IsEnabledDominant)
+            {
+                CountFloorsDominant = ProjectScheme.ProjectInfo.CountFloorsDominant;
+            }
+            else
+            {
+                CountFloorsDominant = CountFloorsMain;
+            }
             SpotName = spotName;
             this.cellStart = cellStart;
             this.parser = parser;

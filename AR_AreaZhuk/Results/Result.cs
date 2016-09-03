@@ -224,7 +224,7 @@ namespace AR_AreaZhuk.Results
             writer.Write(pi.CountFloorsMain);
             writer.Write(pi.DominantOffSet);
             writer.Write(pi.IsEnabledDominant);
-            writer.Write(pi.IsRemainingDominants);
+            writer.Write(pi.IsEnableDominantsOffset);
             writer.Write(pi.GUID?? "");
             writer.Write(pi.K1);
             writer.Write(pi.K2);
@@ -247,7 +247,7 @@ namespace AR_AreaZhuk.Results
             pi.CountFloorsMain=reader.ReadInt32();
             pi.DominantOffSet=reader.ReadInt32();
             pi.IsEnabledDominant = reader.ReadBoolean();
-            pi.IsRemainingDominants = reader.ReadBoolean();            
+            pi.IsEnableDominantsOffset = reader.ReadBoolean();            
             pi.GUID = reader.ReadString();
             pi.K1 = reader.ReadDouble();
             pi.K2 = reader.ReadDouble();            

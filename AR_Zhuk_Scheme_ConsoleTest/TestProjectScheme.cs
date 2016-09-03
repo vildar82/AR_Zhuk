@@ -26,7 +26,8 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             };
             ProjectInfo sp = GetSpotInformation();
             sp.CountFloorsMain = 15;
-            sp.CountFloorsDominant = 25;            
+            sp.CountFloorsDominant = 25;
+            sp.PathInsolation = insolationFile;
 
             // схема проекта
             ProjectScheme projectSpot = new ProjectScheme(sp);

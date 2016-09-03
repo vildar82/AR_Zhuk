@@ -3,11 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AR_Zhuk_DataModel.Messages.Windows"
+        xmlns:local="clr-namespace:AR_Zhuk_DataModel.Messages.Windows"        
+        xmlns:self="clr-namespace:AR_Zhuk_DataModel.Properties"        
         mc:Ignorable="d"
         x:ClassModifier="internal"
         Title="Информация" 
-        Icon="beetles.ico" Topmost="True" WindowStartupLocation="CenterOwner">
+        Icon="beetles.ico" Topmost="True" ShowInTaskbar="False"        
+        Closing="Window_Closing">    
     <Grid>
         <ListBox ItemsSource="{Binding Messages}" FontSize="16" 
                  HorizontalContentAlignment="Stretch"

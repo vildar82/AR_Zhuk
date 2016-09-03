@@ -15,7 +15,6 @@ using System.Drawing.Imaging;
 using AR_Zhuk_Schema;
 using AR_AreaZhuk.Controller;
 
-
 namespace AR_AreaZhuk
 {
     public partial class MainForm : Form
@@ -26,13 +25,11 @@ namespace AR_AreaZhuk
         public PIK1.C_Flats_PIK1_AreasDataTable flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
         public PIK1.C_Flats_PIK1DataTable dbFlats = new PIK1.C_Flats_PIK1DataTable();
         BindingSource bs = new BindingSource();
-        public static List<ProjectInfo> spinfos = new List<ProjectInfo>();        
-        public static bool isContinue = true;
-        public static bool isContinue2 = true;
+        public static List<ProjectInfo> spinfos = new List<ProjectInfo>();                        
         public static ProjectInfo projectInfo;
         public static List<List<HouseInfo>> houses = new List<List<HouseInfo>>();
-        public static List<GeneralObject> ob = new List<GeneralObject>();        
-
+        public static List<GeneralObject> ob = new List<GeneralObject>();
+        double maxArea = 0;
         public MainForm()
         {
             InitializeComponent();
@@ -56,7 +53,7 @@ namespace AR_AreaZhuk
         {
             // Экспорт в базу, если нужно что-то конкретное залить в базу            
             //Export();
-            
+
             // Если нужно обновить базу квартир
             //if (Environment.UserName.Equals("khisyametdinovvt") | Environment.UserName.Equals("ostaninam") | Environment.UserName.Equals("inkinli"))
             //{
@@ -64,11 +61,11 @@ namespace AR_AreaZhuk
             //    chkUpdateSections.Visible = true;
             //}
 
-            // Загрузка spotInfo
+            // Загрузка projectInfo - из конфига, или дефолт
             projectInfo = LoadSpotInfo();
             // Заполнение контролов настройками spotInfo
             FillSpotInfoControls(projectInfo);
-                        
+            // ??                        
             isEvent = true;
         }
 
@@ -168,7 +165,6 @@ namespace AR_AreaZhuk
                 ob.Add(go);
             }
             //}
-
         }
 
         private double GetTotalArea(HouseInfo house1)
@@ -194,41 +190,7 @@ namespace AR_AreaZhuk
                 section.Area = sectionArea;
             }
             return totalArea;
-        }
-
-        public bool SetIndexesSection(int[] indexes, int[] sizes, int index, List<HouseInfo> listSections)
-        {
-            if (index == 0)
-            {
-                isContinue2 = false;
-                return false;
-            }
-            indexes[index] = 0;
-            indexes[index - 1]++;
-
-            if (indexes[index - 1] >= listSections[index - 1].Sections.Count)
-            {
-                SetIndexesSection(indexes, sizes, index - 1, listSections);
-            }
-            return true;
-        }
-
-        public bool SetIndexesSize(int[] indexes, int index, int[] masSizes)//List<HouseInfo> listSections)
-        {
-            if (index == 0)
-            {
-                isContinue = false;
-                return false;
-            }
-            indexes[index] = 0;
-            indexes[index - 1]++;
-
-            if (indexes[index - 1] >= masSizes.Length)
-            {
-                SetIndexesSize(indexes, index - 1, masSizes);
-            }
-            return isContinue;
-        }
+        }        
 
         public void GetHousePercentage(ref HouseInfo houseInfo)
         {
@@ -275,6 +237,9 @@ namespace AR_AreaZhuk
             lblCountObjects.Text = ob.Count.ToString();
         }
 
+        /// <summary>
+        /// Сохранение результатов расчета в файл
+        /// </summary>        
         private void btnSave_Click(object sender, EventArgs e)
         {
             //List<string> guids = (from DataGridViewRow row in dg2.SelectedRows select dg2[dg2.Columns.Count - 1, row.Index].Value.ToString()).ToList();
@@ -343,7 +308,7 @@ namespace AR_AreaZhuk
         private void btnStartScan_Click(object sender, EventArgs e)
         {
             isStop = false;
-            double maxArea = 0;
+            maxArea = 0;
             ob = new List<GeneralObject>();
             lblCountObjects.Text = ob.Count.ToString();
             // Обнулить Label кол.секци.
@@ -354,11 +319,13 @@ namespace AR_AreaZhuk
             btnViewPercentsge.Enabled = true;
 
             // считывание настоек из контролов            
-            projectInfo = GetProjectInfoFromControls();
-            
+            projectInfo = GetProjectInfoFromControls();            
             // сохранение настроек            
             Serializer s = new Serializer();
             s.SerializeSpoinfo(projectInfo);
+
+            // Сортировка требований квартирографии для расчета (начиная с минимально процентажа)            
+            projectInfo.SortRequirmentsForCalculate();
 
             // Сброс ближайшего процентажа
             ResetNearPercentage();
@@ -367,212 +334,119 @@ namespace AR_AreaZhuk
             profectShema.ReadScheme();
             th = new Thread(ViewProgress);
             th.Start();
+
             List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(
-                int.Parse(textBoxMaxCountSectionsBySize.Text), int.Parse(textBoxMaxCountHousesBySpot.Text));            
+                int.Parse(textBoxMaxCountSectionsBySize.Text), int.Parse(textBoxMaxCountHousesBySpot.Text));
+
+            Debug.WriteLine("Кол секций по totalObject = " + totalObject.Sum(t => t.Sum(c => c.SectionsBySize.Sum(f => f.Sections.Count))));
+
             SetInfoTotalSectionsCount(totalObject);
-            isContinue = true;
+            
             if (totalObject.Count == 0)
             {
-                isContinue = false;
+                isStop = true;
             }
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            int counterGood = 0;
+            
             int[] selectedHouse = new int[totalObject.Count];
             int[] nearReqPercentage = new int[projectInfo.requirments.Count];
-            while (isContinue)
+
+            // Перебор вариантов домов
+            do
             {
                 if (isStop)
                     break;
-                List<List<FlatInfo>> sections = new List<List<FlatInfo>>();
-                //Получение cекций из домов                
-                if (GetHouseSections(selectedHouse, totalObject, sections)) continue;
-                
-                int counter = 0;
-                //Группировка и сортировка секций
-                List<CodeSection> codeSections = GetSectionsByCode(sections, counter);
-                int[] selectedSectSize = new int[40];                                    //Выбранная размерность дома
-                int[] selectedSectCode = new int[40];                                    //Выбранный код секций
-                isContinue2 = true;
 
-                double totalCountFlats = 0;
-                //Общее кол-во квартир в объекте
-                for (int i = 0; i < sections.Count; i++)
-                {
-                    totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
-                }
+                Debug.WriteLine("Вариант дома = " + selectedHouse.Aggregate(string.Empty, (u, i) => u + i.ToString()));
+
+                List<List<FlatInfo>> sections;
+                //Получение cекций из домов                
+                if (!GetHouseSections(selectedHouse, totalObject,out sections))
+                    continue;
+
+                Debug.WriteLine("Размерность секций sections = " + sections.Aggregate(string.Empty, (u, i) => u + "." + i.Count.ToString()));
+
+                //Группировка и сортировка секций
+                List<CodeSection> codeSections = GetSectionsByCode(sections);
+
+                Debug.WriteLine("Размерность секций по кол. квартир = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + i.SectionsByCountFlats.Count));
+                Debug.WriteLine("Размерность секций по кол. кодов = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + "[" + i.SectionsByCountFlats.Aggregate(string.Empty, (n, j) => n + "." + j.SectionsByCode.Count) + "]"));
+
+                int[] selectedSectByCountFlats = new int[codeSections.Count]; //Выбранная размерность секции по кол-ву квартир
+                int[] selectedSectCode = new int[codeSections.Count]; //Выбранный код секций                
+                                
                 //Обход сформированных секций с уникальными кодами на объект
-                while (isContinue2)
+                // Перебор размерностей дома (selectedSectByCountFlats)
+                do
                 {
-                    Application.DoEvents();
                     if (isStop)
                         break;
-                    List<Code> listCodes = new List<Code>();
-                    if (codeSections[0].SectionsByCountFlats.Count == selectedSectSize[0]) //Последний рассматриваемый вариант
+                    int totalCountFlats = 0;
+                    //Общее кол-во квартир в размерности
+                    for (int i = 0; i < sections.Count; i++)
                     {
-                        isContinue2 = false;
-                        break;
+                        totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].CountFlats;
                     }
-                    bool isValidPercentage = true;
-                    string strP = "";
-                    for (int q = 0; q < projectInfo.requirments.Count; q++)
-                    {
-                        var rr = projectInfo.requirments[q];
-                        int countFlats = 0;
-                        for (int i = 0; i < codeSections.Count; i++)
-                        {
-                            countFlats += Convert.ToInt16(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].
-                                SectionsByCode[selectedSectCode[i]].CodeStr[q].ToString()) * (codeSections[i].CountFloors - 1);                         
-                        }
-                        //Процентаж определенного типа квартир в объекте
-                        double percentage = countFlats * 100 / totalCountFlats;
-                        
-                        // Ближайший процентаж квартиры - если текущий процент квартиры ближе к требуемому, то записываем его как ближайший
-                        double arround = Math.Abs(percentage - rr.Percentage);
-                        double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
-                        if (arround < arround2 || rr.NearPercentage == 0)
-                            rr.NearPercentage = Math.Round( percentage, 1);
-                        // проверка процентажа квартиры
-                        if (arround <= rr.OffSet)
-                        {
-                            isValidPercentage = true;
-                            strP += (Math.Round(percentage, 0)).ToString() + ";";
-                        }
-                        else
-                        {
-                            isValidPercentage = false;
+
+                    // Перебор кодов секций (в заданной размерности) - selectedSectCode
+                    do
+                    {                        
+                        Debug.WriteLine("\n\rselectedSectSize = " + selectedSectByCountFlats.Aggregate(string.Empty,
+                            (u, i) => u + "." + i.ToString()));
+                        Debug.WriteLine("selectedSectCode = " + selectedSectCode.Aggregate(string.Empty,
+                            (u, i) => u + "." + i.ToString()));
+
+                        Application.DoEvents();
+                        if (isStop)
                             break;
-                        }
-                    }
-                    //if (counterGood > 500)
-                    //{
-                    //    break;
-                    //}
-                    if (isValidPercentage)  //Процентаж прошел
-                    {
-                        counterGood++;
-                        //сбор секций
-                        for (int i = 0; i < sections.Count; i++)
-                            listCodes.Add(codeSections[i].SectionsByCountFlats[selectedSectSize[i]].SectionsByCode[selectedSectCode[i]]);
-
-                        //сортровка по пятнам и очередности расположения
-                        listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
-
-                        List<HouseInfo> hoyses = new List<HouseInfo>();
-                        int[] indexSelectedId = new int[listCodes.Count];
-
-                        //isContinue = true;
-                        int countSections = listCodes.Count - 1;
-
-                        string[] strPercent = strP.Split(';');
-                        while (true)
+                        bool isValidPercentage = true;
+                        string strP = string.Empty;
+                        for (int q = 0; q < projectInfo.requirments.Count; q++)
                         {
-                            GeneralObject go = new GeneralObject();
-                            HouseInfo hi1 = new HouseInfo();
-                            hi1.Sections = new List<FlatInfo>();
+                            var rr = projectInfo.requirments[q];
                             int countFlats = 0;
-                            int[] idSections = new int[listCodes.Count];
-                            double totalArea = 0;
-                            double liveArea = 0;
-
-                            int countContainsSections = 0;
-                            double k1 = 0;
-                            double k2 = 0;
-                            for (int j = 0; j <= countSections; j++)
+                            for (int i = 0; i < codeSections.Count; i++)
                             {
-                                double levelArea = 0;
-                                double levelAreaOffLLU = 0;
-                                double levelAreaOnLLU = 0;
-                                foreach (var secByPosition in sections)
-                                {
-                                    if (!(secByPosition[0].SpotOwner.Equals(listCodes[j].SpotOwner) &
-                                          secByPosition[0].NumberInSpot.Equals(listCodes[j].NumberSection)))
-                                        continue;
-                                    var sec = secByPosition.Where(x => x.IdSection.Equals(listCodes[j].IdSections[indexSelectedId[j]])).ToList();
-                                    if (sec.Count == 0) continue;
-                                    idSections[j] = sec[0].IdSection;
-                                    hi1.Sections.Add(sec[0]);
-                                    if (sec[0].Flats.Any(x => x.SubZone.Equals("3")) |
-                                        sec[0].Flats.Any(x => x.SubZone.Equals("4")))
-                                        countContainsSections++;
-                                    foreach (var flat in sec[0].Flats)
-                                    {
-                                        var currentFlatAreas =
-                                            flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
-                                        var areas = Calculate.GetAreaFlat(sec[0].Floors, flat, currentFlatAreas);
-                                        totalArea += areas[0];
-                                        liveArea += areas[1];
-                                        levelArea += areas[2];
-                                        levelAreaOffLLU += areas[3];
-                                        levelAreaOnLLU += areas[4];
-
-                                    }
-                                    k1 += levelAreaOffLLU / levelArea;
-                                    k2 += levelAreaOffLLU / levelAreaOnLLU;
-                                    break;
-                                }
-                                countFlats += listCodes[j].CountFlats;
+                                countFlats += codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].
+                                    SectionsByCode[selectedSectCode[i]].CountFlatsByCode[q];                                    
                             }
-                            k1 = k1 / (countSections + 1);
-                            k2 = k2 / (countSections + 1);
+                            //Процентаж определенного типа квартир в объекте
+                            double percentage = countFlats * 100d / totalCountFlats;
 
-                            var objectByHouses =
-                                hi1.Sections.GroupBy(x => x.SpotOwner).Select(x => x.ToList()).ToList();
-                            List<HouseInfo> housesInSpot = new List<HouseInfo>();
-                            foreach (var house in objectByHouses)
+                            // Ближайший процентаж квартиры - если текущий процент квартиры ближе к требуемому, то записываем его как ближайший
+                            double arround = Math.Abs(percentage - rr.Percentage);
+                            double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
+                            if (arround < arround2 || rr.NearPercentage == 0)
+                                rr.NearPercentage = Math.Round(percentage, 1);
+                            // проверка процентажа квартиры
+                            if (arround <= rr.OffSet)
                             {
-                                HouseInfo h = new HouseInfo();
-                                foreach (var section in house.OrderBy(x => x.NumberInSpot).ToList())
-                                {
-                                    h.Sections.Add(section);
-                                }
-                                housesInSpot.Add(h);
+                                isValidPercentage = true;
+                                strP += (Math.Round(percentage, 0)).ToString() + ";";
                             }
-                            var typicalSect = GetCountTypicalSections(idSections);                            
-                            ProjectInfo spGo = projectInfo.Copy();
-                            spGo.CountContainsSections = countContainsSections;
-                            spGo.K1 = k1;
-                            spGo.K2 = k2;
-                            spGo.TotalStandartArea = totalArea;
-                            spGo.TotalLiveArea = liveArea;
-                            spGo.TotalFlats = countFlats;
-                            spGo.TypicalSections = typicalSect;
-                            spGo.TotalSections = countSections + 1;
-
-                            for (int k = 0; k < projectInfo.requirments.Count; k++)
-                                spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
-                            go.Houses = housesInSpot;
-                            go.SpotInf = spGo;
-                            ob.Add(go);
-                            lblCountObjects.Text = ob.Count.ToString();
-                            if (maxArea < totalArea)
-                                maxArea = totalArea;
-                            Application.DoEvents();
-
-                            indexSelectedId[countSections]++;
-                            if (listCodes[countSections].IdSections.Count <= indexSelectedId[countSections])
-                                IncrementIdSection(countSections - 1, indexSelectedId, listCodes);
-
-                            if (listCodes[0].IdSections.Count == indexSelectedId[0])
+                            else
                             {
-                                //  isContinue = false;
+                                isValidPercentage = false;
                                 break;
                             }
-                            // isContinue = true;     
-                            if (isStop)
-                                break;
                         }
-                        counterGood++;
-                    }
+                        if (isValidPercentage)  //Процентаж прошел
+                        {                          
+                            // Сбор секции прошедшего варианта  
+                            var successGOs = GetSuccesGeneralObjects(codeSections, selectedSectByCountFlats, selectedSectCode, strP);
+                            ob.AddRange(successGOs);
+                            lblCountObjects.Text = ob.Count.ToString();
+                        }
 
-                    selectedSectCode[sections.Count - 1]++;
-                    if (selectedSectCode[sections.Count - 1] >= codeSections[codeSections.Count - 1].
-                        SectionsByCountFlats[selectedSectSize[codeSections.Count - 1]].SectionsByCode.Count)
-                        IncrementSectionCode(selectedSectCode, selectedSectSize, codeSections.Count - 1, codeSections, ref totalCountFlats);
-                }
-                //if (selectedHouse.Length == 1)
-                //    break;
-            }
+                    } while (IncrementSectionCode(sections.Count - 1, selectedSectCode, codeSections, selectedSectByCountFlats));
+
+                } while (IncrementSectionSize(sections.Count - 1, selectedSectByCountFlats, codeSections));
+
+            } while (IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject));
+
+            // Сортировка квартирографии по заданному пользователем порядку            
+            projectInfo.SortRequirmentsByUser();
 
             FormManager.ViewDataProcentage(dg2, ob, projectInfo);
             for (int q = 0; q < projectInfo.requirments.Count; q++)
@@ -595,47 +469,127 @@ namespace AR_AreaZhuk
             AR_Zhuk_DataModel.Messages.Informer.Show();
         }
 
-        private static List<CodeSection> GetSectionsByCode(List<List<FlatInfo>> sections, int counter)
+        private List<GeneralObject> GetSuccesGeneralObjects (List<CodeSection> codeSections, 
+            int[] selectedSectByCountFlats, int[] selectedSectCode, string strP)
+        {
+            List<GeneralObject> successGOs = new List<GeneralObject>();
+            //сбор секций
+            List<Code> listCodes = new List<Code>();
+            for (int i = 0; i < codeSections.Count; i++)
+                listCodes.Add(codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].SectionsByCode[selectedSectCode[i]]);
+
+            //сортровка по пятнам и очередности расположения
+            listCodes = listCodes.OrderBy(x => x.SpotOwner).ThenBy(x => x.NumberSection).ToList();
+                        
+            int[] indexSelectedId = new int[listCodes.Count];
+
+            //isContinue = true;
+            int countSectionsIndex = listCodes.Count - 1;
+
+            string[] strPercent = strP.Split(';');
+            // Перебор id секций
+            do
+            {
+                GeneralObject go = new GeneralObject();
+
+                var sections = new List<FlatInfo>();
+                int countFlats = 0;
+                double totalArea = 0;
+                double liveArea = 0;
+
+                int countContainsLargeFlatSections = 0;
+                double k1 = 0;
+                double k2 = 0;
+                for (int j = 0; j <= countSectionsIndex; j++)
+                {
+                    double levelArea = 0;
+                    double levelAreaOffLLU = 0;
+                    double levelAreaOnLLU = 0;
+
+                    var sec = listCodes[j].IdSections[indexSelectedId[j]];
+                    sections.Add(sec);
+                    if (sec.Flats.Any(x => x.SubZone.Equals("3")) |
+                        sec.Flats.Any(x => x.SubZone.Equals("4")))
+                        countContainsLargeFlatSections++;
+                    foreach (var flat in sec.Flats)
+                    {
+                        var currentFlatAreas = flatsAreas.First(x => x.Short_Type.Equals(flat.ShortType));
+                        var areas = Calculate.GetAreaFlat(sec.Floors, flat, currentFlatAreas);
+                        totalArea += areas[0];
+                        liveArea += areas[1];
+                        levelArea += areas[2];
+                        levelAreaOffLLU += areas[3];
+                        levelAreaOnLLU += areas[4];
+                    }
+                    k1 += levelAreaOffLLU / levelArea;
+                    k2 += levelAreaOffLLU / levelAreaOnLLU;
+
+                    countFlats += listCodes[j].CountFlats;
+                }
+                k1 = k1 / (countSectionsIndex + 1);
+                k2 = k2 / (countSectionsIndex + 1);
+                
+                List<HouseInfo> housesInSpot = new List<HouseInfo>();
+                foreach (var house in sections.GroupBy(g=>g.SpotOwner))
+                {
+                    HouseInfo h = new HouseInfo();                    
+                    h.Sections.AddRange(house);                    
+                    housesInSpot.Add(h);
+                }
+                ProjectInfo spGo = projectInfo.Copy();
+                spGo.CountContainsSections = countContainsLargeFlatSections;
+                spGo.K1 = k1;
+                spGo.K2 = k2;
+                spGo.TotalStandartArea = totalArea;
+                spGo.TotalLiveArea = liveArea;
+                spGo.TotalFlats = countFlats;
+                spGo.TypicalSections = GetCountTypicalSections(sections);
+
+                for (int k = 0; k < projectInfo.requirments.Count; k++)
+                    spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
+                go.Houses = housesInSpot;
+                go.SpotInf = spGo;
+                successGOs.Add(go);
+                if (maxArea < totalArea)
+                    maxArea = totalArea;
+                Application.DoEvents();
+            } while (IncrementIdSection(countSectionsIndex, indexSelectedId, listCodes));
+            return successGOs;
+        }        
+
+        private static List<CodeSection> GetSectionsByCode(List<List<FlatInfo>> sections)
         {
             List<CodeSection> codeSections = new List<CodeSection>();
-            foreach (var ss in sections.OrderBy(x => x.Count))
-            {
-                List<Code> codes = new List<Code>();
+            foreach (var sectionsInPlace in sections.OrderBy(x => x.Count))
+            {                
                 CodeSection codeSection = new CodeSection();
-                codeSection.CountFloors = ss[0].Floors;
+                codeSection.CountFloors = sectionsInPlace[0].Floors;
 
                 //Группировка по коду
-                foreach (var s in ss.OrderByDescending(x => x.CountFlats))
-                {
-                    if (codes.Any(x => x.CodeStr.Equals(s.Code)))
-                        codes.First(x => x.CodeStr.Equals(s.Code)).IdSections.Add(s.IdSection);
-                    else
+                List<Code> codes = sectionsInPlace.OrderByDescending(x => x.CountFlats).GroupBy(g => g.Code).
+                    OrderByDescending(o=>o.Key).
+                    Select(g =>
                     {
-                        codes.Add(new Code(s.Code, s.IdSection, (s.Floors - 1) * (s.CountFlats - 1),
-                            s.NumberInSpot, s.SpotOwner));
-                    }
-                }
+                                var firstSect = g.First();
+                                var code = new Code(g.Key, g.ToList(),
+                                    (codeSection.CountFloors - 1) * (firstSect.CountFlats - 1),
+                                    firstSect.NumberInSpot, firstSect.SpotOwner, codeSection.CountFloors);
+                                return code;
+                    }).ToList();
                 //Группировка  по кол-ву квартир в секции
-                foreach (
-                    var c in codes.OrderBy(x => x.CountFlats).OrderByDescending(x => x.CodeStr).ToList())
-                {
-                    FlatsInSection flatsInSection = new FlatsInSection();
-                    flatsInSection.Count = c.CountFlats;
-                    flatsInSection.SectionsByCode.Add(c);
-                    if (codeSection.SectionsByCountFlats.Any(x => x.Count.Equals(c.CountFlats)))
-                        codeSection.SectionsByCountFlats.First(x => x.Count.Equals(c.CountFlats))
-                            .SectionsByCode.Add(c);
-                    else codeSection.SectionsByCountFlats.Add(flatsInSection);
-                }
-                //Сортировка по кол-ву квартир
-                codeSection.SectionsByCountFlats =
-                    codeSection.SectionsByCountFlats.OrderByDescending(x => x.Count).ToList();
-                codeSections.Add(codeSection);
-                counter++;
+                codeSection.SectionsByCountFlats = codes.GroupBy(g => g.CountFlats).OrderByDescending(o => o.Key).
+                    Select(g =>
+                    {
+                        var flatsInSection = new FlatsInSection();
+                        flatsInSection.CountFlats = g.Key;
+                        flatsInSection.SectionsByCode = g.ToList();
+                        return flatsInSection;
+                    }).ToList();                
+                
+                codeSections.Add(codeSection);                
             }
             return codeSections;
         }
-
 
         private static string GetCountTypicalSections(int[] idSections)
         {
@@ -662,152 +616,103 @@ namespace AR_AreaZhuk
             return typicalSect;
         }
 
-        private bool GetHouseSections(int[] selectedHouse, List<List<HouseInfo>> totalObject, List<List<FlatInfo>> sections)
+        private bool GetHouseSections(int[] selectedHouse, List<List<HouseInfo>> totalObject,out List<List<FlatInfo>> sections)
         {
+            sections = new List<List<FlatInfo>>();
             for (int i = 0; i < selectedHouse.Length; i++)
             {
                 sections.AddRange(totalObject[i][selectedHouse[i]].SectionsBySize.Select(s => s.Sections));
             }
-            if (projectInfo.IsRemainingDominants)
+            if (projectInfo.IsEnableDominantsOffset)
             {
-                int offsetDom = projectInfo.DominantOffSet;
-                List<FlatInfo> dominants = new List<FlatInfo>();
-                foreach (var s in sections)
+                // Все доминанты (их шаги)
+                List<int> dominantsStep = sections.Where(s => s[0].IsDominant).Select(s => s[0].CountStep).ToList();
+                if (dominantsStep.Count > 1)
                 {
-                    if (!s[0].IsDominant)
-                        continue;
-                    dominants.Add(s[0]);
-                }
-                int remaining = Math.Abs(dominants[0].CountStep - dominants[dominants.Count - 1].CountStep);
-                if (remaining > offsetDom)
-                {
-                    selectedHouse[selectedHouse.Length - 1]++;
-                    if (selectedHouse[selectedHouse.Length - 1] >= totalObject[selectedHouse.Length - 1].Count)
-                        IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject);
-                    return true;
-                }
-            }
-            selectedHouse[selectedHouse.Length - 1]++;
-
-            isContinue = true;
-            if (selectedHouse[selectedHouse.Length - 1] >= totalObject[selectedHouse.Length - 1].Count)
-                IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject);
-            return false;
-        }
-
-
-        public void IncrementSelectedHouse(int index, int[] houses, List<List<HouseInfo>> totalObject)
-        {
-            if (index == 0)
-            {
-              //  if (houses.Length > 1)
-                    isContinue = false;
-                return;
-            }
-            houses[index] = 0;
-            houses[index - 1]++;
-            if (houses[index - 1] >= totalObject[index - 1].Count)
-            {
-                IncrementSelectedHouse(index - 1, houses, totalObject);
-            }
-        }
-
-        public void IncrementIdSection(int index, int[] selectedIdSection, List<Code> codes)
-        {
-            if (index == -1)
-                return;
-            selectedIdSection[index + 1] = 0;
-            selectedIdSection[index]++;
-            if (selectedIdSection[index] >= codes[index].IdSections.Count)
-            {
-                IncrementIdSection(index - 1, selectedIdSection, codes);
-            }
-        }
-
-
-        public void IncrementSectionCode(int[] selectedSectCode, int[] selectedSectSize, int index, List<CodeSection> sections, ref double totalCountFlats)
-        {
-            //try
-            //{
-                // if (index == 0) было 0
-                if (index == 0)
-                    return;
-                //Текущий выбранный код обнуляем
-                selectedSectCode[index] = 0;
-                //Изменяем выбранную размерность
-                selectedSectSize[index]++;
-
-                if (selectedSectSize[index] >= sections[index].SectionsByCountFlats.Count)
-                {
-                    IncrementSectionSize(selectedSectCode, selectedSectSize, index - 1, sections, false);
-                    if (sections[0].SectionsByCountFlats.Count <= selectedSectSize[0])
-                        return;
-
-                }
-                totalCountFlats = 0;
-                //Общее кол-во квартир в размерности
-                for (int i = 0; i < sections.Count; i++)
-                {
-                    totalCountFlats += sections[i].SectionsByCountFlats[selectedSectSize[i]].Count;
-                }
-            //}
-            //catch
-            //{
-            //    MessageBox.Show("");
-            //}
-        }
-
-        public void IncrementSectionSize(int[] selectedSectCode, int[] selectedSize, int index, List<CodeSection> sections, bool isSize)
-        {
-            if (index == 0)//было 0
-            {
-                return;
-            }
-
-            selectedSize[index + 1] = 0;
-            if (!isSize)
-            {
-                selectedSectCode[index]++;
-                if (sections[index].SectionsByCountFlats[selectedSize[index]].SectionsByCode.Count - 1 <=
-                    selectedSectCode[index])
-                {
-                    selectedSize[index]++;
-                    selectedSectCode[index] = 0;
-
-
-                    if (selectedSize[index] >= sections[index].SectionsByCountFlats.Count)
+                    if (dominantsStep.Max() - dominantsStep.Min() > projectInfo.DominantOffSet)
                     {
-                        IncrementSectionSize(selectedSectCode, selectedSize, index - 1, sections, true);
+                        return false;
                     }
                 }
+            }            
+            return true;
+        }
+
+        public bool IncrementSelectedHouse(int index, int[] houses, List<List<HouseInfo>> totalObject)
+        {
+            bool res = true;
+            if (index == -1)
+            {
+                res = false;
+            }
+            else
+            {                
+                houses[index]++;
+                if (houses[index] >= totalObject[index].Count)
+                {
+                    houses[index] = 0;
+                    res = IncrementSelectedHouse(index - 1, houses, totalObject);
+                }
+            }
+            return res;  
+        }
+
+        public bool IncrementIdSection(int index, int[] selectedIdSection, List<Code> codes)
+        {
+            bool res = true;
+            if (index == -1)
+            {
+                res = false;
+            }
+            else
+            {                
+                selectedIdSection[index]++;
+                if (selectedIdSection[index] >= codes[index].IdSections.Count)
+                {
+                    selectedIdSection[index] = 0;
+                    res = IncrementIdSection(index - 1, selectedIdSection, codes);
+                }
+            }
+            return res;
+        }
+
+        private bool IncrementSectionCode (int index, int[] selectedSectCode, List<CodeSection> codeSections, int[] selectedSectByCountFlats)
+        {
+            bool res = true;
+            if (index ==-1)
+            {                
+                res = false;
             }
             else
             {
-                selectedSize[index + 1] = 0;
-                selectedSize[index]++;
-
-                if (selectedSize[index] >= sections[index].SectionsByCountFlats.Count)
+                selectedSectCode[index]++;
+                if (selectedSectCode[index] == codeSections[index].SectionsByCountFlats[selectedSectByCountFlats[index]].SectionsByCode.Count)
                 {
-                    selectedSize[index] = 0;
-                    if (index != 0)
-                    {
-                        selectedSize[index - 1]++;
-
-                        for (int i = index - 1; i < sections.Count; i++)
-                        {
-                            selectedSectCode[i] = 0;
-                        }
-
-                        if (selectedSize[index - 1] >= sections[index - 1].SectionsByCountFlats.Count)
-                        {
-                            IncrementSectionSize(selectedSectCode, selectedSize, index - 1, sections, true);
-                        }
-                    }
+                    selectedSectCode[index] = 0;                    
+                    res = IncrementSectionCode(index - 1, selectedSectCode, codeSections, selectedSectByCountFlats);                    
                 }
             }
-
-            return;
+            return res;
         }
+
+        private bool IncrementSectionSize (int index, int[] selectedSectByCountFlats, List<CodeSection> codeSections)
+        {
+            bool res = true;
+            if (index ==-1)
+            {
+                res = false;
+            }
+            else
+            {
+                selectedSectByCountFlats[index]++;
+                if (selectedSectByCountFlats[index] == codeSections[index].SectionsByCountFlats.Count)
+                {
+                    selectedSectByCountFlats[index] = 0;                                        
+                    res = IncrementSectionSize(index - 1, selectedSectByCountFlats, codeSections);                    
+                }
+            }
+            return res;
+        }                
 
         private void pb_MouseClick(object sender, MouseEventArgs e)
         {
@@ -840,7 +745,7 @@ namespace AR_AreaZhuk
         private void chkDominantOffset_CheckedChanged(object sender, EventArgs e)
         {
             txtOffsetDominants.Enabled = chkDominantOffset.Checked;
-            projectInfo.IsRemainingDominants = chkDominantOffset.Checked;
+            projectInfo.IsEnableDominantsOffset = chkDominantOffset.Checked;
             projectInfo.DominantOffSet = Convert.ToInt32(txtOffsetDominants.Text);
         }
 
@@ -896,7 +801,7 @@ namespace AR_AreaZhuk
 
         private void chkEnableDominant_CheckedChanged(object sender, EventArgs e)
         {
-            numDomCountFloor.Enabled = chkEnableDominant.Checked;
+            numDomCountFloor.Enabled = chkEnableDominant.Checked;            
         }
 
         private void GetFile_Click(object sender, EventArgs e)
@@ -1057,20 +962,13 @@ namespace AR_AreaZhuk
             //
             // Пятна
             FillSpotControls(pi.SpotOptions);
-            // Разность доминант            
-            if (pi.DominantOffSet != 0)
-            {
-                txtOffsetDominants.Value = pi.DominantOffSet;
-                chkDominantOffset.Checked = true;                
-            }
-            else
-            {
-                chkDominantOffset.Checked = false;
-            }
+            // Разность доминант                        
+            txtOffsetDominants.Value = pi.DominantOffSet;
+            chkDominantOffset.Checked = pi.IsEnableDominantsOffset;                            
             // Этажночсти
             numMainCountFloor.Value = pi.CountFloorsMain;
             numDomCountFloor.Value = pi.CountFloorsDominant;
-            chkEnableDominant.Checked = pi.CountFloorsDominant != pi.CountFloorsMain;            
+            chkEnableDominant.Checked = pi.IsEnabledDominant;
         }
 
         private void FillDgReq (ProjectInfo sp)
@@ -1137,7 +1035,7 @@ namespace AR_AreaZhuk
             resPI.IsEnabledDominant = chkEnableDominant.Checked;
 
             // Разность доминант
-            resPI.IsRemainingDominants = chkDominantOffset.Checked;
+            resPI.IsEnableDominantsOffset = chkDominantOffset.Checked;
             resPI.DominantOffSet = Convert.ToInt32(txtOffsetDominants.Value);
 
             return resPI;
@@ -1158,6 +1056,24 @@ namespace AR_AreaZhuk
                 options.Add(houseOption);
             }
             return options;
+        }
+
+        private void MainForm_FormClosed (object sender, FormClosedEventArgs e)
+        {
+            ProgressThreadStop();
+        }
+
+        public static void ProgressThreadStop()
+        {
+            if (th != null && th.ThreadState == System.Threading.ThreadState.Running)
+                th.Abort();
+        }
+
+        private string GetCountTypicalSections (List<FlatInfo> sections)
+        {
+            var typicalSect = sections.GroupBy(g => g.IdSection).Select(s=>s.Count()).Where(w => w > 1).OrderBy(o => o).
+                Aggregate(string.Empty, (s, i) => s + i + ";");
+            return typicalSect;
         }
     }
 }

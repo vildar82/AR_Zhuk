@@ -11,5 +11,7 @@ namespace AR_Zhuk_DataModel
         public List<FlatInfo> Sections = new List<FlatInfo>();
         public List<Section> SectionsBySize = new List<Section>();
         public ProjectInfo SpotInf { get; set; }
+
+        
     }
 }

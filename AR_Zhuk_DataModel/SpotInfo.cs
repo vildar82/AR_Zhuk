@@ -48,7 +48,7 @@ namespace AR_Zhuk_DataModel
         public List<Requirment> requirments = new List<Requirment>();
         public List<SpotOption> SpotOptions { get; set; }
         public int DominantOffSet { get; set; }
-        public bool IsRemainingDominants { get; set; }
+        public bool IsEnableDominantsOffset { get; set; }
         /// <summary>
         /// Основная этажность секций
         /// </summary>
@@ -72,6 +72,16 @@ namespace AR_Zhuk_DataModel
             }            
             return s;
         }
+
+        public void SortRequirmentsByUser ()
+        {
+            requirments.Sort((r1, r2) => r1.UserSortIndex.CompareTo(r2.UserSortIndex));
+        }
+
+        public void SortRequirmentsForCalculate ()
+        {
+            requirments.Sort((r1, r2) => r1.Percentage.CompareTo(r2.Percentage));
+        }
     }
 
     public class Requirment
@@ -89,6 +99,7 @@ namespace AR_Zhuk_DataModel
         public int CountFlats { get; set; }
         public int MaxCountFlat { get; set; }
         public int MinCountFlat { get; set; }
+        public int UserSortIndex { get; set; }
 
         public Requirment () { }
 

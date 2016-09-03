@@ -83,11 +83,8 @@
     <Compile Include="FormProgress.Designer.cs">
       <DependentUpon>FormProgress.cs</DependentUpon>
     </Compile>
-    <Compile Include="Insolation\InsolationFrameWork.cs" />
-    <Compile Include="LightingStringParser.cs" />
     <Compile Include="Model\CodeSection.cs" />
     <Compile Include="Model\HouseInfo.cs" />
-    <Compile Include="Insolation\Insolation.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,7 +107,6 @@
     <Compile Include="Model\SpotInfo.cs" />
     <Compile Include="Results\Result.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="SpotHouseInfo.cs" />
     <EmbeddedResource Include="FormPreviewImage.resx">
       <DependentUpon>FormPreviewImage.cs</DependentUpon>
     </EmbeddedResource>

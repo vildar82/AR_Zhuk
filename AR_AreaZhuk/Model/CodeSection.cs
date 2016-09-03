@@ -4,38 +4,41 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AR_Zhuk_DataModel;
 
 namespace AR_AreaZhuk.Model
 {
-  public  class Code
+    public class Code
     {
-    
-      public string CodeStr { get; set; }
-      public int CountFlats { get; set; }
-      public List<int> IdSections = new List<int>();
-      public int NumberSection { get; set; }
-      public  string SpotOwner { get; set; }
+        public int[] CountFlatsByCode { get;}
+        public string CodeStr { get; set; }
+        public int CountFlats { get; set; }
+        public List<FlatInfo> IdSections { get; }
+        public int NumberSection { get; set; }
+        public string SpotOwner { get; set; }
+        public int Floors { get; }
 
-      public Code(string code, int idSection,int countFlats,int numberSection,string spotName)
-      {
-           
-          this.CodeStr = code;
-          IdSections.Add(idSection);
-          this.CountFlats = countFlats;
-          this.NumberSection = numberSection;
-          this.SpotOwner = spotName;
-      }
+        public Code (string code, List<FlatInfo> idSections, int countFlats, int numberSection, string spotName, int floors)
+        {
+            CodeStr = code;
+            IdSections = idSections;            
+            CountFlats = countFlats;
+            NumberSection = numberSection;
+            SpotOwner = spotName;
+            Floors = floors;
+            CountFlatsByCode = code.Select(s => (int)char.GetNumericValue(s) * (floors-1)).ToArray();
+        }
     }
 
     public class CodeSection
     {
         public int CountFloors { get; set; }
-        public List<FlatsInSection> SectionsByCountFlats = new List<FlatsInSection>(); 
+        public List<FlatsInSection> SectionsByCountFlats = new List<FlatsInSection>();
     }
 
     public class FlatsInSection
     {
-        public int Count { get; set; }
-        public List<Code> SectionsByCode = new List<Code>(); 
+        public int CountFlats { get; set; }
+        public List<Code> SectionsByCode = new List<Code>();
     }
 }

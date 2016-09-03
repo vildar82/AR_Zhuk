@@ -29,7 +29,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         bool failCutting = true;
         bool failFilterReqs = true;
-        bool failins = true;
+        bool? failIns = null;
 
         public CuttingOrdinary(HouseSpot houseSpot, IDBService dbService, IInsolation insService)
         {
@@ -98,8 +98,6 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             return resHouses;
         }
 
-        
-
         private List<HouseInfo> GetRandomMaxHauses (List<HouseInfo> houses, int maxHousesBySpot)
         {
             List<HouseInfo> res = new List<HouseInfo>();
@@ -137,7 +135,10 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
             List<SectionBySize> sectionsBySize;
 
             if (CutSectionsBySize(houseSteps, out sectionsBySize))
-            {                
+            {
+                if (failIns == null)
+                    failIns = true;
+
                 // Определение торцов секции
                 DefineSectionEnds(ref sectionsBySize);
 
@@ -156,7 +157,7 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
                         }
                         sectionBySize.Section.Sections = flatsCheckedIns;
                         passedSections.Add(sectionBySize.Key, sectionBySize.Section);
-                        failins = false;
+                        failIns = false;
                     }
                     resHouseSections.Add(sectionBySize.Section);                    
                 }                
@@ -557,21 +558,26 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
         private void DefineFailReason ()
         {
             string failReason = "Не удалось подобрать варианты домов для пятна " + houseSpot.SpotName + ": \n";
-            // через инсоляцию не прошло ничего
-            if (failins)
-            {
-                failReason += "Требования раскладки секций по серии ПИК1 не совместимы с инсоляцией. Попробуйте изменить габариты пятна или этажность (доминанту)";
-            }
-            // Через фильтр ничего не прошло
-            else if (failFilterReqs)
-            {
-                failReason += "Требования квартирографии не пропускают секции. Измените требования - диапазоны площадей.";
-            }
             // Файл при нарезке
-            else
+            if (failCutting)
             {
                 failReason += "Габариты пятна не соответствуют требованиям раскладки секций по серии ПИК1. Измените пятно.";
             }
+            // Через требования квартирографии (типы квартир и площади) ничего не прошло
+            else if (failFilterReqs)
+            {
+                failReason += "Требования квартирографии не пропускают секции. Измените требования - диапазоны площадей.";
+            }            
+            else if (failIns == null)
+            {
+                // До инсоляции не дошло. Т.е. некоторые секции проходили и через отрезку и через квартирографию, но целиком дом через них не прошел                
+                failReason += "Требования квартирографии и этажностей не пропускают секции. Попробуйте изменить параметры квартирографии или этажности (доминанты).";
+            }
+            else
+            {
+                failReason += "Требования раскладки секций по серии ПИК1 не совместимы с инсоляцией. Попробуйте изменить габариты пятна или этажность (доминанту).";
+            }         
+            
             AR_Zhuk_DataModel.Messages.Informer.AddMessage(failReason);
         }
     }

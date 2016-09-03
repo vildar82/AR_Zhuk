@@ -12,18 +12,9 @@ using System.Xml;
 using System.Xml.Serialization;
 
 namespace AR_AreaZhuk
-{
-
-    //public class GeneralObject
-    //{
-    //    public string GUID { get; set; }
-    //    public List<HouseInfo> Houses = new List<HouseInfo>();
-    //    public SpotInfo SpotInf { get; set; }
-
-    //}
+{   
     public class Serializer
     {
-
         public void SerializeSpoinfo(ProjectInfo sp)
         {
             string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\Zhuk_Config.cfg";
@@ -58,8 +49,6 @@ namespace AR_AreaZhuk
         }
         public void SerializeList(GeneralObject go,string mark)
         {
-
-
             //SaveFileDialog sfd = new SaveFileDialog();
 
             //sfd.Filter = "xml files |*.xml";
@@ -100,9 +89,7 @@ namespace AR_AreaZhuk
 
         public List<HouseInfo> DeserializeXmlFile(string filePath)
         {
-
             List<HouseInfo> houseInfo = new List<HouseInfo>();
-
             try
             {
                 XmlSerializer ser = new XmlSerializer(houseInfo.GetType());
@@ -122,8 +109,6 @@ namespace AR_AreaZhuk
 
                 //  MessageBox.Show(ex.Message, "Ошибка!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
             return houseInfo;
         }
     }
