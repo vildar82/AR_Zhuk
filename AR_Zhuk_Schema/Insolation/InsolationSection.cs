@@ -16,13 +16,10 @@ namespace AR_Zhuk_Schema.Insolation
                 new RoomInsolation ("Двухкомнатная", 2, new List<string>() { "C", "2B" }),
                 new RoomInsolation("Трехкомнатная", 3, new List<string>() { "C", "2B" }),
                 new RoomInsolation ("Четырехкомнатная", 4, new List<string>() { "2C", "C+2B" })
-            };
-        
-        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes;        
+            };                
 
         public InsolationSection()
-        {            
-            dictFlatsCodes = new Dictionary<List<RoomInfo>, string>();
+        {   
         }
 
         /// <summary>
@@ -58,27 +55,7 @@ namespace AR_Zhuk_Schema.Insolation
                 res.Add(s);
             }
             return res;
-        }        
-
-        public string GetFlatCode(FlatInfo flat)
-        {
-            string code;
-            if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
-            {
-                code = string.Empty;
-                var dictCountFlatByReq = flat.Flats.Where(r=>r.SubZone!="0").
-                        GroupBy(g => g.CodeReqIndex).ToDictionary(k => k.Key, v => v.Count());
-
-                for (int i = 0; i < ProjectScheme.ProjectInfo.requirments.Count; i++)
-                {
-                    int count = 0;
-                    dictCountFlatByReq.TryGetValue(i, out count);
-                    code += count.ToString();
-                }                
-                dictFlatsCodes.Add(flat.Flats, code);
-            }
-            return code;            
-        }        
+        }                
 
         public RoomInsolation FindRule (RoomInfo flat)
         {
@@ -318,25 +295,5 @@ namespace AR_Zhuk_Schema.Insolation
             CountLighting += count;
             InsPoints = GetInsPoints(InsIndex) * CountLighting;
         }
-    }
-
-    class FlatComparer : IEqualityComparer<List<RoomInfo>>
-    {
-        public bool Equals (List<RoomInfo> x, List<RoomInfo> y)
-        {
-            var res = x.Count == y.Count &&
-                x.Where(r => r.SubZone != "0").All(a => y.Where(r => r.SubZone != "0").Any(n => n.ShortType == a.ShortType));
-            return res;
-        }
-
-        public int GetHashCode (List<RoomInfo> rooms)
-        {
-            int hashcode = 0;
-            foreach (RoomInfo r in rooms.Where(r=>r.SubZone != "0"))
-            {
-                hashcode ^= r.ShortType.GetHashCode();
-            }
-            return hashcode;
-        }
-    }
+    }    
 }

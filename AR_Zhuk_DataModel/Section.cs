@@ -71,8 +71,7 @@ namespace AR_Zhuk_DataModel
         /// <summary>
         /// боковая инсоляция в конце секции
         /// </summary>
-        public List<Module> InsSideEnd { get; set; }
-        public int IdSection { get; set; }
+        public List<Module> InsSideEnd { get; set; }        
         public int CountStep { get; set; }        
         public bool IsVertical { get; set; }
         public bool IsCorner { get; set; }
@@ -83,12 +82,9 @@ namespace AR_Zhuk_DataModel
         public string SpotOwner { get; set; }
         public int NumberInSpot { get; set; }
         public int CountModules { get; set; }
-        public int Floors { get; set; }
-        public string Code { get; set; }
+        public int Floors { get; set; }        
         public bool IsLeftBottomCorner { get; set; }
-        public bool IsRightBottomCorner { get; set; }
-        public double AxisArea { get; set; }
-        public double TotalArea { get; set; }
+        public bool IsRightBottomCorner { get; set; }        
         public List<FlatInfo> Sections = new List<FlatInfo>();
         public int TotalIndex = 0;
         public double RealIndex = 0;

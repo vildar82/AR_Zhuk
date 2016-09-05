@@ -27,7 +27,9 @@ namespace AR_Zhuk_Schema.DB
         /// <summary>
         /// Виды секций в базе - по шагу, типу и этажности (Type, Levels, CountStep)
         /// </summary>
-        private static List<SelectSectionParam> sectionsTypesInDb;                
+        private static List<SelectSectionParam> sectionsTypesInDb;
+        private static Dictionary<string, Tuple<string, int[]>> dictFlatsCodes = 
+            new Dictionary<string, Tuple<string, int[]>>();
 
         public DBService()
         {   
@@ -112,8 +114,11 @@ namespace AR_Zhuk_Schema.DB
                         continue;
 
                     if (fl.Flats.Count > 3)
-                    {
-                        fl.DefineIdenticalCodeSection();
+                    {                        
+                        var code = GetFlatCode(fl);
+                        fl.Code = code.Item1;
+                        fl.CodeArray = code.Item2;
+
                         sectionsBySyze.Add(fl);
                     }
                     else
@@ -349,6 +354,32 @@ namespace AR_Zhuk_Schema.DB
             catch { }
         }
 
+        public Tuple<string, int[]> GetFlatCode (FlatInfo section)
+        {
+            Tuple<string, int[]> code = null;
+            var flatsWoLlu = section.Flats.Where(w => w.SubZone != "0").OrderBy(o => o.ShortType).ToList();
+            string key = section.Floors + "_" + flatsWoLlu.Aggregate(string.Empty, (s, i) => s + i.ShortType + "_");
+            section.IdenticalCode = key;
+
+            if (!dictFlatsCodes.TryGetValue(key, out code))
+            {
+                string codeStr = string.Empty;
+                int[] codeArr = new int[ProjectScheme.ProjectInfo.requirments.Count];
+                var dictCountFlatByReq = flatsWoLlu.GroupBy(g => g.CodeReqIndex).ToDictionary(k => k.Key, v => v.Count());
+
+                for (int i = 0; i < ProjectScheme.ProjectInfo.requirments.Count; i++)
+                {
+                    int count = 0;
+                    dictCountFlatByReq.TryGetValue(i, out count);
+                    codeStr += count.ToString();
+                    codeArr[i] = count;
+                }
+                code = new Tuple<string, int[]>(codeStr, codeArr);
+                dictFlatsCodes.Add(key, code);
+            }
+            return code;
+        }
+
         public void ResetSections ()
         {   
             dictSections = new Dictionary<string, List<FlatInfo>>();            
@@ -397,5 +428,5 @@ namespace AR_Zhuk_Schema.DB
         {
             return Type + "_" + Levels + "_" + Step;
         }
-    }
+    }    
 }

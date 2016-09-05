@@ -28,6 +28,7 @@ namespace AR_Zhuk_DataModel
         public double Area { get; set; }
         public int Floors { get; set; }
         public string Code { get; set; }
+        public int[] CodeArray { get; set; }
         public string SpotOwner { get; set; }
         public int NumberInSpot { get; set; }
 
@@ -38,11 +39,6 @@ namespace AR_Zhuk_DataModel
         {
             var res = (FlatInfo)MemberwiseClone();
             return res;
-        }
-
-        public void DefineIdenticalCodeSection ()
-        {
-            IdenticalCode = string.Join("_", Flats.Select(f => f.ShortType).OrderBy(r => r));            
-        }
+        }        
     }
 }

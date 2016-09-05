@@ -92,6 +92,15 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Section.cs" />
+    <Compile Include="Percentage\IPercentage.cs" />
+    <Compile Include="Percentage\New\ChoiceSections.cs" />
+    <Compile Include="Percentage\New\ReqCountFlat.cs" />
+    <Compile Include="Percentage\New\SectionByCode.cs" />
+    <Compile Include="Percentage\New\SectionBySize.cs" />
+    <Compile Include="Percentage\New\SectionInPlace.cs" />
+    <Compile Include="Percentage\New\SelectedCode.cs" />
+    <Compile Include="Percentage\PercentageHelper.cs" />
+    <Compile Include="Percentage\PercentageNew.cs" />
     <Compile Include="PIK1.cs">
       <DependentUpon>PIK1.xsd</DependentUpon>
     </Compile>

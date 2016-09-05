@@ -14,6 +14,7 @@ using AR_Zhuk_DataModel;
 using System.Drawing.Imaging;
 using AR_Zhuk_Schema;
 using AR_AreaZhuk.Controller;
+using AR_AreaZhuk.Percentage;
 
 namespace AR_AreaZhuk
 {
@@ -26,7 +27,7 @@ namespace AR_AreaZhuk
         public PIK1.C_Flats_PIK1DataTable dbFlats = new PIK1.C_Flats_PIK1DataTable();
         BindingSource bs = new BindingSource();
         public static List<ProjectInfo> spinfos = new List<ProjectInfo>();                        
-        public static ProjectInfo projectInfo;
+        public static ProjectInfo ProjectInfo;
         public static List<List<HouseInfo>> houses = new List<List<HouseInfo>>();
         public static List<GeneralObject> ob = new List<GeneralObject>();
         double maxArea = 0;
@@ -62,9 +63,9 @@ namespace AR_AreaZhuk
             //}
 
             // Загрузка projectInfo - из конфига, или дефолт
-            projectInfo = LoadSpotInfo();
+            ProjectInfo = LoadSpotInfo();
             // Заполнение контролов настройками spotInfo
-            FillSpotInfoControls(projectInfo);
+            FillSpotInfoControls(ProjectInfo);
             // ??                        
             isEvent = true;
         }
@@ -74,7 +75,7 @@ namespace AR_AreaZhuk
             FrameWork fw = new FrameWork();
             string excelPath = @"E:\__ROM_Типы квартир.xlsx";
             var roomInfo = fw.GetRoomData(excelPath);
-            projectInfo = fw.GetDefaultSpotInfo();
+            ProjectInfo = fw.GetDefaultSpotInfo();
             Exporter.ExportSectionsToSQL(8 * 4, "Рядовая", 9, false, false, roomInfo);//Если нужно залить 1 тип секции
             Environment.Exit(48);
         }
@@ -100,14 +101,14 @@ namespace AR_AreaZhuk
 
                 var spot2 = house2.SpotInf;
                 int allCountFlats = 0;
-                for (int k = 0; k < projectInfo.requirments.Count; k++)
+                for (int k = 0; k < ProjectInfo.requirments.Count; k++)
                 {
                     allCountFlats += spot1.requirments[k].RealCountFlats;
                     allCountFlats += spot2.requirments[k].RealCountFlats;
                 }                
-                ProjectInfo spGo = projectInfo.Copy();
+                ProjectInfo spGo = ProjectInfo.Copy();
                 // dg2.Rows.Add();                
-                for (int k = 0; k < projectInfo.requirments.Count; k++)
+                for (int k = 0; k < ProjectInfo.requirments.Count; k++)
                 {
                     int currentCountFlats = spot1.requirments[k].RealCountFlats;
                     currentCountFlats += spot2.requirments[k].RealCountFlats;
@@ -194,7 +195,7 @@ namespace AR_AreaZhuk
 
         public void GetHousePercentage(ref HouseInfo houseInfo)
         {
-            var sp1 = projectInfo.Copy();
+            var sp1 = ProjectInfo.Copy();
             for (int k = 0; k < houseInfo.Sections.Count; k++) //Квартиры
             {
                 FlatInfo section = houseInfo.Sections[k];                
@@ -228,12 +229,12 @@ namespace AR_AreaZhuk
         {
             spinfos.Clear();
             ob.Clear();
-            projectInfo.requirments = FormManager.GetSpotTaskFromDG(dg);
+            ProjectInfo.requirments = FormManager.GetSpotTaskFromDG(dg);
             ParallelOptions po = new ParallelOptions();
             po.MaxDegreeOfParallelism = 15;
             Parallel.For(0, houses[0].Count, po, GetGeneralObjects);
             //  GetGeneralObjects();
-            FormManager.ViewDataProcentage(dg2, ob, projectInfo);
+            FormManager.ViewDataProcentage(dg2, ob, ProjectInfo);
             lblCountObjects.Text = ob.Count.ToString();
         }
 
@@ -253,7 +254,7 @@ namespace AR_AreaZhuk
             Results.Result result = new Results.Result();
             try
             {
-                result.Save(ob, projectInfo);
+                result.Save(ob, ProjectInfo);
             }
             catch (Exception ex)
             {
@@ -265,7 +266,6 @@ namespace AR_AreaZhuk
         {
             if (e.RowIndex == dg.RowCount - 1) return;
             if (!isEvent) return;
-
 
             FormManager.DataReqValidator(dg);
             int per = 0;
@@ -310,7 +310,7 @@ namespace AR_AreaZhuk
             isStop = false;
             maxArea = 0;
             ob = new List<GeneralObject>();
-            lblCountObjects.Text = ob.Count.ToString();
+            lblCountObjects.Text = "0";
             // Обнулить Label кол.секци.
             SetInfoTotalSectionsCount(null);
 
@@ -319,18 +319,18 @@ namespace AR_AreaZhuk
             btnViewPercentsge.Enabled = true;
 
             // считывание настоек из контролов            
-            projectInfo = GetProjectInfoFromControls();            
+            ProjectInfo = GetProjectInfoFromControls();            
             // сохранение настроек            
             Serializer s = new Serializer();
-            s.SerializeSpoinfo(projectInfo);
+            s.SerializeSpoinfo(ProjectInfo);
 
             // Сортировка требований квартирографии для расчета (начиная с минимально процентажа)            
-            projectInfo.SortRequirmentsForCalculate();
+            ProjectInfo.SortRequirmentsForCalculate();
 
             // Сброс ближайшего процентажа
             ResetNearPercentage();
             
-            ProjectScheme profectShema = new ProjectScheme(projectInfo);
+            ProjectScheme profectShema = new ProjectScheme(ProjectInfo);
             profectShema.ReadScheme();
             th = new Thread(ViewProgress);
             th.Start();
@@ -348,9 +348,12 @@ namespace AR_AreaZhuk
             }
             Stopwatch sw = new Stopwatch();
             sw.Start();
+
+            IPercentage percentageNew = new PercentageNew();
+            ob = percentageNew.Calc(totalObject);
             
             int[] selectedHouse = new int[totalObject.Count];
-            int[] nearReqPercentage = new int[projectInfo.requirments.Count];
+            int[] nearReqPercentage = new int[ProjectInfo.requirments.Count];
 
             // Перебор вариантов домов
             do
@@ -362,7 +365,7 @@ namespace AR_AreaZhuk
 
                 List<List<FlatInfo>> sections;
                 //Получение cекций из домов                
-                if (!GetHouseSections(selectedHouse, totalObject,out sections))
+                if (!PercentageHelper.GetHouseSections(selectedHouse, totalObject,out sections))
                     continue;
 
                 Debug.WriteLine("Размерность секций sections = " + sections.Aggregate(string.Empty, (u, i) => u + "." + i.Count.ToString()));
@@ -402,9 +405,9 @@ namespace AR_AreaZhuk
                             break;
                         bool isValidPercentage = true;
                         string strP = string.Empty;
-                        for (int q = 0; q < projectInfo.requirments.Count; q++)
+                        for (int q = 0; q < ProjectInfo.requirments.Count; q++)
                         {
-                            var rr = projectInfo.requirments[q];
+                            var rr = ProjectInfo.requirments[q];
                             int countFlats = 0;
                             for (int i = 0; i < codeSections.Count; i++)
                             {
@@ -446,12 +449,12 @@ namespace AR_AreaZhuk
             } while (IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject));
 
             // Сортировка квартирографии по заданному пользователем порядку            
-            projectInfo.SortRequirmentsByUser();
+            ProjectInfo.SortRequirmentsByUser();
 
-            FormManager.ViewDataProcentage(dg2, ob, projectInfo);
-            for (int q = 0; q < projectInfo.requirments.Count; q++)
+            FormManager.ViewDataProcentage(dg2, ob, ProjectInfo);
+            for (int q = 0; q < ProjectInfo.requirments.Count; q++)
             {
-                dg[5, q].Value = projectInfo.requirments[q].NearPercentage;
+                dg[5, q].Value = ProjectInfo.requirments[q].NearPercentage;
             }
             th.Abort();
             lblCountObjects.Text = ob.Count.ToString();
@@ -536,7 +539,7 @@ namespace AR_AreaZhuk
                     h.Sections.AddRange(house);                    
                     housesInSpot.Add(h);
                 }
-                ProjectInfo spGo = projectInfo.Copy();
+                ProjectInfo spGo = ProjectInfo.Copy();
                 spGo.CountContainsSections = countContainsLargeFlatSections;
                 spGo.K1 = k1;
                 spGo.K2 = k2;
@@ -545,7 +548,7 @@ namespace AR_AreaZhuk
                 spGo.TotalFlats = countFlats;
                 spGo.TypicalSections = GetCountTypicalSections(sections);
 
-                for (int k = 0; k < projectInfo.requirments.Count; k++)
+                for (int k = 0; k < ProjectInfo.requirments.Count; k++)
                     spGo.requirments[k].RealPercentage = Convert.ToInt16(strPercent[k]);
                 go.Houses = housesInSpot;
                 go.SpotInf = spGo;
@@ -614,28 +617,6 @@ namespace AR_AreaZhuk
                 typicalSect = typicalSect.Remove(typicalSect.Length - 1, 1);
             else typicalSect = "0";
             return typicalSect;
-        }
-
-        private bool GetHouseSections(int[] selectedHouse, List<List<HouseInfo>> totalObject,out List<List<FlatInfo>> sections)
-        {
-            sections = new List<List<FlatInfo>>();
-            for (int i = 0; i < selectedHouse.Length; i++)
-            {
-                sections.AddRange(totalObject[i][selectedHouse[i]].SectionsBySize.Select(s => s.Sections));
-            }
-            if (projectInfo.IsEnableDominantsOffset)
-            {
-                // Все доминанты (их шаги)
-                List<int> dominantsStep = sections.Where(s => s[0].IsDominant).Select(s => s[0].CountStep).ToList();
-                if (dominantsStep.Count > 1)
-                {
-                    if (dominantsStep.Max() - dominantsStep.Min() > projectInfo.DominantOffSet)
-                    {
-                        return false;
-                    }
-                }
-            }            
-            return true;
         }
 
         public bool IncrementSelectedHouse(int index, int[] houses, List<List<HouseInfo>> totalObject)
@@ -745,8 +726,8 @@ namespace AR_AreaZhuk
         private void chkDominantOffset_CheckedChanged(object sender, EventArgs e)
         {
             txtOffsetDominants.Enabled = chkDominantOffset.Checked;
-            projectInfo.IsEnableDominantsOffset = chkDominantOffset.Checked;
-            projectInfo.DominantOffSet = Convert.ToInt32(txtOffsetDominants.Text);
+            ProjectInfo.IsEnableDominantsOffset = chkDominantOffset.Checked;
+            ProjectInfo.DominantOffSet = Convert.ToInt32(txtOffsetDominants.Text);
         }
 
         private void dg2_SelectionChanged(object sender, EventArgs e)
@@ -771,7 +752,7 @@ namespace AR_AreaZhuk
 
         private void txtOffsetDominants_ValueChanged(object sender, EventArgs e)
         {
-            projectInfo.DominantOffSet = Convert.ToInt32(txtOffsetDominants.Value);
+            ProjectInfo.DominantOffSet = Convert.ToInt32(txtOffsetDominants.Value);
         }
 
         private void btnMenuGroup1_Click_1(object sender, EventArgs e)
@@ -808,8 +789,8 @@ namespace AR_AreaZhuk
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             string initDirectory = "c:\\";
-            if (!string.IsNullOrWhiteSpace(projectInfo.PathInsolation))
-                initDirectory = Path.GetDirectoryName(projectInfo.PathInsolation);
+            if (!string.IsNullOrWhiteSpace(ProjectInfo.PathInsolation))
+                initDirectory = Path.GetDirectoryName(ProjectInfo.PathInsolation);
             openFileDialog.InitialDirectory = initDirectory;
             openFileDialog.Filter = "Файл задание инсоляции (*.xlsx)|*.xlsx";
             openFileDialog.RestoreDirectory = true;
@@ -834,7 +815,7 @@ namespace AR_AreaZhuk
 
                 btnStartScan.Enabled = true;
 
-                projectInfo.PathInsolation = path;
+                ProjectInfo.PathInsolation = path;
             }                     
         }
 
@@ -1021,7 +1002,7 @@ namespace AR_AreaZhuk
             ProjectInfo resPI = new ProjectInfo();
 
             // Файл инсоляции
-            resPI.PathInsolation = projectInfo.PathInsolation;            
+            resPI.PathInsolation = ProjectInfo.PathInsolation;            
 
             // Квартирография
             resPI.requirments = FormManager.GetSpotTaskFromDG(dg);           
