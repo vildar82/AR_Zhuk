@@ -508,7 +508,7 @@ namespace AR_AreaZhuk
 
                     var sec = listCodes[j].IdSections[indexSelectedId[j]];
                     sections.Add(sec);
-                    if (sec.Flats.Any(x => x.SubZone.Equals("3")) |
+                    if (sec.Flats.Any(x => x.SubZone.Equals("3")) ||
                         sec.Flats.Any(x => x.SubZone.Equals("4")))
                         countContainsLargeFlatSections++;
                     foreach (var flat in sec.Flats)
