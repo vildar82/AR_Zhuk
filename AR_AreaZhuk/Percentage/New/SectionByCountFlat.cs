@@ -26,9 +26,9 @@ namespace AR_AreaZhuk.Percentage.New
             SectionsByCode = SectionByCode.GetSections(sections, 0, FactorDom);
         }
 
-        public static List<SectionByCountFlat> GetSections (List<Section> sections, double factorDom)
+        public static List<SectionByCountFlat> GetSections (List<FlatInfo> sections, double factorDom)
         {
-            var sizes = sections.SelectMany(s => s.Sections).GroupBy(g => g.CountFlats).
+            var sizes = sections.GroupBy(g => g.CountFlats).
                     Select(g => new SectionByCountFlat(g.Key-1, g.ToList(), factorDom)).ToList();            
             return sizes;
         }        

@@ -337,7 +337,7 @@ namespace AR_AreaZhuk
 
             List<List<HouseInfo>> totalObject = profectShema.GetTotalHouses(
                 int.Parse(textBoxMaxCountSectionsBySize.Text), int.Parse(textBoxMaxCountHousesBySpot.Text));
-
+            
             Debug.WriteLine("Кол секций по totalObject = " + totalObject.Sum(t => t.Sum(c => c.SectionsBySize.Sum(f => f.Sections.Count))));
 
             SetInfoTotalSectionsCount(totalObject);
@@ -349,129 +349,44 @@ namespace AR_AreaZhuk
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
-            IPercentage percentageNew = new PercentageNew();
-            ob = percentageNew.Calc(totalObject);
+            btnStop.Enabled = true;            
             
-            int[] selectedHouse = new int[totalObject.Count];
-            int[] nearReqPercentage = new int[ProjectInfo.requirments.Count];
-
-            // Перебор вариантов домов
-            do
+            backgroundWorkerCalculate.DoWork += (o, a) =>
             {
-                if (isStop)
-                    break;
+                // Процентаж
+                IPercentage percentageNew = new PercentageNew();
+                percentageNew.ChangeCount += (o1, a1) => backgroundWorkerCalculate.ReportProgress(0, a1.Count);
+                ob = percentageNew.Calc(totalObject, backgroundWorkerCalculate);
+            };
+            backgroundWorkerCalculate.ProgressChanged += (ow, aw) => lblCountObjects.Text = aw.UserState.ToString();            
+            backgroundWorkerCalculate.RunWorkerAsync();            
+            backgroundWorkerCalculate.RunWorkerCompleted += (ow, aw) =>
+            {
+                // Сортировка квартирографии по заданному пользователем порядку            
+                ProjectInfo.SortRequirmentsByUser();
 
-                Debug.WriteLine("Вариант дома = " + selectedHouse.Aggregate(string.Empty, (u, i) => u + i.ToString()));
-
-                List<List<FlatInfo>> sections;
-                //Получение cекций из домов                
-                if (!PercentageHelper.GetHouseSections(selectedHouse, totalObject,out sections))
-                    continue;
-
-                Debug.WriteLine("Размерность секций sections = " + sections.Aggregate(string.Empty, (u, i) => u + "." + i.Count.ToString()));
-
-                //Группировка и сортировка секций
-                List<CodeSection> codeSections = GetSectionsByCode(sections);
-
-                Debug.WriteLine("Размерность секций по кол. квартир = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + i.SectionsByCountFlats.Count));
-                Debug.WriteLine("Размерность секций по кол. кодов = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + "[" + i.SectionsByCountFlats.Aggregate(string.Empty, (n, j) => n + "." + j.SectionsByCode.Count) + "]"));
-
-                int[] selectedSectByCountFlats = new int[codeSections.Count]; //Выбранная размерность секции по кол-ву квартир
-                int[] selectedSectCode = new int[codeSections.Count]; //Выбранный код секций                
-                                
-                //Обход сформированных секций с уникальными кодами на объект
-                // Перебор размерностей дома (selectedSectByCountFlats)
-                do
+                FormManager.ViewDataProcentage(dg2, ob, ProjectInfo);
+                for (int q = 0; q < ProjectInfo.requirments.Count; q++)
                 {
-                    if (isStop)
-                        break;
-                    int totalCountFlats = 0;
-                    //Общее кол-во квартир в размерности
-                    for (int i = 0; i < sections.Count; i++)
-                    {
-                        totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].CountFlats;
-                    }
+                    dg[5, q].Value = ProjectInfo.requirments[q].NearPercentage;
+                }
+                th.Abort();
+                lblCountObjects.Text = ob.Count.ToString();
+                isEvent = true;
+                sw.Stop();
+                //MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
+                lblTime.Visible = true;
+                lblTime.Text = (sw.ElapsedMilliseconds / 1000).ToString();
+                bs.DataSource = dg2.DataSource;
+                lblMaxArea.Text = maxArea.ToString();
+                lblTotalCount.Text = ob.Count.ToString();
+                //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
-                    // Перебор кодов секций (в заданной размерности) - selectedSectCode
-                    do
-                    {                        
-                        Debug.WriteLine("\n\rselectedSectSize = " + selectedSectByCountFlats.Aggregate(string.Empty,
-                            (u, i) => u + "." + i.ToString()));
-                        Debug.WriteLine("selectedSectCode = " + selectedSectCode.Aggregate(string.Empty,
-                            (u, i) => u + "." + i.ToString()));
-
-                        Application.DoEvents();
-                        if (isStop)
-                            break;
-                        bool isValidPercentage = true;
-                        string strP = string.Empty;
-                        for (int q = 0; q < ProjectInfo.requirments.Count; q++)
-                        {
-                            var rr = ProjectInfo.requirments[q];
-                            int countFlats = 0;
-                            for (int i = 0; i < codeSections.Count; i++)
-                            {
-                                countFlats += codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].
-                                    SectionsByCode[selectedSectCode[i]].CountFlatsByCode[q];                                    
-                            }
-                            //Процентаж определенного типа квартир в объекте
-                            double percentage = countFlats * 100d / totalCountFlats;
-
-                            // Ближайший процентаж квартиры - если текущий процент квартиры ближе к требуемому, то записываем его как ближайший
-                            double arround = Math.Abs(percentage - rr.Percentage);
-                            double arround2 = Math.Abs(rr.NearPercentage - rr.Percentage);
-                            if (arround < arround2 || rr.NearPercentage == 0)
-                                rr.NearPercentage = Math.Round(percentage, 1);
-                            // проверка процентажа квартиры
-                            if (arround <= rr.OffSet)
-                            {
-                                isValidPercentage = true;
-                                strP += (Math.Round(percentage, 0)).ToString() + ";";
-                            }
-                            else
-                            {
-                                isValidPercentage = false;
-                                break;
-                            }
-                        }
-                        if (isValidPercentage)  //Процентаж прошел
-                        {                          
-                            // Сбор секции прошедшего варианта  
-                            var successGOs = GetSuccesGeneralObjects(codeSections, selectedSectByCountFlats, selectedSectCode, strP);
-                            ob.AddRange(successGOs);
-                            lblCountObjects.Text = ob.Count.ToString();
-                        }
-
-                    } while (IncrementSectionCode(sections.Count - 1, selectedSectCode, codeSections, selectedSectByCountFlats));
-
-                } while (IncrementSectionSize(sections.Count - 1, selectedSectByCountFlats, codeSections));
-
-            } while (IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject));
-
-            // Сортировка квартирографии по заданному пользователем порядку            
-            ProjectInfo.SortRequirmentsByUser();
-
-            FormManager.ViewDataProcentage(dg2, ob, ProjectInfo);
-            for (int q = 0; q < ProjectInfo.requirments.Count; q++)
-            {
-                dg[5, q].Value = ProjectInfo.requirments[q].NearPercentage;
-            }
-            th.Abort();
-            lblCountObjects.Text = ob.Count.ToString();
-            isEvent = true;
-            sw.Stop();
-            //MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
-            lblTime.Visible = true;
-            lblTime.Text = (sw.ElapsedMilliseconds / 1000).ToString();
-            bs.DataSource = dg2.DataSource;
-            lblMaxArea.Text = maxArea.ToString();
-            lblTotalCount.Text = ob.Count.ToString();
-            //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
-
-            // Показать сообщения если они есть.
-            AR_Zhuk_DataModel.Messages.Informer.Show();
+                // Показать сообщения если они есть.
+                AR_Zhuk_DataModel.Messages.Informer.Show();
+            };
         }
-
+        
         private List<GeneralObject> GetSuccesGeneralObjects (List<CodeSection> codeSections, 
             int[] selectedSectByCountFlats, int[] selectedSectCode, string strP)
         {
@@ -857,6 +772,11 @@ namespace AR_AreaZhuk
         private void btnStop_Click(object sender, EventArgs e)
         {
             isStop = true;
+            if (backgroundWorkerCalculate.IsBusy)
+            {
+                backgroundWorkerCalculate.CancelAsync();
+            }
+            ProgressThreadStop();
         }
 
         private void dg_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)

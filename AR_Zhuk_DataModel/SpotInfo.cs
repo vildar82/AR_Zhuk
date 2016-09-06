@@ -66,8 +66,8 @@ namespace AR_Zhuk_DataModel
             foreach (var r in requirments)
             {
                 var newR = r.Clone();
-                newR.RealCountFlats = 0;
-                newR.RealPercentage = 0;
+                //newR.RealCountFlats = 0;
+                //newR.RealPercentage = 0;
                 s.requirments.Add(newR);
             }            
             return s;

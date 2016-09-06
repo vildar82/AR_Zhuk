@@ -14,10 +14,6 @@ namespace AR_AreaZhuk
    
     partial class MainForm
     {
-
-
-
-       
         /// <summary>
         /// Требуется переменная конструктора.
         /// </summary>
@@ -45,7 +41,7 @@ namespace AR_AreaZhuk
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.dg = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -107,6 +103,7 @@ namespace AR_AreaZhuk
             this.textBoxMaxCountSectionsBySize = new System.Windows.Forms.TextBox();
             this.btnLoad = new System.Windows.Forms.Button();
             this.labelInsolationFile = new System.Windows.Forms.LinkLabel();
+            this.backgroundWorkerCalculate = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -189,8 +186,8 @@ namespace AR_AreaZhuk
             // 
             // Column5
             // 
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
-            this.Column5.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightGray;
+            this.Column5.DefaultCellStyle = dataGridViewCellStyle2;
             this.Column5.HeaderText = "Кол-во квартир, попадающих в диапазон.";
             this.Column5.Name = "Column5";
             this.Column5.ReadOnly = true;
@@ -850,6 +847,11 @@ namespace AR_AreaZhuk
             this.labelInsolationFile.TabStop = true;
             this.labelInsolationFile.Text = "-";
             // 
+            // backgroundWorkerCalculate
+            // 
+            this.backgroundWorkerCalculate.WorkerReportsProgress = true;
+            this.backgroundWorkerCalculate.WorkerSupportsCancellation = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -974,6 +976,7 @@ namespace AR_AreaZhuk
         private TextBox textBoxMaxCountSectionsBySize;
         private Button btnLoad;
         private LinkLabel labelInsolationFile;
+        private System.ComponentModel.BackgroundWorker backgroundWorkerCalculate;
     }
 }
 

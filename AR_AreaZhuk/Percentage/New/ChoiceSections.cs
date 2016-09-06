@@ -11,6 +11,7 @@ namespace AR_AreaZhuk.Percentage.New
     {        
         private List<SectionByCountFlat> sectionsByCountFlat;
         ReqCountFlat[] reqCountFlat;
+        SelectedCode[] selectedCode;
 
         public ChoiceSections (List<SectionByCountFlat> sectionsByCountFlat, ReqCountFlat[] reqsFlat)
         {
@@ -18,22 +19,98 @@ namespace AR_AreaZhuk.Percentage.New
             this.sectionsByCountFlat = sectionsByCountFlat;            
         }
 
-        public List<HouseInfo> Select ()
+        public SuccessHouses Select ()
         {
-            List<HouseInfo> resHouses = new List<HouseInfo>();
+            SuccessHouses successHouses = new SuccessHouses();
+            successHouses.GOS = new List<GeneralObject>();            
 
             // Определение перебираемых индексов по каждому требованию
-            SelectedCode[] selectedCode = SelectedCode.GetSelectedCodes(sectionsByCountFlat, reqCountFlat);
-            // Перебор первых индексов требований 
-            while (IncrementCalcIndexCode(selectedCode.Length-1, selectedCode, 0))
+            selectedCode = SelectedCode.GetSelectedCodes(sectionsByCountFlat, reqCountFlat);
+            // Перебор кодов секций удовлетворяющих процентажу
+            do
             {
+                // проверка кол. квартир процентажное
+                if (CheckSelCodePercentage())
+                {
+                    // Прошедшие секции
+                    var successSections = GetSelectedSections();
+                    List<GeneralObject> gos = GetHouses(successSections);
+                    successHouses.GOS.AddRange(gos);
+                }
 
-            }
-
-            return resHouses;
+            } while (IncrementSelectedCode(selectedCode.Length - 1));
+            
+            return successHouses;
         }
 
-        private bool IncrementCalcIndexCode (int indexSel, int[] selectedFirstCodeReq, int indexReq)
+        private bool CheckSelCodePercentage ()
+        {
+            bool res = true;
+            for (int r = 0; r < reqCountFlat.Length; r++)
+            {
+                double curCount = 0;
+                curCount = selectedCode.Sum(s => s.GetCountFlat(r));
+                var reqFlat = reqCountFlat[r];
+                if (Math.Abs(curCount - reqFlat.Count) > reqFlat.Offset)
+                {
+                    res = false;
+                }
+            }
+            return res;
+        }
+
+        private List<GeneralObject> GetHouses (List<SectionByCode> successSections)
+        {
+            List<GeneralObject> res = new List<GeneralObject>();
+            // Все комбинации секций
+            int[] selectedSuccessSec = new int[successSections.Count];
+
+            do
+            {                
+                HouseInfo hi = new HouseInfo();
+                hi.Sections = new List<FlatInfo>();
+                var sections = new List<FlatInfo>();
+                for (int i = 0; i < successSections.Count; i++)
+                {
+                    var sec = successSections[i].Sections[selectedSuccessSec[i]];
+                    sections.Add(sec);
+                }
+                // группировка по домам
+                var houses = sections.GroupBy(g => g.SpotOwner).Select(s => new HouseInfo { Sections = s.ToList() }).ToList();
+                var go = new GeneralObject { Houses = houses };
+                res.Add(go);
+
+            } while (IncrementSuccesSec(selectedSuccessSec.Length-1, selectedSuccessSec, successSections));
+
+            return res;
+        }
+
+        private bool IncrementSuccesSec (int index, int[] selectedSuccessSec, List<SectionByCode> successSections)
+        {
+            bool res = true;
+            if (index ==-1)
+            {
+                res = false;
+            }
+            else
+            {
+                selectedSuccessSec[index]++;
+                if (selectedSuccessSec[index] == successSections[index].Sections.Count)
+                {
+                    selectedSuccessSec[index] = 0;
+                    res = IncrementSuccesSec(index - 1, selectedSuccessSec, successSections);
+                }
+            }
+            return res;
+        }
+
+        private List<SectionByCode> GetSelectedSections ()
+        {
+            var res = selectedCode.Select(s => s.GetSelectedSections()).ToList();
+            return res;
+        }
+
+        private bool IncrementSelectedCode (int indexSel)
         {
             bool res = true;
             if (indexSel ==-1)
@@ -42,32 +119,13 @@ namespace AR_AreaZhuk.Percentage.New
             }
             else
             {
-                selectedFirstCodeReq[indexSel]++;
-                // Проверка индекса
-                if (selectedFirstCodeReq[indexSel]== sectionsByCountFlat[indexSel].SectionsByCode.Count)
+                if (!selectedCode[indexSel].IncrementSelIndex())
                 {
-                    selectedFirstCodeReq[indexSel] = 0;
-                    // Сдвиг индекса
-                    res = IncrementCalcIndexCode(indexSel-1, selectedFirstCodeReq, indexReq);
-                }
-                else
-                {
-                    // проверка кол. квартир процентажное
-                    double curCount = 0;
-                    for (int i = 0; i < selectedFirstCodeReq.Length; i++)
-                    {
-                        curCount += sectionsByCountFlat[i].SectionsByCode[selectedFirstCodeReq[i]].SectionsByCodeNextReq[indexReq].CountFlatPercentage;
-                    }
-                    var reqFlat = reqCountFlat[indexReq];
-                    if (curCount - reqFlat.Count > reqFlat.Offset)
-                    {
-                        res = false;
-                    }
-                }
+                    selectedCode[indexSel].ResetSelIndex();
+                    res = IncrementSelectedCode(indexSel - 1);
+                }                                
             }
             return res;
-        }
-
-        
+        }       
     }
 }

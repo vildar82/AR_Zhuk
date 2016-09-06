@@ -9,14 +9,14 @@ namespace AR_AreaZhuk.Percentage.New
 {
     class SectionInPlace
     {        
-        private List<Section> sections;
+        private List<FlatInfo> sections;
 
         public bool IsDominant { get; private set; }
         public int CountStep { get; private set; }
         public List<SectionByCountFlat> SectionsByCountFlat { get; private set; }
         public double FactorFloor { get; private set; }
 
-        public SectionInPlace (List<Section> sections, double factorfloor)
+        public SectionInPlace (List<FlatInfo> sections, double factorfloor)
         {
             this.sections = sections;
             var f = sections[0];
@@ -26,37 +26,37 @@ namespace AR_AreaZhuk.Percentage.New
             SectionsByCountFlat = SectionByCountFlat.GetSections(sections, factorfloor);
         }        
 
-        public static List<SectionInPlace> GetSections (int[] selectedHouses, List<List<HouseInfo>> totalObject,double factorDom)
+        public static List<List<SectionByCountFlat>> GetSections (int[] selectedHouses, List<List<HouseInfo>> totalObject,double factorDom)
         {
-            List<SectionInPlace> secsInPlaces = new List<SectionInPlace>();
+            List<List<SectionByCountFlat>> secsByCountflats = new List<List<SectionByCountFlat>>();
                         
-            List<List<Section>> allSections = new List<List<Section>>();
+            List<Section> allSections = new List<Section>();
             for (int i = 0; i < selectedHouses.Length; i++)
             {
                 var sections = totalObject[i][selectedHouses[i]].SectionsBySize.ToList();
-                allSections.Add(sections);                
+                allSections.AddRange(sections);                
             }
             if (MainForm.ProjectInfo.IsEnableDominantsOffset)
             {
                 // Все доминанты (их шаги)
-                List<int> dominantsStep = allSections.Where(s => s[0].IsDominant).Select(s => s[0].CountStep).ToList();
+                List<int> dominantsStep = allSections.Where(s => s.IsDominant).Select(s => s.CountStep).ToList();
                 if (dominantsStep.Count > 1)
                 {
                     if (dominantsStep.Max() - dominantsStep.Min() > MainForm.ProjectInfo.DominantOffSet)
                     {
                         // Условие разности кол шагов доминант не удовлетворено
-                        return secsInPlaces;
+                        return secsByCountflats;
                     }
                 }
             }
 
             foreach (var secs in allSections)
             {
-                var secInPlace = new SectionInPlace(secs, secs[0].IsDominant? factorDom : 1);                
-                secsInPlaces.Add(secInPlace);
+                var secInPlace = new SectionInPlace(secs.Sections, secs.IsDominant? factorDom : 1);
+                secsByCountflats.Add(secInPlace.SectionsByCountFlat);
             }            
             
-            return secsInPlaces;
+            return secsByCountflats;
         }        
     }
 }

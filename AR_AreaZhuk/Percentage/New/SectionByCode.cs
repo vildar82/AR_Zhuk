@@ -9,7 +9,7 @@ namespace AR_AreaZhuk.Percentage.New
 {
     class SectionByCode
     {        
-        private List<FlatInfo> sections;        
+        public List<FlatInfo> Sections { get; private set; }        
         public int IndexReq { get; private set; } 
         public int CountCodeIndexFlat { get; private set; }
         /// <summary>
@@ -25,7 +25,7 @@ namespace AR_AreaZhuk.Percentage.New
         {
             IndexReq = indexReq;
             CountCodeIndexFlat = countCodeIndexFlat;
-            this.sections = sections;
+            this.Sections = sections;
             // Процентажное кол квартир
             CountFlatPercentage = countCodeIndexFlat * factorDom;
             // Квартиры след индекса
