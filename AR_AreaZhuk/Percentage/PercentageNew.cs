@@ -72,6 +72,9 @@ namespace AR_AreaZhuk.Percentage
                     var satisfySecs = new SatisfySections(selSecsByCountFlat, ProjectInfo.requirments, factorDom);
                     satisfySecs.Calc();
 
+                    if (satisfySecs.SectionsCodes.Count == 0)
+                        continue;
+
                     // Проверка процентажа                    
 
                     // Прошел вариант

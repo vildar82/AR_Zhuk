@@ -26,7 +26,7 @@ namespace AR_AreaZhuk.Percentage.New
         /// <summary>
         /// Список подходящих кодов секций под процентаж
         /// </summary>
-        public List<string[]> SectionsCodes { get; private set; }
+        public List<string[]> SectionsCodes { get; private set; } = new List<string[]>();
 
         public SatisfySections (List<SectionByCountFlat> selSecsByCountFlat, 
             List<Requirment> requirments, double factorDom)
@@ -47,8 +47,10 @@ namespace AR_AreaZhuk.Percentage.New
             reqCountFlat = ReqCountFlat.GetRequirementCountFlats(requirments, totalCountFlatD);
 
             // варианты сумм квартир рядовых и доминантных секций для каждого требования                        
+            List<Tuple<List<int[]>, List<int[]>>>[] vars = new List<Tuple<List<int[]>, List<int[]>>>[reqCountFlat.Length];
             for(int r =0; r< reqCountFlat.Length; r++)
             {
+                vars[r] = new List<Tuple<List<int[]>, List<int[]>>>();
                 var reqFlat = reqCountFlat[r];
                 // Список вариантов сумм для типов секций (рядовых и доминант)
                 List<int[]> varsSumFlatBySecType = GetVarsSumSecType(reqFlat);
@@ -58,10 +60,19 @@ namespace AR_AreaZhuk.Percentage.New
                 {
                     // варианты кодов рядовых секций
                     var varSecsOrdinary = ordinarySections.GetSectionsByReqSum(sumFlatBySecType[0], r);
+                    if (varSecsOrdinary.Count == 0) continue;
                     // варианты кодов доминантных секций
                     var varSecsDom = dominantSections.GetSectionsByReqSum(sumFlatBySecType[1], r);
+                    if (varSecsDom.Count == 0) continue;
+
+                    // прошедший вариант                     
+                    vars[r].Add(new Tuple<List<int[]>, List<int[]>>(varSecsOrdinary, varSecsDom));
                 }
-            }            
+                if (vars[r].Count == 0)
+                {
+                    return;
+                }
+            }     
         }
 
         private List<int[]> GetVarsSumSecType (ReqCountFlat req)
@@ -76,23 +87,11 @@ namespace AR_AreaZhuk.Percentage.New
             foreach (int sumDom in domSumVars)
             {                
                 // Формула Лени
-                double sumOrdinary = req.Count - (sumDom * factorDom);
-                int sumOrdinaryInt;
-                // Если это целое число, то оно подходит под процентаж. Если не больше 0, то берем сумму 0 для рядовых секц
-                if (sumOrdinary > 0 && IsInteger(sumOrdinary, out sumOrdinaryInt))
-                {                    
-                    resVars.Add(new[] { sumOrdinaryInt, sumDom });
-                }                               
+                int sumOrdinary = Math.Abs(Convert.ToInt32(req.Count + req.Offset - (sumDom * factorDom)));                                
+                resVars.Add(new[] { sumOrdinary, sumDom });
             }
             return resVars;
-        }
-
-        private bool IsInteger (double d, out int sumOrdinaryInt)
-        {
-            sumOrdinaryInt = Convert.ToInt32(d);
-            var res = Math.Abs(d - sumOrdinaryInt) <= 0.21;
-            return res;
-        }
+        }        
 
         private List<int> GetVarSumDominants (ReqCountFlat req)
         {
@@ -105,7 +104,7 @@ namespace AR_AreaZhuk.Percentage.New
             else
             {
                 // сумма квартир доминант максимальная
-                int maxSumDom =Convert.ToInt32(req.Count+req.Offset / factorDom);
+                int maxSumDom =Convert.ToInt32((req.Count + req.Offset) / factorDom);
                 if (ordinarySections.TotalCountFlatD ==0)
                 {
                     // Нет рядовых секций в расчете. 

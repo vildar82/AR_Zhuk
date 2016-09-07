@@ -43,7 +43,7 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
         /// <summary>
         /// Определение вариантов секций для заданной суммы квартир
         /// </summary>        
-        public object GetSectionsByReqSum (int sumFlatReq, int indexReq)
+        public List<int[]> GetSectionsByReqSum (int sumFlatReq, int indexReq)
         {
             // список кол квартир по всем секциям для заданного индекса требования
             var codes = codesByReq[indexReq];
