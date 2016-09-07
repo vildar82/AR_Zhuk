@@ -18,10 +18,20 @@ namespace AR_AreaZhuk.Percentage.New
         /// </summary>
         public double Offset { get; internal set; }
 
-        public ReqCountFlat (Requirment req, double totalCountFlat)
+        public ReqCountFlat (Requirment req, double totalCountFlatD)
         {
-            Count = req.Percentage * totalCountFlat * 0.01;
-            Offset = req.OffSet * totalCountFlat * 0.01;
+            Count = req.Percentage * totalCountFlatD * 0.01;
+            Offset = req.OffSet * totalCountFlatD * 0.01;
+        }
+
+        public static ReqCountFlat[] GetRequirementCountFlats (List<Requirment> requirments, double totalCountFlatD)
+        {
+            ReqCountFlat[] resReqs = new ReqCountFlat[requirments.Count];
+            for (int r = 0; r < requirments.Count; r++)
+            {
+                resReqs[r] = new ReqCountFlat(requirments[r], totalCountFlatD);
+            }
+            return resReqs;
         }
     }
 }

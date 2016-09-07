@@ -12,7 +12,7 @@ using AR_Zhuk_DataModel;
 
 namespace AR_AreaZhuk.Percentage
 {
-    class PercentageNew : IPercentage
+    class PercentageNew
     {
         public event EventHandler<EventIntArg> ChangeCount;
 
@@ -24,9 +24,7 @@ namespace AR_AreaZhuk.Percentage
         List<Requirment> requirments;
         int floorsMain;
         int floorsDom;
-        double factorDom;
-        double totalCountFlatPer;
-        ReqCountFlat[] reqCountFlat;
+        double factorDom;                
         ProjectInfo ProjectInfo;
 
         public List<GeneralObject> Calc (List<List<HouseInfo>> totalObject, BackgroundWorker worker)
@@ -53,7 +51,7 @@ namespace AR_AreaZhuk.Percentage
                 Debug.WriteLine("selectedHouses: " + string.Join(".", selectedHouses));
 
                 // Секции по этому варианту домов                
-                sectionsByCountFlats = SectionInPlace.GetSections(selectedHouses, totalObject, factorDom);
+                sectionsByCountFlats = GetSections(selectedHouses, totalObject);
                 if (sectionsByCountFlats.Count == 0)
                     continue;
 
@@ -70,30 +68,25 @@ namespace AR_AreaZhuk.Percentage
 
                     // Подбор секций под процентаж
                     var selSecsByCountFlat = GetCurrentSelectedSectionsByCountFlat();
-                    // Кол квартир на одном этаже (процентажное)
-                    totalCountFlatPer = selSecsByCountFlat.Sum(s => s.CountFlatWoLLU * s.FactorDom);
-                    // Кол квартир на каждое требования (процентажное)
-                    reqCountFlat = GetRequirementCountFlats();
-                    
-                    // Проверка процентажа
-                    ChoiceSections choice = new ChoiceSections(selSecsByCountFlat, reqCountFlat);
-                    var succesHouse = choice.Select();
-                    if (succesHouse.GOS.Count == 0)
-                        continue;
+
+                    var satisfySecs = new SatisfySections(selSecsByCountFlat, ProjectInfo.requirments, factorDom);
+                    satisfySecs.Calc();
+
+                    // Проверка процентажа                    
 
                     // Прошел вариант
 
                     // расчет реальных процентажей
-                    succesHouse.SuccesProjectInfo = GetSuccesProjectInfo(succesHouse.GOS[0].Houses);
+                    //succesHouse.SuccesProjectInfo = GetSuccesProjectInfo(succesHouse.GOS[0].Houses);
 
                     // Подсчет площадей
-                    foreach (var go in succesHouse.GOS)
-                    {
-                        var piGo = succesHouse.SuccesProjectInfo.Copy();
-                        go.SpotInf = piGo;
-                        AreaCalcHelper.Calc(go);
-                        gos.Add(go);
-                    }
+                    //foreach (var go in succesHouse.GOS)
+                    //{
+                    //    var piGo = succesHouse.SuccesProjectInfo.Copy();
+                    //    go.SpotInf = piGo;
+                    //    AreaCalcHelper.Calc(go);
+                    //    gos.Add(go);
+                    //}
 
                     // Обновление числа вариантов на форме
                     ChangeCount?.Invoke(null, new EventIntArg(gos.Count));
@@ -101,6 +94,41 @@ namespace AR_AreaZhuk.Percentage
                 } while (IncremenSectionByCountFlat(sectionsByCountFlats.Count - 1));
             } while (IncrementHouse(totalObject.Count - 1));
             return gos;
+        }
+
+        public List<List<SectionByCountFlat>> GetSections (int[] selectedHouses, List<List<HouseInfo>> totalObject)
+        {
+            List<List<SectionByCountFlat>> secsByCountflats = new List<List<SectionByCountFlat>>();
+
+            List<Section> allSections = new List<Section>();
+            for (int i = 0; i < selectedHouses.Length; i++)
+            {
+                var sections = totalObject[i][selectedHouses[i]].SectionsBySize.ToList();
+                allSections.AddRange(sections);
+            }
+            if (MainForm.ProjectInfo.IsEnableDominantsOffset)
+            {
+                // Все доминанты (их шаги)
+                List<int> dominantsStep = allSections.Where(s => s.IsDominant).Select(s => s.CountStep).ToList();
+                if (dominantsStep.Count > 1)
+                {
+                    if (dominantsStep.Max() - dominantsStep.Min() > MainForm.ProjectInfo.DominantOffSet)
+                    {
+                        // Условие разности кол шагов доминант не удовлетворено
+                        return secsByCountflats;
+                    }
+                }
+            }
+
+            for (int i = 0; i < allSections.Count; i++)
+            {
+                var sec = allSections[i];
+                var secsByCountFlat = sec.Sections.GroupBy(g => g.CountFlats).
+                    Select(g => new SectionByCountFlat(i, g.Key - 1, g.ToList())).ToList();                
+                secsByCountflats.Add(secsByCountFlat);
+            }
+
+            return secsByCountflats;
         }
 
         private ProjectInfo GetSuccesProjectInfo (List<HouseInfo> houses)
@@ -166,16 +194,6 @@ namespace AR_AreaZhuk.Percentage
                 curSecsByCountFlats.Add(sectionsByCountFlats[i][selectedSecByCountFlat[i]]);
             }
             return curSecsByCountFlats;
-        }
-
-        private ReqCountFlat[] GetRequirementCountFlats ()
-        {
-            ReqCountFlat[] resReqs = new ReqCountFlat[requirments.Count];
-            for (int r = 0; r < requirments.Count; r++)
-            {
-                resReqs[r] = new ReqCountFlat(requirments[r], totalCountFlatPer);
-            }
-            return resReqs;
-        }
+        }        
     }
 }

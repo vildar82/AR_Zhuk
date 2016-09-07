@@ -113,7 +113,7 @@ namespace AR_Zhuk_Schema.DB
                     if (!isValidSection)
                         continue;
 
-                    if (fl.Flats.Count > 3)
+                    if (fl.Flats.Count > 4)
                     {                        
                         var code = GetFlatCode(fl);
                         fl.Code = code.Item1;

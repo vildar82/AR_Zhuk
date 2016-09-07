@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AR_AreaZhuk;
 using AR_AreaZhuk.Controller;
+using AR_AreaZhuk.Percentage.New.Satisfy;
 using AR_AreaZhuk.PIK1TableAdapters;
 using AR_Zhuk_DataModel;
 using AR_Zhuk_Schema.DB;
@@ -24,8 +25,11 @@ namespace AR_Zhuk_Scheme_ConsoleTest
         [STAThread]
         static void Main (string[] args)
         {
-            TestMessage();
-            return;
+            // Test combine
+            TestCombine();
+
+            //TestMessage();
+            //return;
             //DBService dbServ = new DBService();
             //dbServ.SaveDbFlats();
             //AnalizSectionsSteps();
@@ -44,6 +48,14 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
+        }
+
+        private static void TestCombine ()
+        {
+            var res = Combina.CodeCombinations(new List<List<int>> {
+                new List<int> { 0, 1, 2 }, new List<int> { 1, 2,3,4,5 }, new List<int>{ 0, 2, 4 },
+                new List<int>{ 1, 2, 3 }, new List<int> { 0, 2, 4 }
+            }, 5);
         }
 
         private static void TestMessage ()

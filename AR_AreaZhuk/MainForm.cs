@@ -354,7 +354,7 @@ namespace AR_AreaZhuk
             backgroundWorkerCalculate.DoWork += (o, a) =>
             {
                 // Процентаж
-                IPercentage percentageNew = new PercentageNew();
+                PercentageNew percentageNew = new PercentageNew();
                 percentageNew.ChangeCount += (o1, a1) => backgroundWorkerCalculate.ReportProgress(0, a1.Count);
                 ob = percentageNew.Calc(totalObject, backgroundWorkerCalculate);
             };
