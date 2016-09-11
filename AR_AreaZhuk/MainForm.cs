@@ -353,6 +353,7 @@ namespace AR_AreaZhuk
             
             backgroundWorkerCalculate.DoWork += (o, a) =>
             {
+                if (backgroundWorkerCalculate.CancellationPending) return;
                 // Процентаж
                 IPercentage percentageNew = new PercentageNew();
                 percentageNew.ChangeCount += (o1, a1) => backgroundWorkerCalculate.ReportProgress(0, a1.Count);
@@ -364,7 +365,7 @@ namespace AR_AreaZhuk
             {
                 // Сортировка квартирографии по заданному пользователем порядку            
                 ProjectInfo.SortRequirmentsByUser();
-
+                isEvent = false;
                 FormManager.ViewDataProcentage(dg2, ob, ProjectInfo);
                 for (int q = 0; q < ProjectInfo.requirments.Count; q++)
                 {

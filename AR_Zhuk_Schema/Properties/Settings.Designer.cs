@@ -26,7 +26,7 @@ namespace AR_Zhuk_Schema.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=cad01PIK;Initial Catalog=SAPR;User ID=cad_ar;Password=qwerty!2345")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=cad01PIK;Initial Catalog=SAPR;User ID=cad_ar;Password=qwerty!23456")]
         public string SAPRConnectionString {
             get {
                 return ((string)(this["SAPRConnectionString"]));
