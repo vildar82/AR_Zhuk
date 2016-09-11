@@ -12,7 +12,7 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
         public bool IsDominant { get; private set; }
         public double TotalCountFlatD { get; private set; }
 
-        private List<SectionByCountFlat> sections = new List<SectionByCountFlat>();        
+        public List<SectionByCountFlat> Sections { get; set; } = new List<SectionByCountFlat>();        
         private List<List<int>>[] codesByReq;
 
         public SectionsByType(bool isDominant, double factorDom, int countRequirements)
@@ -28,7 +28,7 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
 
         public void Add (List<SectionByCountFlat> sections)
         {                        
-            this.sections.AddRange(sections);
+            this.Sections.AddRange(sections);
             foreach (var secByCountFlat in sections)
             {
                 TotalCountFlatD += secByCountFlat.CountFlatWoLLU * factorDom;

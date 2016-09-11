@@ -15,7 +15,7 @@ namespace AR_AreaZhuk.Percentage.New
         /// <summary>
         /// Секции по индексу требования
         /// </summary>
-        public List<SectionByCode> SectionsByCodeNextReq { get; private set; }
+        public Dictionary<int, SectionByCode> SectionsByCodeNextReq { get; private set; }
 
         public SectionByCode (int indexReq, int countCodeIndexFlat, List<FlatInfo> sections)
         {
@@ -26,27 +26,27 @@ namespace AR_AreaZhuk.Percentage.New
             SectionsByCodeNextReq = GetSections(sections, indexReq + 1);
         }
 
-        public static List<SectionByCode> GetSections(List<FlatInfo> sections, int indexReq)
+        public static Dictionary<int,SectionByCode> GetSections(List<FlatInfo> sections, int indexReq)
         {
             if (indexReq == sections[0].CodeArray.Length)
             {
                 return null;
             }
             // группировка сецйи по первому требованию (кол квартир в первой индексе кода секций)
-            List<SectionByCode> secsByCode = sections.GroupBy(g => g.CodeArray[indexReq]).OrderBy(o=>o.Key).
-                Select(v => new SectionByCode(indexReq, v.Key, v.ToList())).ToList();
+            Dictionary<int, SectionByCode> secsByCode = sections.GroupBy(g => g.CodeArray[indexReq]).OrderBy(o => o.Key).
+                Select(v => new SectionByCode(indexReq, v.Key, v.ToList())).ToDictionary(k => k.CountCodeIndexFlat, v => v);
             return secsByCode;
         }
 
         public List<int> GetCountFlatsByReq (int indexReq)
         {
-            if (this.IndexReq == indexReq)
+            if (IndexReq == indexReq)
             {
                 return new List<int>() { CountCodeIndexFlat };
             }
             else
             {
-                return SectionsByCodeNextReq.SelectMany(s => s.GetCountFlatsByReq(indexReq)).ToList();
+                return SectionsByCodeNextReq.SelectMany(s => s.Value.GetCountFlatsByReq(indexReq)).ToList();
             }
         }
     }

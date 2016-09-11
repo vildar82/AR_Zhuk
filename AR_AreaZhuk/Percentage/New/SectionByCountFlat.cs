@@ -14,7 +14,7 @@ namespace AR_AreaZhuk.Percentage.New
         public bool IsDominant { get; private set; }
         public int CountFlatWoLLU { get; private set; }          
         public Dictionary<string, List<FlatInfo>> DictCodes { get; private set; }   
-        public List<SectionByCode> SectionsByCodeIndexes { get; private set; }
+        public Dictionary<int, SectionByCode> SectionsByCodeIndexes { get; private set; }
 
         public SectionByCountFlat (int indexSec, int сountFlatsWoLLU, List<FlatInfo> sections)
         {
@@ -35,7 +35,7 @@ namespace AR_AreaZhuk.Percentage.New
 
         public List<int> GetCountsFlatByReq (int indexReq)
         {
-            List<int> res = SectionsByCodeIndexes.SelectMany(s => s.GetCountFlatsByReq(indexReq)).ToList();
+            List<int> res = SectionsByCodeIndexes.SelectMany(s => s.Value.GetCountFlatsByReq(indexReq)).ToList();
             return res;
         }
     }

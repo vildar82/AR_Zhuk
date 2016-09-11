@@ -23,6 +23,8 @@ namespace AR_AreaZhuk.Percentage.New
         SectionsByType ordinarySections;
         SectionsByType dominantSections;
 
+        List<Tuple<List<int[]>, List<int[]>>>[] varsSum;
+
         /// <summary>
         /// Список подходящих кодов секций под процентаж
         /// </summary>
@@ -47,10 +49,10 @@ namespace AR_AreaZhuk.Percentage.New
             reqCountFlat = ReqCountFlat.GetRequirementCountFlats(requirments, totalCountFlatD);
 
             // варианты сумм квартир рядовых и доминантных секций для каждого требования                        
-            List<Tuple<List<int[]>, List<int[]>>>[] vars = new List<Tuple<List<int[]>, List<int[]>>>[reqCountFlat.Length];
+            varsSum = new List<Tuple<List<int[]>, List<int[]>>>[reqCountFlat.Length];
             for(int r =0; r< reqCountFlat.Length; r++)
             {
-                vars[r] = new List<Tuple<List<int[]>, List<int[]>>>();
+                varsSum[r] = new List<Tuple<List<int[]>, List<int[]>>>();
                 var reqFlat = reqCountFlat[r];
                 // Список вариантов сумм для типов секций (рядовых и доминант)
                 List<int[]> varsSumFlatBySecType = GetVarsSumSecType(reqFlat);
@@ -66,13 +68,46 @@ namespace AR_AreaZhuk.Percentage.New
                     if (varSecsDom.Count == 0) continue;
 
                     // прошедший вариант                     
-                    vars[r].Add(new Tuple<List<int[]>, List<int[]>>(varSecsOrdinary, varSecsDom));
+                    varsSum[r].Add(new Tuple<List<int[]>, List<int[]>>(varSecsOrdinary, varSecsDom));
                 }
-                if (vars[r].Count == 0)
+                if (varsSum[r].Count == 0)
                 {
                     return;
                 }
-            }     
+            }
+            // Выбор кодов екций
+
+            // Подстановка кода первого требования в первый вариант суммы кодов рядовых и доминант            
+            int indexReq = 0;
+            var ordinarysCode = ordinarySections.Sections.Select(s => s.SectionsByCodeIndexes).ToList();
+            var domsCode = dominantSections.Sections.Select(s => s.SectionsByCodeIndexes).ToList();
+            foreach (var sum in varsSum[indexReq])
+            {
+                var secsOrd = GetSubstCodesSec(sum.Item1, ordinarysCode);
+                var secsDom = GetSubstCodesSec(sum.Item2, domsCode);
+            }
+        }
+
+        private List<List<SectionByCode>> GetSubstCodesSec (List<int[]> varsSum, List<Dictionary<int, SectionByCode>> ordinarysCode)
+        {
+            List<List<SectionByCode>> res = new List<List<SectionByCode>> ();
+            foreach (var varSum in varsSum)
+            {
+                List<SectionByCode> secsCodesVar = new List<SectionByCode>();
+                for (int i = 0; i < varSum.Length; i++)
+                {
+                    SectionByCode secCode;
+                    if (ordinarysCode[i].TryGetValue(varSum[i], out secCode))
+                    {
+                        secsCodesVar.Add(secCode);
+                    }
+                }
+                if (secsCodesVar.Count != 0)
+                {
+                    res.Add(secsCodesVar);
+                }
+            }
+            return res;
         }
 
         private List<int[]> GetVarsSumSecType (ReqCountFlat req)
@@ -87,7 +122,7 @@ namespace AR_AreaZhuk.Percentage.New
             foreach (int sumDom in domSumVars)
             {                
                 // Формула Лени
-                int sumOrdinary = Math.Abs(Convert.ToInt32(req.Count + req.Offset - (sumDom * factorDom)));                                
+                int sumOrdinary = Math.Abs(Convert.ToInt32(req.Count - (sumDom * factorDom)));                                
                 resVars.Add(new[] { sumOrdinary, sumDom });
             }
             return resVars;
@@ -104,7 +139,7 @@ namespace AR_AreaZhuk.Percentage.New
             else
             {
                 // сумма квартир доминант максимальная
-                int maxSumDom =Convert.ToInt32((req.Count + req.Offset) / factorDom);
+                int maxSumDom =Convert.ToInt32(req.Count / factorDom);
                 if (ordinarySections.TotalCountFlatD ==0)
                 {
                     // Нет рядовых секций в расчете. 
