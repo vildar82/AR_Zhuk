@@ -28,7 +28,7 @@ namespace AR_AreaZhuk.Percentage.New
         /// <summary>
         /// Список подходящих кодов секций под процентаж
         /// </summary>
-        public List<string[]> SectionsCodes { get; private set; } = new List<string[]>();
+        public List<string[]> SectionsCodes  = new List<string[]>();
 
         public SatisfySections (List<SectionByCountFlat> selSecsByCountFlat, 
             List<Requirment> requirments, double factorDom)

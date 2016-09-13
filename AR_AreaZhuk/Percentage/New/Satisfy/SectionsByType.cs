@@ -12,7 +12,7 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
         public bool IsDominant { get; private set; }
         public double TotalCountFlatD { get; private set; }
 
-        public List<SectionByCountFlat> Sections { get; set; } = new List<SectionByCountFlat>();        
+        public List<SectionByCountFlat> Sections = new List<SectionByCountFlat>();        
         private List<List<int>>[] codesByReq;
 
         public SectionsByType(bool isDominant, double factorDom, int countRequirements)
