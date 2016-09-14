@@ -25,7 +25,7 @@ namespace AR_AreaZhuk
         public PIK1.C_Flats_PIK1_AreasDataTable flatsAreas = new PIK1.C_Flats_PIK1_AreasDataTable();
         public Dictionary<string, PIK1.C_Flats_PIK1_AreasRow> dictFlatsAreas;
         public PIK1.C_Flats_PIK1DataTable dbFlats = new PIK1.C_Flats_PIK1DataTable();
-      static  BindingSource bs = new BindingSource();
+        static BindingSource bs = new BindingSource();
         public static List<ProjectInfo> spinfos = new List<ProjectInfo>();
         public static ProjectInfo projectInfo;
         public static List<List<HouseInfo>> houses = new List<List<HouseInfo>>();
@@ -373,43 +373,74 @@ namespace AR_AreaZhuk
                 Debug.WriteLine("Размерность секций sections = " + sections.Aggregate(string.Empty, (u, i) => u + "." + i.Count.ToString()));
 
                 //Группировка и сортировка секций
-                List<CodeSection> codeSections = GetSectionsByCode(sections,true);
-               // List<CodeSection> codeSections1 = GetSectionsByCode(sections,false);
-                Debug.WriteLine("Размерность секций по кол. квартир = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + i.SectionsByCountFlats.Count));
-                Debug.WriteLine("Размерность секций по кол. кодов = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + "[" + i.SectionsByCountFlats.Aggregate(string.Empty, (n, j) => n + "." + j.SectionsByCode.Count) + "]"));
 
-                int[] selectedSectByCountFlats = new int[codeSections.Count]; //Выбранная размерность секции по кол-ву квартир
-                int[] selectedSectCode = new int[codeSections.Count]; //Выбранный код секций                
+                // List<CodeSection> codeSections1 = GetSectionsByCode(sections,false);
+                //Debug.WriteLine("Размерность секций по кол. квартир = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + i.SectionsByCountFlats.Count));
+                // Debug.WriteLine("Размерность секций по кол. кодов = " + codeSections.Aggregate(string.Empty, (u, i) => u + "." + "[" + i.SectionsByCountFlats.Aggregate(string.Empty, (n, j) => n + "." + j.SectionsByCode.Count) + "]"));
+
+                //int[] selectedSectByCountFlats = new int[codeSections.Count]; //Выбранная размерность секции по кол-ву квартир
+                //int[] selectedSectCode = new int[codeSections.Count]; //Выбранный код секций                
 
                 //Обход сформированных секций с уникальными кодами на объект
                 // Перебор размерностей дома (selectedSectByCountFlats)
-                do
+                //do
+                //{
+                //    if (isStop)
+                //        break;
+                //    Application.DoEvents();
+
+                //int totalCountFlats = 0;
+
+                ////Общее кол-во квартир в размерности
+                //for (int i = 0; i < sections.Count; i++)
+                //{
+                //    totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].CountFlats;
+                //}
+                // Перебор кодов секций (в заданной размерности) - selectedSectCode
+                //do
+                //{
+                //    countEnter++;
+                //    if (isStop)
+                //        break;
+                bool isValidPercentage = true;
+                string strP = string.Empty;
+                bool isOverFlow = false;
+                //    Application.DoEvents();
+
+                //  List<FlatInfo>[] reqSections = sections.ToArray();
+                //  List<FlatInfo>[] reqSections = 
+                for (int q = 0; q < projectInfo.requirments.Count; q++)
                 {
-                    if (isStop)
+                    if (sections.Any(x => x.Count.Equals(0)))
                         break;
-                    Application.DoEvents();
+                    List<CodeSection> codeSections = GetSectionsByCode(sections, q);
+                    List<FlatInfo>[] reqSections = new List<FlatInfo>[codeSections.Count];
+                    for (int i = 0; i < codeSections.Count; i++)
+                        reqSections[i] = new List<FlatInfo>();
+                    var rr = projectInfo.requirments[q];
 
-                    int totalCountFlats = 0;
-
-                    //Общее кол-во квартир в размерности
-                    for (int i = 0; i < sections.Count; i++)
-                    {
-                        totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].CountFlats;
-                    }
-
-                //    // Перебор кодов секций (в заданной размерности) - selectedSectCode
+                    int[] selectedSectByCountFlats = new int[codeSections.Count]; //Выбранная размерность секции по кол-ву квартир
+                    int[] selectedSectCode = new int[codeSections.Count]; //Выбранный код секций      
                     do
                     {
-                        countEnter++;
-                        if (isStop)
-                            break;
-                        bool isValidPercentage = true;
-                        string strP = string.Empty;
-                        bool isOverFlow = false;
-                        Application.DoEvents();
-                        for (int q = 0; q < projectInfo.requirments.Count; q++)
+                        int totalCountFlats = 0;
+
+                        //Общее кол-во квартир в размерности
+                        for (int i = 0; i < sections.Count; i++)
                         {
-                            var rr = projectInfo.requirments[q];
+                            totalCountFlats += codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].CountFlats;
+                        }
+
+
+                        //  HashSet<int>[] selectedSectCodeSucces = new HashSet<int>[codeSections.Count];
+
+
+                        //for (int i = 0; i < selectedSectCodeSucces.Length; i++)
+                        //{
+                        //    selectedSectCodeSucces[i] = new HashSet<int>();
+                        //}
+                        do
+                        {
                             int countFlats = 0;
                             for (int i = 0; i < codeSections.Count; i++)
                             {
@@ -429,6 +460,19 @@ namespace AR_AreaZhuk
                             if (arround <= rr.OffSet)
                             {
                                 strP += (Math.Round(percentage, 0)).ToString() + ";";
+
+                                for (int i = 0; i < codeSections.Count; i++)
+                                {
+                                    //  selectedSectCodeSucces[i].Add(selectedSectCode[i]);
+
+                                    Code code = codeSections[i].SectionsByCountFlats[selectedSectByCountFlats[i]].
+                                        SectionsByCode[selectedSectCode[i]];
+                                    if (!reqSections[i].Any(x => code.IdSections.Any(y => y.IdSection.Equals(x.IdSection))))
+                                        reqSections[i].AddRange(code.IdSections);
+
+                                }
+                                // newCodeSections.Add();
+                                //List<CodeSection> codeSections2 = GetSectionsByCode(reqSections, true);
                                 continue;
                             }
 
@@ -438,32 +482,37 @@ namespace AR_AreaZhuk
                                 isValidPercentage = false;
                                 break;
                             }
-                            isValidPercentage = false;
-                            break;
+                            // isValidPercentage = false;
+                            // break;
+                        } while (IncrementSectionCode(sections.Count - 1, selectedSectCode, codeSections, selectedSectByCountFlats));
 
-                        }
-                        if (isValidPercentage)  //Процентаж прошел
-                        {
-                            //Debug.WriteLine("\n\rselectedSectSize = " + selectedSectByCountFlats.Aggregate(string.Empty,
-                            //(u, i) => u + "." + i.ToString()));
-                            //Debug.WriteLine("selectedSectCode = " + selectedSectCode.Aggregate(string.Empty,
-                            //    (u, i) => u + "." + i.ToString()));
-                            // Сбор секции прошедшего варианта  
-                            var successGOs = GetSuccesGeneralObjects(codeSections, selectedSectByCountFlats, selectedSectCode, strP);
-                            ob.AddRange(successGOs);
-                            lblCountObjects.Text = ob.Count.ToString();
 
-                            //  Debug.WriteLine(successGOs.Count);
 
-                        }
-                        else if (isOverFlow)
-                        {
-                            break;
-                        }
+                    } while (IncrementSectionSize(sections.Count - 1, selectedSectByCountFlats, codeSections, ref selectedSectCode));
+                    sections = reqSections.ToList();
+                }
+                if (isValidPercentage)  //Процентаж прошел
+                {
+                    //Debug.WriteLine("\n\rselectedSectSize = " + selectedSectByCountFlats.Aggregate(string.Empty,
+                    //(u, i) => u + "." + i.ToString()));
+                    //Debug.WriteLine("selectedSectCode = " + selectedSectCode.Aggregate(string.Empty,
+                    //    (u, i) => u + "." + i.ToString()));
+                    // Сбор секции прошедшего варианта  
+                    //var successGOs = GetSuccesGeneralObjects(codeSections, selectedSectByCountFlats, selectedSectCode, strP);
+                    //ob.AddRange(successGOs);
+                    //lblCountObjects.Text = ob.Count.ToString();
 
-                    } while (IncrementSectionCode(sections.Count - 1, selectedSectCode, codeSections, selectedSectByCountFlats));
+                    //  Debug.WriteLine(successGOs.Count);
 
-                } while (IncrementSectionSize(sections.Count - 1, selectedSectByCountFlats, codeSections, ref selectedSectCode));
+                }
+                else if (isOverFlow)
+                {
+                    break;
+                }
+
+                //} while (IncrementSectionCode(sections.Count - 1, selectedSectCode, codeSections, selectedSectByCountFlats));
+
+                //} while (IncrementSectionSize(sections.Count - 1, selectedSectByCountFlats, codeSections, ref selectedSectCode));
 
             } while (IncrementSelectedHouse(selectedHouse.Length - 1, selectedHouse, totalObject));
 
@@ -581,16 +630,16 @@ namespace AR_AreaZhuk
             return successGOs;
         }
 
-        private static List<CodeSection> GetSectionsByCode(List<List<FlatInfo>> sections, bool isCount)
+        private static List<CodeSection> GetSectionsByCode(List<List<FlatInfo>> sections, int indexReq)
         {
             List<CodeSection> codeSections = new List<CodeSection>();
-            foreach (var sectionsInPlace in sections.OrderBy(x => x.Count))
+            foreach (var sectionsInPlace in sections)
             {
                 CodeSection codeSection = new CodeSection();
                 codeSection.CountFloors = sectionsInPlace[0].Floors;
 
                 //Группировка по коду
-                List<Code> codes = sectionsInPlace.OrderByDescending(x => x.CountFlats).GroupBy(g => g.CodeCountByIndexReq[0]).
+                List<Code> codes = sectionsInPlace.OrderByDescending(x => x.CountFlats).GroupBy(g => g.CodeCountByIndexReq[indexReq]).
                     OrderBy(o => o.Key).
                     Select(g =>
                     {
@@ -601,15 +650,15 @@ namespace AR_AreaZhuk
                         return code;
                     }).ToList();
                 //Группировка  по кол-ву квартир в секции
-               // if (isCount)
-                    codeSection.SectionsByCountFlats = codes.GroupBy(g => g.CountFlats).OrderByDescending(o => o.Key).
-                        Select(g =>
-                        {
-                            var flatsInSection = new FlatsInSection();
-                            flatsInSection.CountFlats = g.Key;
-                            flatsInSection.SectionsByCode = g.ToList();
-                            return flatsInSection;
-                        }).ToList();
+                // if (isCount)
+                codeSection.SectionsByCountFlats = codes.GroupBy(g => g.CountFlats).OrderByDescending(o => o.Key).
+                    Select(g =>
+                    {
+                        var flatsInSection = new FlatsInSection();
+                        flatsInSection.CountFlats = g.Key;
+                        flatsInSection.SectionsByCode = g.ToList();
+                        return flatsInSection;
+                    }).ToList();
                 //else
                 //{
                 //    codeSection.SectionsByCountFlats = codes.Select(g =>
