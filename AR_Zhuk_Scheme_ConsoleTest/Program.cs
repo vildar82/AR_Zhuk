@@ -53,9 +53,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest
         private static void TestCombine ()
         {
             var res = Combina.CodeCombinations(new List<List<int>> {
-                new List<int> { 0, 1, 2 }, new List<int> { 1, 2,3,4,5 }, new List<int>{ 0, 2, 4 },
-                new List<int>{ 1, 2, 3 }, new List<int> { 0, 2, 4 }
-            }, 5);
+                new List<int> { 0 }, new List<int> {0 }, new List<int>{0 },
+                new List<int>{ 0 }, new List<int> { 0, 1 }                
+            }, 1);
         }
 
         private static void TestMessage ()

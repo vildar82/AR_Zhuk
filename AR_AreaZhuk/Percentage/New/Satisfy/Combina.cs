@@ -81,7 +81,7 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
 
         private static bool CheckResMinMaxSum (int sumRest, int indexSec)
         {
-            return sumMinCodes[indexSec] <= sumRest && sumMaxCodes[indexSec] >= sumRest;
+            return sumMinCodes[sumMinCodes.Length-indexSec-1] <= sumRest && sumMaxCodes[sumMinCodes.Length - indexSec-1] >= sumRest;
         }
 
         private static void DefMinMaxSums ()
@@ -91,17 +91,17 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
             int sumMin =0;
             int sumMax = 0;
             // перебор секций начиная с последней
-            //var codesRev = Enumerable.Reverse(_codes).ToList();
-            for (int i = 0; i < _codes.Count; i++)
+            var codesRev = Enumerable.Reverse(_codes).ToList();
+            for (int i = 0; i < codesRev.Count; i++)
             {
-                var code = _codes[i];
+                var code = codesRev[i];
                 sumMin += code[0];
                 sumMax += code[code.Count - 1];
                 sumMinCodes[i] = sumMin;
                 sumMaxCodes[i] = sumMax;
             }
-            sumMinCodes = sumMinCodes.Reverse().ToArray();
-            sumMaxCodes = sumMaxCodes.Reverse().ToArray();         
+            //sumMinCodes = sumMinCodes.Reverse().ToArray();
+            //sumMaxCodes = sumMaxCodes.Reverse().ToArray();         
         }
     }
 }
