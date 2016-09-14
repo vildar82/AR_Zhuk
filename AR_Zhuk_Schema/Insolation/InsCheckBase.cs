@@ -54,7 +54,9 @@ namespace AR_Zhuk_Schema.Insolation
             var passedSections = new Dictionary<string, FlatInfo>();
             foreach (var section in sectionBySize.Sections)
             {
-                section.Code = insService.GetFlatCode(section);                                
+                int[] codesReq;
+                section.Code = insService.GetFlatCode(section, out codesReq);
+                section.CodeCountByIndexReq = codesReq;
                 FlatInfo passedSect;
                 if (!passedSections.TryGetValue(section.IdenticalCode, out passedSect))
                 {

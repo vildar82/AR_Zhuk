@@ -803,6 +803,7 @@ namespace AR_AreaZhuk
             this.labelCountSectionsTotal.Size = new System.Drawing.Size(80, 13);
             this.labelCountSectionsTotal.TabIndex = 4;
             this.labelCountSectionsTotal.Text = "Кол.секций:  0";
+            this.labelCountSectionsTotal.Visible = false;
             // 
             // textBoxMaxCountHousesBySpot
             // 

@@ -119,9 +119,9 @@ namespace AR_AreaZhuk
         public static void ViewDataProcentage (DataGridView dg2, List<GeneralObject> ob, ProjectInfo sp)
         {
             //  if (spinfos.Count == 0) return;
-            DataSet dataSet = new DataSet();
-            BindingSource bs = new BindingSource();
-            bs.DataSource = dataSet;
+            //DataSet dataSet = new DataSet();
+            //BindingSource bs = new BindingSource();
+            //bs.DataSource = dataSet;
             DataTable dt = new DataTable();
             dt.Columns.Add("Продаваемая площадь (м2.)", typeof(Double));
             dt.Columns.Add("Жилая площадь (м2.)", typeof(Double));
@@ -171,6 +171,7 @@ namespace AR_AreaZhuk
             dg2.DataSource = null;
             dg2.DataSource = dt;
             dg2.Columns[dg2.Columns.Count - 1].Visible = false;
+           
         }
     }
 }

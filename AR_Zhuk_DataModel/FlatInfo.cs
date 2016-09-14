@@ -28,6 +28,7 @@ namespace AR_Zhuk_DataModel
         public double Area { get; set; }
         public int Floors { get; set; }
         public string Code { get; set; }
+        public int[] CodeCountByIndexReq { get; set; }
         public string SpotOwner { get; set; }
         public int NumberInSpot { get; set; }
 
@@ -46,3 +47,4 @@ namespace AR_Zhuk_DataModel
         }
     }
 }
+

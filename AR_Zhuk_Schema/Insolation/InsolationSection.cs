@@ -60,9 +60,10 @@ namespace AR_Zhuk_Schema.Insolation
             return res;
         }        
 
-        public string GetFlatCode(FlatInfo flat)
+        public string GetFlatCode(FlatInfo flat, out int[] codeCountByIndexReq)
         {
             string code;
+            codeCountByIndexReq = new int[ProjectScheme.ProjectInfo.requirments.Count];
             if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
             {
                 code = string.Empty;
@@ -74,6 +75,7 @@ namespace AR_Zhuk_Schema.Insolation
                     int count = 0;
                     dictCountFlatByReq.TryGetValue(i, out count);
                     code += count.ToString();
+                    codeCountByIndexReq[i] = count;
                 }                
                 dictFlatsCodes.Add(flat.Flats, code);
             }
