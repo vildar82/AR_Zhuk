@@ -92,7 +92,7 @@ namespace AR_AreaZhuk.Percentage
                     //}
 
                     // Обновление числа вариантов на форме
-                    if (ChangeCount!= null)                        
+                    if (ChangeCount!=null)
                         ChangeCount.Invoke(null, new EventIntArg(gos.Count));
 
                 } while (IncremenSectionByCountFlat(sectionsByCountFlats.Count - 1));
