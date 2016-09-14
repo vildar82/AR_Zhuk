@@ -14,6 +14,13 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
         static List<List<int>> _codes;
         static int _sum;
 
+        static Dictionary<List<List<int>>, List<int[]>> cache;
+
+        public static void Init()
+        {
+            cache = new Dictionary<List<List<int>>, List<int[]>>();
+        }
+
         /// <summary>
         /// варианты сочетания чисел дающих заданную сумму
         /// </summary>
@@ -21,21 +28,27 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
         /// <returns>Список вариантов сочетания чисел дающих заданную сумму. int[] - соответствует кол секций</returns>
         public static List<int[]> CodeCombinations (List<List<int>> codes, int sum)
         {
-            _codes = codes;
-            _sum = sum;
-            List<int[]> resCombo = new List<int[]>();
-
-            DefMinMaxSums();            
-
-            if (!CheckResMinMaxSum(sum, 0))
+            List<int[]> resCombo;
+            if (!cache.TryGetValue(codes,out resCombo))
             {
-                // из заданных секций нельзя подобрать требуемую сумму квартир
-                return resCombo;
-            }
+                _codes = codes;
+                _sum = sum;
+                resCombo = new List<int[]>();
 
-            // перебор секций                       
-            int[] curCode = new int[codes.Count];
-            IterateCodes(sum, 0, ref resCombo, ref curCode);            
+                DefMinMaxSums();
+
+                if (!CheckResMinMaxSum(sum, 0))
+                {
+                    // из заданных секций нельзя подобрать требуемую сумму квартир
+                    return resCombo;
+                }
+
+                // перебор секций                       
+                int[] curCode = new int[codes.Count];
+                IterateCodes(sum, 0, ref resCombo, ref curCode);
+
+                cache.Add(codes, resCombo);
+            }        
 
             return resCombo;
         }

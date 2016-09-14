@@ -13,7 +13,7 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
         public double TotalCountFlatD { get; private set; }
 
         public List<SectionByCountFlat> Sections { get; set; } = new List<SectionByCountFlat>();        
-        private List<List<int>>[] codesByReq;
+        private List<List<int>>[] codesByReq;        
 
         public SectionsByType(bool isDominant, double factorDom, int countRequirements)
         {
@@ -50,6 +50,6 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
             // варианты кодов для заданной суммы
             var sucCodes = Combina.CodeCombinations(codes, sumFlatReq);
             return sucCodes;
-        }        
+        }
     }
 }

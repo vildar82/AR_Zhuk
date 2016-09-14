@@ -42,6 +42,7 @@ namespace AR_AreaZhuk.Percentage.New
 
         public void Calc ()
         {
+            Combina.Init();
             // разделение секций на рядовые и доминанты
             DefSectionsAndCountFlatD();
             totalCountFlatD = ordinarySections.TotalCountFlatD + dominantSections.TotalCountFlatD;
