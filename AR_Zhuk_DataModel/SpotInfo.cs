@@ -80,7 +80,8 @@ namespace AR_Zhuk_DataModel
 
         public void SortRequirmentsForCalculate ()
         {
-            requirments.Sort((r1, r2) => r1.Percentage.CompareTo(r2.Percentage));
+            requirments.Sort((r1, r2) => (r1.Percentage+r1.OffSet).CompareTo(r2.Percentage+r2.OffSet));
+           // requirments.Sort((r1, r2) => r1.Percentage.CompareTo(r2.Percentage));
         }
     }
 

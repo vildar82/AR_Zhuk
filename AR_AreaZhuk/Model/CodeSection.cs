@@ -10,13 +10,13 @@ namespace AR_AreaZhuk.Model
 {
     public class Code
     {
-        public int[] CountFlatsByCode { get;}
+        public int[] CountFlatsByCode { get; set; }
         public string CodeStr { get; set; }
         public int CountFlats { get; set; }
-        public List<FlatInfo> IdSections { get; }
+        public List<FlatInfo> IdSections { get; set; }
         public int NumberSection { get; set; }
         public string SpotOwner { get; set; }
-        public int Floors { get; }
+        public int Floors { get; set; }
 
         public Code (string code, List<FlatInfo> idSections, int countFlats, int numberSection, string spotName, int floors)
         {
