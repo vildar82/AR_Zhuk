@@ -14,7 +14,7 @@ namespace AR_AreaZhuk.Results
         private const string Extension = ".bet";
         private BinaryWriter writer;
         private BinaryReader reader;
-        private Dictionary<string, PIK1.C_Flats_PIK1Row> dictDbFlats;
+        private Dictionary<string, RoomInfo> dictRoomInfo;
 
         public void Save (List<GeneralObject> gos, ProjectInfo pi)
         {
@@ -56,35 +56,41 @@ namespace AR_AreaZhuk.Results
             List<GeneralObject> gos = new List<GeneralObject>();
             pi = null;
 
-            dictDbFlats = new Dictionary<string, PIK1.C_Flats_PIK1Row>();
+            dictRoomInfo = new Dictionary<string, RoomInfo>();
             foreach (var dbFlat in dbFlats)
             {
-                if (!dictDbFlats.ContainsKey(dbFlat.Type))
+                if (!dictRoomInfo.ContainsKey(dbFlat.Type))
                 {
-                    dictDbFlats.Add(dbFlat.Type, dbFlat);
+                    RoomInfo flat = new RoomInfo();
+                    flat.Type = dbFlat.Type;
+                    flat.AreaLive = dbFlat.AreaLive;
+                    flat.AreaModules = dbFlat.AreaInModule;
+                    flat.AreaTotal = dbFlat.AreaTotalStandart;
+                    flat.FactorSmoke = dbFlat.FactorSmoke;
+                    flat.ShortType = dbFlat.ShortType;
+                    flat.SubZone = dbFlat.SubZone;
+                    flat.SelectedIndexBottom = Convert.ToInt32(dbFlat.IndexBottom);
+                    flat.SelectedIndexTop = Convert.ToInt32(dbFlat.IndexTop);
+
+                    dictRoomInfo.Add(dbFlat.Type, flat);
                 }
             }            
 
             var fileResult = PromptFileResult();          
             using (ZipArchive zip = ZipFile.OpenRead(fileResult))
             {   
-                using (var mem = new MemoryStream(zip.GetEntry("gos").Open().ReadByte()))
-                {
-                   // long totalMemory = GC.GetTotalMemory(true);
-                  //  GC.WaitForPendingFinalizers();
-
-                    using (reader = new BinaryReader(mem))
-                    {
+                using (var stream = zip.GetEntry("gos").Open())
+                {   
+                    using (reader = new BinaryReader(stream))
+                    {                        
                         pi = ReadProjectInfo();
                         pi.SpotOptions = ReadSpotOptions();                                                
                         pi.InsModulesAll = ReadInsModules();
 
                         var countGos = reader.ReadInt32();
-                        int counter = 0;
                         for (int i=0; i<countGos; i++)
                         {
-                            counter++;
-                            GeneralObject go = new GeneralObject();
+                            var go = new GeneralObject();
                             go.GUID = reader.ReadString();
                             go.Houses = new List<HouseInfo>();
                             var countHouse = reader.ReadInt32();
@@ -97,15 +103,9 @@ namespace AR_AreaZhuk.Results
                             }
                             go.SpotInf = ReadProjectInfo();
                             go.SpotInf.InsModulesAll = pi.InsModulesAll;
-                            gos.Add(go);
-                            if (counter == 100000)
-                            {
-                                counter = 0;
-                                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
-                            }
-                         
+                            gos.Add(go);                            
                         }
-                    }
+                    }                    
                 }
             }            
             return gos;
@@ -207,22 +207,9 @@ namespace AR_AreaZhuk.Results
             List<RoomInfo> flats = new List<RoomInfo>();
             var count = reader.ReadInt32();
             for (int i = 0; i < count; i++)
-            {
-                var flat = new RoomInfo();
+            {                
                 var type = reader.ReadString();
-                PIK1.C_Flats_PIK1Row dbFlat;
-                if (dictDbFlats.TryGetValue(type, out dbFlat))
-                {
-                    flat.Type = type;
-                    flat.AreaLive = dbFlat.AreaLive;
-                    flat.AreaModules = dbFlat.AreaInModule;
-                    flat.AreaTotal = dbFlat.AreaTotalStandart;
-                    flat.FactorSmoke = dbFlat.FactorSmoke;
-                    flat.ShortType = dbFlat.ShortType;
-                    flat.SubZone = dbFlat.SubZone;
-                    flat.SelectedIndexBottom =Convert.ToInt32(dbFlat.IndexBottom);
-                    flat.SelectedIndexTop = Convert.ToInt32(dbFlat.IndexTop);                    
-                }
+                RoomInfo flat = dictRoomInfo[type];                
                 flats.Add(flat);
             }
             return flats;
