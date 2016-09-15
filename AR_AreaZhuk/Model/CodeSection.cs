@@ -10,7 +10,7 @@ namespace AR_AreaZhuk.Model
 {
     public class Code
     {
-        public int[] CountFlatsByCode { get; set; }
+        public int CountReqFlats { get; set; }
         public string CodeStr { get; set; }
         public int CountFlats { get; set; }
         public List<FlatInfo> IdSections { get; set; }
@@ -18,7 +18,7 @@ namespace AR_AreaZhuk.Model
         public string SpotOwner { get; set; }
         public int Floors { get; set; }
 
-        public Code (string code, List<FlatInfo> idSections, int countFlats, int numberSection, string spotName, int floors)
+        public Code (string code, List<FlatInfo> idSections, int countFlats, int numberSection, string spotName, int floors,int countReqFlats)
         {
             CodeStr = code;
             IdSections = idSections;            
@@ -26,7 +26,7 @@ namespace AR_AreaZhuk.Model
             NumberSection = numberSection;
             SpotOwner = spotName;
             Floors = floors;
-            CountFlatsByCode = code.Select(s => (int)char.GetNumericValue(s) * (floors-1)).ToArray();
+            CountReqFlats = countReqFlats * (floors-1);
         }
     }
 

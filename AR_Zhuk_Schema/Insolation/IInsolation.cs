@@ -20,7 +20,7 @@ namespace AR_Zhuk_Schema.Insolation
         List<FlatInfo> GetInsolationSections (Section section);
         RoomInsolation FindRule (RoomInfo flat);
         List<RoomInfo> GetSideFlatsInSection (List<RoomInfo> sectionFlats, bool isTop, SectionType sectionType);
-        string GetFlatCode(FlatInfo flat, out int[] codeCountByIndexReq);
+        Tuple<string, int[]> GetFlatCode(FlatInfo flat);
         FlatInfo NewFlats (Section section, FlatInfo flat, bool isInvert);        
     }
 }

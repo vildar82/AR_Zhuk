@@ -18,11 +18,11 @@ namespace AR_Zhuk_Schema.Insolation
                 new RoomInsolation ("Четырехкомнатная", 4, new List<string>() { "2C", "C+2B" })
             };
         
-        private static Dictionary<List<RoomInfo>, string> dictFlatsCodes;        
+        private static Dictionary<List<RoomInfo>,Tuple<string, int[]>> dictFlatsCodes;        
 
         public InsolationSection()
-        {            
-            dictFlatsCodes = new Dictionary<List<RoomInfo>, string>();
+        {
+            dictFlatsCodes = new Dictionary<List<RoomInfo>, Tuple<string, int[]>>();
         }
 
         /// <summary>
@@ -58,15 +58,16 @@ namespace AR_Zhuk_Schema.Insolation
                 res.Add(s);
             }
             return res;
-        }        
+        }
 
-        public string GetFlatCode(FlatInfo flat, out int[] codeCountByIndexReq)
+        public Tuple<string, int[]> GetFlatCode(FlatInfo flat)
         {
-            string code;
-            codeCountByIndexReq = new int[ProjectScheme.ProjectInfo.requirments.Count];
-            if (!dictFlatsCodes.TryGetValue(flat.Flats, out code))
+            Tuple<string, int[]> res;
+            if (!dictFlatsCodes.TryGetValue(flat.Flats, out res))
             {
-                code = string.Empty;
+                
+                var code = string.Empty;
+                var codeCountByIndexReq = new int[ProjectScheme.ProjectInfo.requirments.Count];
                 var dictCountFlatByReq = flat.Flats.Where(r=>r.SubZone!="0").
                         GroupBy(g => g.CodeReqIndex).ToDictionary(k => k.Key, v => v.Count());
 
@@ -76,10 +77,11 @@ namespace AR_Zhuk_Schema.Insolation
                     dictCountFlatByReq.TryGetValue(i, out count);
                     code += count.ToString();
                     codeCountByIndexReq[i] = count;
-                }                
-                dictFlatsCodes.Add(flat.Flats, code);
+                }
+                res = new Tuple<string, int[]>(code, codeCountByIndexReq);
+                dictFlatsCodes.Add(flat.Flats, res);
             }
-            return code;            
+            return res;            
         }        
 
         public RoomInsolation FindRule (RoomInfo flat)
