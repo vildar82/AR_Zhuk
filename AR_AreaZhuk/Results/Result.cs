@@ -68,18 +68,23 @@ namespace AR_AreaZhuk.Results
             var fileResult = PromptFileResult();          
             using (ZipArchive zip = ZipFile.OpenRead(fileResult))
             {   
-                using (var stream = zip.GetEntry("gos").Open())
+                using (var mem = new MemoryStream(zip.GetEntry("gos").Open().ReadByte()))
                 {
-                    using (reader = new BinaryReader(stream))
+                   // long totalMemory = GC.GetTotalMemory(true);
+                  //  GC.WaitForPendingFinalizers();
+
+                    using (reader = new BinaryReader(mem))
                     {
                         pi = ReadProjectInfo();
                         pi.SpotOptions = ReadSpotOptions();                                                
                         pi.InsModulesAll = ReadInsModules();
 
                         var countGos = reader.ReadInt32();
+                        int counter = 0;
                         for (int i=0; i<countGos; i++)
                         {
-                            var go = new GeneralObject();
+                            counter++;
+                            GeneralObject go = new GeneralObject();
                             go.GUID = reader.ReadString();
                             go.Houses = new List<HouseInfo>();
                             var countHouse = reader.ReadInt32();
@@ -93,6 +98,12 @@ namespace AR_AreaZhuk.Results
                             go.SpotInf = ReadProjectInfo();
                             go.SpotInf.InsModulesAll = pi.InsModulesAll;
                             gos.Add(go);
+                            if (counter == 100000)
+                            {
+                                counter = 0;
+                                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced);
+                            }
+                         
                         }
                     }
                 }
