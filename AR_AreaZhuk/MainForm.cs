@@ -398,16 +398,6 @@ namespace AR_AreaZhuk
                     // Перебор кодов секций (в заданной размерности) - selectedSectCode
                     do
                     {
-
-                        //if (selectedSectByCountFlats.Aggregate(string.Empty,
-                        //    (u, i) => u + "." + i.ToString()) == ".0.0.0.0.1.0.0.0.0.2.2")
-                        //{
-                        //    if (selectedSectCode.Aggregate(string.Empty,
-                        //   (u, i) => u + "." + i.ToString()) == ".0.0.0.0.0.0.0.0.0.1.0")
-                        //    {
-
-                        //    }
-                        //}
                         countEnter++;
                         if (isStop)
                             break;
@@ -951,9 +941,13 @@ namespace AR_AreaZhuk
                 // Заполнение DataGrid домов
                 isEvent = false;
                 FormManager.ViewDataProcentage(dg2, gos, pi);
+                bs.DataSource = dg2.DataSource;
                 isEvent = true;
                 // Запись требований
                 FillSpotInfoControls(pi);
+                lblTotalCount.Text = gos.Count.ToString();
+                lblCountObjects.Text = gos.Count.ToString();
+                lblMaxArea.Text = gos.Max(x => x.SpotInf.TotalStandartArea).ToString();
             }
             catch (Exception ex)
             {
