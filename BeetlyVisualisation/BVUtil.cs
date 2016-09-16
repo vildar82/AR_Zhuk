@@ -11,7 +11,8 @@ namespace BeetlyVisualisation
 {
     public static class Utils
     {
-        
+
+        static List<FlatType> fTypes;        
 
         public static GeneralObject getHouseInfo(string XmlPath)
         {
@@ -22,8 +23,8 @@ namespace BeetlyVisualisation
 
         internal static void AddInfoForVisualisation(GeneralObject GenObject, string ExcelDataPath)
         {
-
-            List<FlatType> fTypes = Utils.getFlatTypesFromXLSX(ExcelDataPath);
+            if (fTypes == null)
+                fTypes = Utils.getFlatTypesFromXLSX(ExcelDataPath);
 
 
             foreach (HouseInfo hi in GenObject.Houses)

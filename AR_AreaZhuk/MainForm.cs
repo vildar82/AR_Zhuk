@@ -19,6 +19,7 @@ namespace AR_AreaZhuk
 {
     public partial class MainForm : Form
     {
+        private bool isHousesFromLoadedFile = false;
         public static Thread th;
         private static bool isEvent = false;
         private bool isStop = false;
@@ -495,6 +496,8 @@ namespace AR_AreaZhuk
             lblTotalCount.Text = ob.Count.ToString();
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
+            isHousesFromLoadedFile = false;
+
             // Показать сообщения если они есть.
             AR_Zhuk_DataModel.Messages.Informer.Show();
         }
@@ -797,6 +800,12 @@ namespace AR_AreaZhuk
                 string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
                 string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
 
+                if (isHousesFromLoadedFile)
+                {
+                    // Нужно сделать копии румынов во всех секциях
+                    go.Houses.ForEach(h => h.Sections.ForEach(s => s.Flats = s.Flats.Select(f => f.Clone()).ToList()));
+                }
+
                 BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
                 //Serializer ser = new Serializer();
                 //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
@@ -954,6 +963,7 @@ namespace AR_AreaZhuk
                 isEvent = true;
                 // Запись требований
                 FillSpotInfoControls(pi);
+                isHousesFromLoadedFile = true;
             }
             catch (Exception ex)
             {
