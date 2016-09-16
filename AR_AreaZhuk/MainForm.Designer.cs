@@ -107,6 +107,8 @@ namespace AR_AreaZhuk
             this.textBoxMaxCountSectionsBySize = new System.Windows.Forms.TextBox();
             this.btnLoad = new System.Windows.Forms.Button();
             this.labelInsolationFile = new System.Windows.Forms.LinkLabel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -249,9 +251,9 @@ namespace AR_AreaZhuk
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.dg2);
-            this.groupBox2.Location = new System.Drawing.Point(416, 25);
+            this.groupBox2.Location = new System.Drawing.Point(416, 87);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(738, 757);
+            this.groupBox2.Size = new System.Drawing.Size(738, 695);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Подробная информация";
@@ -269,7 +271,7 @@ namespace AR_AreaZhuk
             this.dg2.Name = "dg2";
             this.dg2.ReadOnly = true;
             this.dg2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dg2.Size = new System.Drawing.Size(726, 732);
+            this.dg2.Size = new System.Drawing.Size(726, 670);
             this.dg2.TabIndex = 0;
             this.dg2.SortStringChanged += new System.EventHandler(this.dg2_SortStringChanged);
             this.dg2.FilterStringChanged += new System.EventHandler(this.dg2_FilterStringChanged);
@@ -851,12 +853,32 @@ namespace AR_AreaZhuk
             this.labelInsolationFile.TabStop = true;
             this.labelInsolationFile.Text = "-";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(567, 42);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 34;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(741, 21);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(162, 60);
+            this.textBox1.TabIndex = 35;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1158, 856);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.labelInsolationFile);
             this.Controls.Add(this.textBoxMaxCountSectionsBySize);
             this.Controls.Add(this.textBoxMaxCountHousesBySpot);
@@ -975,6 +997,8 @@ namespace AR_AreaZhuk
         private TextBox textBoxMaxCountSectionsBySize;
         private Button btnLoad;
         private LinkLabel labelInsolationFile;
+        private Button button1;
+        private TextBox textBox1;
     }
 }
 

@@ -14,6 +14,7 @@ using AR_Zhuk_DataModel;
 using System.Drawing.Imaging;
 using AR_Zhuk_Schema;
 using AR_AreaZhuk.Controller;
+using System.Text.RegularExpressions;
 
 namespace AR_AreaZhuk
 {
@@ -1240,6 +1241,13 @@ namespace AR_AreaZhuk
             if (typicalSect.Length > 1)
                 return typicalSect.Remove(typicalSect.Length - 1, 1);
             return "0";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = Regex.Replace(textBox1.Text, "[\n\r\t]", " ");
+            
+
         }
     }
 }
