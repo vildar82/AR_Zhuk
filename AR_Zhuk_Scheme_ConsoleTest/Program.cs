@@ -24,8 +24,8 @@ namespace AR_Zhuk_Scheme_ConsoleTest
         [STAThread]
         static void Main (string[] args)
         {
-            TestMessage();
-            return;
+            //TestCountStepInSection();
+            //TestMessage();            
             //DBService dbServ = new DBService();
             //dbServ.SaveDbFlats();
             //AnalizSectionsSteps();
@@ -44,6 +44,36 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
+        }
+
+        private static void TestCountStepInSection ()
+        {
+            DBService dbServ = new DBService(null);
+            dbServ.LoadDbFlatsFromFile();
+
+            var failStepSects = DBService.dictDbFlats.SelectMany(s =>
+            {
+                var fs = s.Value.Select(w =>
+                {
+                    var countBot = w.Sum(f => f.SelectedIndexBottom);
+                    var countTop = w.Sum(f => f.SelectedIndexTop);
+                    if (s.Key.Type!="Рядовая")
+                    {
+                        countBot -= 3;
+                        countTop += 4;
+                    }
+                    if (countBot != s.Key.Step || countTop != s.Key.Step)
+                    {
+                        return new { key = s.Key, sect = w };
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }).ToList();
+                return fs;
+            }).Where(w=>w!=null).ToList();
+            var countFailSect = failStepSects.Count;
         }
 
         private static void TestMessage ()

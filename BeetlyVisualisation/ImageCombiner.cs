@@ -371,9 +371,11 @@ namespace BeetlyVisualisation
             imgSection.BmpSection = generateOneSection(imgSection);
 
             // Сохранение отдельных секций для отладки
-            //string imgName = "Секция" + SectionIndex + ".png";
-            //string imgDir = @"C:\Users\fazleevaa\Links\Desktop\RRR" + "\\";
-            //SaveImage(imgSection.BmpSection, imgDir, imgName);
+#if DEBUG
+            string imgName = @"Секция" + SectionIndex + ".png";
+            string imgDir = @"Section\";// @"C:\Users\fazleevaa\Links\Desktop\RRR" + "\\";
+            SaveImage(imgSection.BmpSection, imgDir, imgName);
+#endif
             return imgSection;
         }
 

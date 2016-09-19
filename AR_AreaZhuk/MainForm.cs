@@ -785,8 +785,8 @@ namespace AR_AreaZhuk
 
             GeneralObject go = (GeneralObject)dg2["GenObject", dg2.SelectedRows[0].Index].Value;
             if (go == null) return;
-            if (go.Image == null)
-            {
+            //if (go.Image == null)
+            //{
                 string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
                 string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
 
@@ -800,7 +800,7 @@ namespace AR_AreaZhuk
                 //Serializer ser = new Serializer();
                 //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
                 go.Image = imgComb.generateGeneralObject();
-            }
+            //}
             pb.Image = go.Image;
         }
 
