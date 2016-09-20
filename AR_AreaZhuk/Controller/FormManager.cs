@@ -15,7 +15,7 @@ namespace AR_AreaZhuk
 {
     public static class FormManager
     {
-        public static void DataReqValidator (DataGridView dg)
+        public static void DataReqValidator(DataGridView dg)
         {
             var selectedCell = dg.SelectedCells[0];
             int iRow = selectedCell.RowIndex;
@@ -48,16 +48,18 @@ namespace AR_AreaZhuk
             }
             else if (iCol > 1)
             {
-                int valid = 0;
-                if (!int.TryParse(Convert.ToString(dg[iCol, iRow].Value), out valid))
+                double valid = 0;
+                if (!double.TryParse(Convert.ToString(dg[iCol, iRow].Value), out valid))
                 {
-                    MessageBox.Show("Необходимо ввести целое число!", "");
-                    dg[iCol, iRow].Value = 5;
+                    if (!double.TryParse(Convert.ToString(dg[iCol, iRow].Value.ToString().Replace('.', ',')), out valid))
+                    {
+                        MessageBox.Show("Необходимо ввести цифру!", "");
+                    }
                 }
             }
         }
 
-        public static void Panel_Show (Panel panel, Button btn, int minSize, int maxSize)
+        public static void Panel_Show(Panel panel, Button btn, int minSize, int maxSize)
         {
             if (panel.Height == minSize)
             {
@@ -81,14 +83,17 @@ namespace AR_AreaZhuk
             }
         }
 
-        public static List<Requirment> GetSpotTaskFromDG (DataGridView dg)
+        public static List<Requirment> GetSpotTaskFromDG(DataGridView dg)
         {
             var resReqs = new List<Requirment>();
             // bool isValid = true;
             for (int i = 0; i < dg.RowCount - 1; i++)
             {
                 string[] parse = dg[1, i].Value.ToString().Split('-');
-                double off = XmlConvert.ToDouble(Convert.ToString(dg[3, i].Value));
+                double off = 0;
+                 if (!double.TryParse(Convert.ToString(dg[3, i].Value), out off))
+                    if (!double.TryParse(Convert.ToString(dg[3, i].Value.ToString().Replace('.',',')), out off))
+                    { }
                 string subZone = dg[0, i].Value.ToString();
                 Requirment r = new Requirment();
                 r.SubZone = subZone;
@@ -116,7 +121,7 @@ namespace AR_AreaZhuk
             //  return isValid;
             return resReqs;
         }
-        public static void ViewDataProcentage (DataGridView dg2, List<GeneralObject> ob, ProjectInfo sp)
+        public static void ViewDataProcentage(DataGridView dg2, List<GeneralObject> ob, ProjectInfo sp)
         {
             //  if (spinfos.Count == 0) return;
             DataSet dataSet = new DataSet();

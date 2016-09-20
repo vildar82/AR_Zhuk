@@ -450,7 +450,7 @@ namespace AR_AreaZhuk
                             // Сбор секции прошедшего варианта  
                             var successGOs = GetSuccesGeneralObjects(codeSections, selectedSectByCountFlats, selectedSectCode, strP);
                             ob.AddRange(successGOs);
-                            lblCountObjects.Text = ob.Count.ToString();
+                            lblTotalCount.Text = string.Format("{0:n0}", ob.Count);
 
                             Debug.WriteLine(successGOs.Count);
 
@@ -475,15 +475,15 @@ namespace AR_AreaZhuk
                 dg[5, q].Value = projectInfo.requirments[q].NearPercentage;
             }
             th.Abort();
-            lblCountObjects.Text = ob.Count.ToString();
+            lblCountObjects.Text = string.Format("{0:n0}", ob.Count);
             isEvent = true;
             sw.Stop();
             //MessageBox.Show((sw.ElapsedMilliseconds / 1000).ToString());
             lblTime.Visible = true;
             lblTime.Text = (sw.ElapsedMilliseconds / 1000).ToString();
             bs.DataSource = dg2.DataSource;
-            lblMaxArea.Text = maxArea.ToString();
-            lblTotalCount.Text = ob.Count.ToString();
+            lblMaxArea.Text = string.Format("{0:n0}",maxArea);
+            lblTotalCount.Text = string.Format("{0:n0}", ob.Count);
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
             isHousesFromLoadedFile = false;
@@ -576,7 +576,7 @@ namespace AR_AreaZhuk
                 if (maxArea < totalArea)
                     maxArea = totalArea;
 
-                Application.DoEvents();
+               // Application.DoEvents();
                 // break;
             } while (IncrementIdSection(countSectionsIndex, indexSelectedId, listCodes));
             return successGOs;
@@ -757,7 +757,7 @@ namespace AR_AreaZhuk
             bs.DataSource = dg2.DataSource;
             bs.Sort = dg2.SortString;
             dg2.DataSource = bs;
-            lblCountObjects.Text = dg2.RowCount.ToString();
+            lblCountObjects.Text = string.Format("{0:n0}", dg2.RowCount);
             isEvent = true;
         }
 
@@ -767,7 +767,7 @@ namespace AR_AreaZhuk
 
             bs.Filter = dg2.FilterString;
             dg2.DataSource = bs;
-            lblCountObjects.Text = dg2.RowCount.ToString();
+            lblCountObjects.Text = string.Format("{0:n0}", dg2.RowCount);
             isEvent = true;
         }
 
@@ -933,8 +933,8 @@ namespace AR_AreaZhuk
 
         private void dg2_Click(object sender, EventArgs e)
         {
-            //if (dg2.SelectedRows.Count > 0)
-            //    dg2_SelectionChanged(sender, e);
+            if (dg2.SelectedRows.Count > 0)
+                dg2_SelectionChanged(sender, e);
         }
 
         private void btnLoad_Click(object sender, EventArgs e)
@@ -954,9 +954,9 @@ namespace AR_AreaZhuk
                 isEvent = true;
                 // Запись требований
                 FillSpotInfoControls(pi);
-                lblTotalCount.Text = gos.Count.ToString();
-                lblCountObjects.Text = gos.Count.ToString();
-                lblMaxArea.Text = gos.Max(x => x.SpotInf.TotalStandartArea).ToString();
+                lblTotalCount.Text = string.Format("{0:n0}", gos.Count); 
+                lblCountObjects.Text = string.Format("{0:n0}", gos.Count); 
+                lblMaxArea.Text = string.Format("{0:n0}", gos.Max(x => x.SpotInf.TotalStandartArea)); 
                 isHousesFromLoadedFile = true;
             }
             catch (Exception ex)
