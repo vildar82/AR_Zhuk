@@ -111,7 +111,7 @@ namespace AR_Zhuk_Schema.DB
                     if (!isValidSection)
                         continue;
 
-                    if (fl.Flats.Count > 4)
+                    if (fl.Flats.Count > 4 && fl.Flats.Count<=11)
                     {
                         fl.DefineIdenticalCodeSection();
                         sectionsBySyze.Add(fl);
