@@ -29,8 +29,8 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
         public static List<int[]> CodeCombinations (List<List<int>> codes, int sum)
         {
             List<int[]> resCombo;
-            if (!cache.TryGetValue(codes,out resCombo))
-            {
+            //if (!cache.TryGetValue(codes,out resCombo))
+            //{
                 _codes = codes;
                 _sum = sum;
                 resCombo = new List<int[]>();
@@ -47,8 +47,8 @@ namespace AR_AreaZhuk.Percentage.New.Satisfy
                 int[] curCode = new int[codes.Count];
                 IterateCodes(sum, 0, ref resCombo, ref curCode);
 
-                cache.Add(codes, resCombo);
-            }        
+                //cache.Add(codes, resCombo);
+            //}        
 
             return resCombo;
         }
