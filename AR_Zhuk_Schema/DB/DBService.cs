@@ -72,12 +72,12 @@ namespace AR_Zhuk_Schema.DB
                     fl.IsCorner = section.IsCorner;
                     fl.IsVertical = section.IsVertical;
                     fl.NumberInSpot = section.NumberInSpot;
-                    fl.SpotOwner = section.SpotOwner;                    
-                    isValidSection = true;                    
+                    fl.SpotOwner = section.SpotOwner;
+                    isValidSection = true;
                     for (int i = 0; i < gg.Count; i++)
                     {
                         var f = gg[i];
-                        fl.IdSection = f.ID_Section;                        
+                        fl.IdSection = f.ID_Section;
 
                         RoomInfo room = null;
                         if (f.SubZone != "0")
@@ -97,38 +97,64 @@ namespace AR_Zhuk_Schema.DB
                         }
                         else
                         {
-                            room = GetRoom(f);                            
+                            room = GetRoom(f);
                         }
-                        
+
                         if (room == null)
-                        {                            
+                        {
                             isValidSection = false;
                             break;
-                        }                                                
-                        fl.Flats.Add(room);                        
+                        }
+                        fl.Flats.Add(room);
                     }
 
                     if (!isValidSection)
                         continue;
 
-                    if (fl.Flats.Count > 4 && fl.Flats.Count<=11)
+                    string err;
+                    if (CheckSection(fl, out  err))
                     {
                         fl.DefineIdenticalCodeSection();
                         sectionsBySyze.Add(fl);
                     }
                     else
                     {
-                        Trace.TraceWarning("Секция меньше 3 квартир, idSection = " + fl.IdSection);
-                    }                   
+                        Trace.TraceWarning("Ошибочная секция - "+ err  + "; idSection = " + fl.IdSection);
+                    }
 
                     //if (maxSectionBySize != 0 && sectionsBySyze.Count == maxSectionBySize)
                     //{
                     //    break;
                     //}
-                }                
+                }
                 dictSections.Add(key, sectionsBySyze);
             }
             return sectionsBySyze;
+        }
+
+        private static bool CheckSection (FlatInfo fl, out string err)
+        {            
+            bool isValid = true;
+            err = null;
+            // Должно быть больше 3 квартир в секции (без ЛЛУ)
+            if (fl.Flats.Count < 5)
+            {
+                isValid = false;
+                err = "Меньше 4 квартир в секции (без ЛЛУ)";
+            }
+            // Должно быть не больше 10 квартир в секции (без ЛЛУ)
+            else if (fl.Flats.Count > 11)
+            {
+                isValid = false;
+                err = "Больше 10 квартир в секции (без ЛЛУ)";
+            }
+            // Студий должно быть не больше 3 в секции
+            else if (fl.Flats.Where(w=>w.SubZone=="01").Count()>3)
+            {
+                isValid = false;
+                err = "Больше 3 студий в секции";
+            }
+            return isValid;                
         }
 
         public static RoomInfo GetRoom (DbFlat f)
@@ -142,9 +168,7 @@ namespace AR_Zhuk_Schema.DB
             fflat.SelectedIndexTop = f.SelectedIndexTop;
             fflat.SelectedIndexBottom = f.SelectedIndexBottom;
             return fflat;
-        }
-
-        
+        }        
 
         public void PrepareLoadSections (List<SelectSectionParam> selectSects)
         {
