@@ -81,27 +81,27 @@ namespace AR_AreaZhuk
            }
        }
 
-       private static void ExportBasicInfo(string excelPath)
-       {
-           FrameWork fw = new FrameWork();
-           var roomInfo = fw.GetRoomData(excelPath);
-           PIK1TableAdapters.C_Flats_PIK1TableAdapter flatsPIK1 = new C_Flats_PIK1TableAdapter();
-           var flats = flatsPIK1.GetData();
-           foreach (var rr in roomInfo)
-           {
-               if (flats.Any(x => x.Type.Equals(rr.Type)))
-                   continue;
-               //flatsPIK1.UpdateFlat(rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
-               //    rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR, rr.Type);
+       //private static void ExportBasicInfo(string excelPath)
+       //{
+       //    FrameWork fw = new FrameWork();
+       //    var roomInfo = fw.GetRoomData(excelPath);
+       //    PIK1TableAdapters.C_Flats_PIK1TableAdapter flatsPIK1 = new C_Flats_PIK1TableAdapter();
+       //    var flats = flatsPIK1.GetData();
+       //    foreach (var rr in roomInfo)
+       //    {
+       //        if (flats.Any(x => x.Type.Equals(rr.Type)))
+       //            continue;
+       //        //flatsPIK1.UpdateFlat(rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
+       //        //    rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,rr.LinkageOR, rr.Type);
 
-               else
-                   flatsPIK1.InsertFlat(rr.Type, rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,
-                       Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
-                       rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,
-                       rr.LinkageOR);
+       //        else
+       //            flatsPIK1.InsertFlat(rr.Type, rr.ShortType, rr.AreaLive, rr.AreaTotalStandart, rr.AreaTotal,
+       //                Convert.ToInt16(rr.AreaModules), 0, 0, rr.LinkageDO, rr.LinkagePOSLE,
+       //                rr.FactorSmoke, rr.LightingNiz, rr.LightingTop, rr.IndexLenghtTOP, rr.IndexLenghtNIZ, rr.SubZone,
+       //                rr.LinkageOR);
 
-           }
-       }
+       //    }
+       //}
 
 
        public static void ExportSectionsToSQL(int countModules,string typeSection,int countFloors,bool isCornerLeft,bool isCornerRight,List<RoomInfo> roomInfo)
@@ -124,21 +124,21 @@ namespace AR_AreaZhuk
 
            foreach (var section in sections)
            {
-               var idSection = sects.InsertSection(countModules / 4, typeSection, floors);
-               int idSec = Convert.ToInt32(idSection);
-               foreach (var flat in section.Flats)
-               {
-                   try
-                   {
+               //var idSection = sects.InsertSection(countModules / 4, typeSection, floors);
+               //int idSec = Convert.ToInt32(idSection);
+               //foreach (var flat in section.Flats)
+               //{
+               //    try
+               //    {
 
-                       int idF = allFlats.First(x => x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
-                                   x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim()) & x.LinkageOr.Trim().Equals(flat.LinkageOR.Trim())).ID_Flat;
-                       flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
-                               flat.SelectedIndexTop);
-                   }
-                   catch { }
+               //        int idF = allFlats.First(x => x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
+               //                    x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim()) & x.LinkageOr.Trim().Equals(flat.LinkageOR.Trim())).ID_Flat;
+               //        flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
+               //                flat.SelectedIndexTop);
+               //    }
+               //    catch { }
 
-               }
+               //}
            }
          
 

@@ -58,11 +58,11 @@ namespace AR_AreaZhuk
             //Export();
 
             // Если нужно обновить базу квартир
-            //if (Environment.UserName.Equals("khisyametdinovvt") | Environment.UserName.Equals("ostaninam") | Environment.UserName.Equals("inkinli"))
-            //{
-            //    UpdateDbFlats.Visible = true;
-            //    chkUpdateSections.Visible = true;
-            //}
+            if (Environment.UserName.Equals("khisyametdinovvt") | Environment.UserName.Equals("ostaninam") | Environment.UserName.Equals("inkinli"))
+            {
+                UpdateDbFlats.Visible = true;
+                chkUpdateSections.Visible = true;
+            }
 
             // Загрузка projectInfo - из конфига, или дефолт
             projectInfo = LoadSpotInfo();
@@ -78,7 +78,7 @@ namespace AR_AreaZhuk
             string excelPath = @"E:\__ROM_Типы квартир.xlsx";
             var roomInfo = fw.GetRoomData(excelPath);
             projectInfo = fw.GetDefaultSpotInfo();
-            Exporter.ExportSectionsToSQL(8 * 4, "Рядовая", 9, false, false, roomInfo);//Если нужно залить 1 тип секции
+            Exporter.ExportSectionsToSQL(10 * 4, "Угловая право", 9, false, true, roomInfo);//Если нужно залить 1 тип секции
             Environment.Exit(48);
         }
 
@@ -903,8 +903,9 @@ namespace AR_AreaZhuk
 
         private void UpdateDbFlats_Click(object sender, EventArgs e)
         {
-            DbController dbController = new DbController();
-            dbController.UpdateFlats(chkUpdateSections.Checked);
+            Export();
+            //DbController dbController = new DbController();
+            //dbController.UpdateFlats(chkUpdateSections.Checked);
 
         }
 
