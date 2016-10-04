@@ -348,11 +348,11 @@ namespace AR_Zhuk_Schema.Scheme.Cutting
 
         public static string GetSectionLevels(int countFloors)
         {
-            string floors = "10-18";
-            if (countFloors > 18 & countFloors <= 25)
-                floors = "19-25";
-            if (countFloors <= 9)
-                floors = "9";
+            string floors = "AB";
+            if (countFloors > 19 & countFloors <= 30)
+                floors = "ABB";
+            if (countFloors <= 12)
+                floors = "A";
             return floors;
         }
 
