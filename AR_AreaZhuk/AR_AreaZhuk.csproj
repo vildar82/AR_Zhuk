@@ -101,6 +101,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>PIK1.xsd</DependentUpon>
     </Compile>
+    <Compile Include="PIK11.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PIK1.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\RoomInfo.cs" />

@@ -397,7 +397,7 @@ namespace AR_AreaZhuk
 
 
         public List<FlatInfo> GenerateSections(List<RoomInfo> roomInfo, int countModulesInSection,
-          bool isCornerLeftNiz, bool isCornerRightNiz, string countFloors)
+          bool isCornerLeftNiz, bool isCornerRightNiz, string floors)
         {
             // FrameWork fw = new FrameWork();
             //  double averageAreaSection = spotInfo.SpotArea / countSections;
@@ -422,7 +422,7 @@ namespace AR_AreaZhuk
             {
                // var rr = roomInfo.Where(x => x.Type.Equals("PIK1U_BS_A_10-17_A_2")).ToList();
                 RoomInfo llu = null;
-                if (countFloors == "10-18")
+                if (floors == "AB")
                     llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_10-17_A_2"));//PIK1U_BS_L_18-25_A_3
                 else 
                     llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_9_A"));//PIK1U_BS_L_9_A
@@ -446,7 +446,7 @@ namespace AR_AreaZhuk
                 if (isCornerRightNiz)
                 {
                     RoomInfo llu = null;
-                    if (countFloors == "10-18")
+                    if (floors == "AB")
                         llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_L_10-17_A_2"));//PIK1U_BS_L_18-25_A_3
                     else
                         llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_9_Z"));//PIK1U_BS_L_9_A
@@ -465,11 +465,11 @@ namespace AR_AreaZhuk
                 else
                 {
                     RoomInfo llu = null;
-                    if (countFloors == "19-25")
+                    if (floors == "ABB")
                     {
                         llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_L_18-25_A_3"));//PIK1U_BS_L_18-25_A_3
                     }
-                    else if (countFloors == "10-18")
+                    else if (floors == "AB")
                     {
                         llu = roomInfo.First(x => x.Type.Equals("PIK1U_BS_A_10-17_Z_2"));//PIK1U_BS_L_18-25_A_3
                     }
@@ -576,7 +576,7 @@ namespace AR_AreaZhuk
                     lastRoomTemp.SelectedIndexBottom = indexNiz;
                     flatsInSectionTemp.Add(tempRoomInfo[indexRandom]);
                    
-                    if (countFloors == "9" & flatsInSectionTemp.Count > 7)
+                    if (floors == "9" & flatsInSectionTemp.Count > 7)
                         break;
                     if (i >= 0)
                     {
@@ -613,20 +613,20 @@ namespace AR_AreaZhuk
                             //h.Sections.Add(fi);
                             //TestCreateImage(h);
                            
-                            if (flatsInSectionTemp.Count < 5&countFloors!="9")
+                            if (flatsInSectionTemp.Count < 5&floors!="9")
                                 break;
                            
                             if (indexSummNizTemp + indexSummTopTemp == countIndexes & indexSummNizTemp == countIndexes / 2 &
                                 !isCornerLeftNiz & !isCornerRightNiz) //рядовая
-                                AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors,isCornerRightNiz);
+                                AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, floors,isCornerRightNiz);
 
                             else if ((summTemp / 4 - 4) == indexSummTopTemp & (summTemp / 4 - 4) + 7 == indexSummNizTemp &
                                      (isCornerLeftNiz | isCornerRightNiz)) //угловая
                             {
                                 if (isCornerRightNiz & lastRoomTemp.Type.Equals("PIK1_3NL2_A0"))
-                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors, isCornerRightNiz);
+                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, floors, isCornerRightNiz);
                                 else if (isCornerLeftNiz)
-                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, countFloors, isCornerRightNiz);
+                                    AddToListSections(listSections, flatsInSectionTemp, roomInfo, isCornerLeftNiz, floors, isCornerRightNiz);
                             }
 
                             break;
@@ -1418,27 +1418,27 @@ namespace AR_AreaZhuk
             {
             
                 RoomInfo rr = allRooms.Where(x => x.SubZone.Equals("0"))
-                          .Where(x => x.LevelsSection.Equals("10-18")).Where(x => x.Requirment != "0")
+                          .Where(x => x.LevelsSection.Equals("AB")).Where(x => x.Requirment != "0")
                           .Where(x => x.TypeSection.Equals("Рядовая")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => !x.FactorSmoke.Equals(""))
                           .ToList()[0];
-                if (countFloors == "19-25")
+                if (countFloors == "ABB")
                 {
                     rr = allRooms.Where(x => x.SubZone.Equals("0")).Where(x => x.Requirment != "0")
-                           .Where(x => x.LevelsSection.Equals("19-25"))
+                           .Where(x => x.LevelsSection.Equals("ABB"))
                            .Where(x => x.TypeSection.Equals("Рядовая")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => !x.FactorSmoke.Equals(""))
                            .ToList()[0];
                 }
                 if (isLeftCorner)
                 {
                     rr = allRooms.Where(x => x.SubZone.Equals("0")).Where(x => x.Requirment != "0")
-                          .Where(x => x.LevelsSection.Equals("10-18"))
+                          .Where(x => x.LevelsSection.Equals("AB"))
                           .Where(x => x.TypeSection.Equals("Угловая-лево")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => x.Requirment != "0").Where(x => !x.FactorSmoke.Equals(""))
                           .ToList()[0];
                 }
                 else if (isRightCorner)
                 {
                     rr = allRooms.Where(x => x.SubZone.Equals("0")).Where(x => x.Requirment != "0")
-                         .Where(x => x.LevelsSection.Equals("10-18"))
+                         .Where(x => x.LevelsSection.Equals("AB"))
                          .Where(x => x.TypeSection.Equals("Угловая-право")).Where(x => x.TypeHouse.Equals("Секционный")).Where(x => x.Requirment != "0").Where(x => !x.FactorSmoke.Equals(""))
                          .ToList()[0];
                 }

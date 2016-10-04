@@ -109,11 +109,11 @@ namespace AR_AreaZhuk
 
            FrameWork fw = new FrameWork();
             //var roomInfo = fw.GetRoomData("");
-           string floors = "10-18";
-           if (countFloors <= 25&countFloors>=19)
-               floors = "19-25";
-           else if (countFloors <= 9)
-               floors = "9";
+           string floors = "AB";
+           if (countFloors <= 30&countFloors>=19)
+               floors = "ABB";
+           else if (countFloors <= 12)
+               floors = "A";
            var sections = fw.GenerateSections(roomInfo, countModules, isCornerLeft, isCornerRight, floors);
 
 
