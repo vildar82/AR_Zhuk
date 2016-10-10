@@ -124,21 +124,21 @@ namespace AR_AreaZhuk
 
            foreach (var section in sections)
            {
-               //var idSection = sects.InsertSection(countModules / 4, typeSection, floors);
-               //int idSec = Convert.ToInt32(idSection);
-               //foreach (var flat in section.Flats)
-               //{
-               //    try
-               //    {
+               var idSection = sects.InsertSection(countModules / 4, typeSection, floors);
+               int idSec = Convert.ToInt32(idSection);
+               foreach (var flat in section.Flats)
+               {
+                   try
+                   {
 
-               //        int idF = allFlats.First(x => x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
-               //                    x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim()) & x.LinkageOr.Trim().Equals(flat.LinkageOR.Trim())).ID_Flat;
-               //        flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
-               //                flat.SelectedIndexTop);
-               //    }
-               //    catch { }
+                       int idF = allFlats.First(x => x.Type.Equals(flat.Type) & x.LinkageBefore.Equals(flat.LinkageDO.Trim()) &
+                                   x.LinkageAfter.Equals(flat.LinkagePOSLE.Trim()) & x.LinkageOr.Trim().Equals(flat.LinkageOR.Trim())).ID_Flat;
+                       flatInSection.InsertFlatInSection(idSec, Convert.ToInt32(idF), flat.SelectedIndexBottom,
+                               flat.SelectedIndexTop);
+                   }
+                   catch { }
 
-               //}
+               }
            }
          
 

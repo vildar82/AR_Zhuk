@@ -119,7 +119,7 @@ namespace AR_Zhuk_Schema.DB
                     }
                     else
                     {
-                        Trace.TraceWarning("Ошибочная секция - "+ err  + "; idSection = " + fl.IdSection);
+                      //  Trace.TraceWarning("Ошибочная секция - "+ err  + "; idSection = " + fl.IdSection);
                     }
 
                     //if (maxSectionBySize != 0 && sectionsBySyze.Count == maxSectionBySize)
@@ -149,7 +149,7 @@ namespace AR_Zhuk_Schema.DB
                 err = "Больше 10 квартир в секции (без ЛЛУ)";
             }
             // Студий должно быть не больше 3 в секции
-            else if (fl.Flats.Where(w=>w.SubZone=="01").Count()>3)
+            else if (fl.Flats.Count(w => w.SubZone=="01")>3)
             {
                 isValid = false;
                 err = "Больше 3 студий в секции";

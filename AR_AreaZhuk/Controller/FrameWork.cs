@@ -407,7 +407,7 @@ namespace AR_AreaZhuk
             // double currentSum = 569.95 + 51.84;//spotInfo.SpotArea / 4; //569.95+51.84;//571.5;//+51.84;
             int countIndexes = countModulesInSection / 2;
 
-            int limit =2000000;
+            int limit =5000000;
             int iteration = 0;
             Random random = new Random();
             // bool isContinue = true;
@@ -508,25 +508,7 @@ namespace AR_AreaZhuk
                 {
 
 
-                    if (flatsInSectionTemp.Count >= 3 && flatsInSectionTemp[2].ShortType.Equals("1KS1"))
-                    {
-                        if (flatsInSectionTemp.Count >= 4 && flatsInSectionTemp[3].ShortType.Equals("4NL2"))
-                        {
-                            if (flatsInSectionTemp.Count >= 5 && flatsInSectionTemp[4].ShortType.Equals("2KL1"))
-                            {
-                                if (flatsInSectionTemp.Count >= 6 && flatsInSectionTemp[5].ShortType.Equals("2KL1"))
-                                {
-                                    if (flatsInSectionTemp.Count >= 7 && flatsInSectionTemp[6].ShortType.Equals("2KL2"))
-                                    {
-                                        if (flatsInSectionTemp.Count >= 7 && flatsInSectionTemp[6].ShortType.Equals("2KL2"))
-                                        {
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                   
                     string[] lastRoomConfig = lastRoomTemp.LinkagePOSLE.Split('/')[0].Split('|');
                     int[] intMass = new int[10];
 
@@ -558,17 +540,17 @@ namespace AR_AreaZhuk
 
                     if (indexSummNizTemp < 0 | indexSummTopTemp < 0)
                         continue;
-                    //if (isTopNull & indexNiz == 0)
-                    //{
-                    //    if (!isCornerLeftNiz && indexSummNizTemp != countIndexes / 2&!isCornerRightNiz)
-                    //        break;
-                    //    if (isCornerLeftNiz)
-                    //    {
-                    //        if (countModulesInSection / 4 - 4 + 7 != indexSummNizTemp)
-                    //            break;
-                    //    }
+                    if (isTopNull & indexNiz == 0)
+                    {
+                        if (!isCornerLeftNiz && indexSummNizTemp != countIndexes / 2 & !isCornerRightNiz)
+                            break;
+                        if (isCornerLeftNiz)
+                        {
+                            if (countModulesInSection / 4 - 4 + 7 != indexSummNizTemp)
+                                break;
+                        }
 
-                    //}
+                    }
                     summTemp += randomValue;
                    
                     lastRoomTemp = tempRoomInfo[indexRandom];
@@ -576,7 +558,7 @@ namespace AR_AreaZhuk
                     lastRoomTemp.SelectedIndexBottom = indexNiz;
                     flatsInSectionTemp.Add(tempRoomInfo[indexRandom]);
                    
-                    if (floors == "9" & flatsInSectionTemp.Count > 7)
+                    if (floors == "A" & flatsInSectionTemp.Count > 7)
                         break;
                     if (i >= 0)
                     {
@@ -604,16 +586,7 @@ namespace AR_AreaZhuk
                             break;
                         if (Math.Abs(summTemp - countModulesInSection).Equals(0))
                         {
-                            //FlatInfo fi = new FlatInfo();
-                            //fi.Flats = flatsInSectionTemp;
-
-                            //////Визуализация
-                            //HouseInfo h = new HouseInfo();
-
-                            //h.Sections.Add(fi);
-                            //TestCreateImage(h);
-                           
-                            if (flatsInSectionTemp.Count < 5&floors!="9")
+                            if (flatsInSectionTemp.Count < 5&floors!="A")
                                 break;
                            
                             if (indexSummNizTemp + indexSummTopTemp == countIndexes & indexSummNizTemp == countIndexes / 2 &
@@ -974,12 +947,12 @@ namespace AR_AreaZhuk
                     FlatInfo fi = new FlatInfo();
                     fi.Flats = listRooms1;
 
-                    ////Визуализация
-                    HouseInfo h = new HouseInfo();
+                    //////Визуализация
+                    //HouseInfo h = new HouseInfo();
 
-                    h.Sections.Add(fi);
-                    TestCreateImage(h);
-                    ////Визуализация
+                    //h.Sections.Add(fi);
+                    //TestCreateImage(h);
+                    //////Визуализация
 
                     listSections.Add(fi);
                 }
@@ -1412,7 +1385,7 @@ namespace AR_AreaZhuk
 
         private bool IsValidSmoke(List<RoomInfo> listRooms1, List<RoomInfo> allRooms, bool isLeftCorner, string countFloors, List<FlatInfo> allsections, bool isRightCorner)
         {
-            if(countFloors=="9")
+            if(countFloors=="A")
                 return true;
             if (listRooms1.Count > 7)
             {

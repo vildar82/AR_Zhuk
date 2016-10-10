@@ -78,7 +78,7 @@ namespace AR_AreaZhuk
             string excelPath = @"E:\__ROM_Типы квартир.xlsx";
             var roomInfo = fw.GetRoomData(excelPath);
             projectInfo = fw.GetDefaultSpotInfo();
-            Exporter.ExportSectionsToSQL(10 * 4, "Угловая право", 9, false, true, roomInfo);//Если нужно залить 1 тип секции
+            Exporter.ExportSectionsToSQL(11 * 4, "Угловая право", 9, false, true, roomInfo);//Если нужно залить 1 тип секции
             Environment.Exit(48);
         }
 
@@ -437,9 +437,9 @@ namespace AR_AreaZhuk
                                 isValidPercentage = false;
                                 break;
                             }
-                                isValidPercentage = false;
-                                break;
-                            
+                            isValidPercentage = false;
+                            break;
+
                         }
                         if (isValidPercentage)  //Процентаж прошел
                         {
@@ -482,13 +482,16 @@ namespace AR_AreaZhuk
             lblTime.Visible = true;
             lblTime.Text = (sw.ElapsedMilliseconds / 1000).ToString();
             bs.DataSource = dg2.DataSource;
-            lblMaxArea.Text = string.Format("{0:n0}",maxArea);
+            lblMaxArea.Text = string.Format("{0:n0}", maxArea);
             lblTotalCount.Text = string.Format("{0:n0}", ob.Count);
             //  this.pb.Image = global::AR_AreaZhuk.Properties.Resources.объект;
 
             isHousesFromLoadedFile = false;
 
             // Показать сообщения если они есть.
+            if (ob.Count == 0)
+                AR_Zhuk_DataModel.Messages.Informer.AddMessage("Требования процентного соотношения квартир " +
+                                                               "в объекте не совместимы с заданными габаритами пятен и инсоляцией. Попробуйте увеличить величину допуска");
             AR_Zhuk_DataModel.Messages.Informer.Show();
         }
 
@@ -576,7 +579,7 @@ namespace AR_AreaZhuk
                 if (maxArea < totalArea)
                     maxArea = totalArea;
 
-               // Application.DoEvents();
+                // Application.DoEvents();
                 // break;
             } while (IncrementIdSection(countSectionsIndex, indexSelectedId, listCodes));
             return successGOs;
@@ -787,19 +790,19 @@ namespace AR_AreaZhuk
             if (go == null) return;
             //if (go.Image == null)
             //{
-                string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
-                string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
+            string imagePath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\00_PNG_ПИК1\";
+            string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
 
-                if (isHousesFromLoadedFile)
-                {
-                    // Нужно сделать копии румынов во всех секциях
-                    go.Houses.ForEach(h => h.Sections.ForEach(s => s.Flats = s.Flats.Select(f => f.Clone()).ToList()));
-                }
+            if (isHousesFromLoadedFile)
+            {
+                // Нужно сделать копии румынов во всех секциях
+                go.Houses.ForEach(h => h.Sections.ForEach(s => s.Flats = s.Flats.Select(f => f.Clone()).ToList()));
+            }
 
-                BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
-                //Serializer ser = new Serializer();
-                //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
-                go.Image = imgComb.generateGeneralObject();
+            BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
+            //Serializer ser = new Serializer();
+            //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
+            go.Image = imgComb.generateGeneralObject();
             //}
             pb.Image = go.Image;
         }
@@ -903,9 +906,9 @@ namespace AR_AreaZhuk
 
         private void UpdateDbFlats_Click(object sender, EventArgs e)
         {
-            Export();
-            //DbController dbController = new DbController();
-            //dbController.UpdateFlats(chkUpdateSections.Checked);
+            // Export();
+            DbController dbController = new DbController();
+            dbController.UpdateFlats(chkUpdateSections.Checked);
 
         }
 
@@ -955,9 +958,9 @@ namespace AR_AreaZhuk
                 isEvent = true;
                 // Запись требований
                 FillSpotInfoControls(pi);
-                lblTotalCount.Text = string.Format("{0:n0}", gos.Count); 
-                lblCountObjects.Text = string.Format("{0:n0}", gos.Count); 
-                lblMaxArea.Text = string.Format("{0:n0}", gos.Max(x => x.SpotInf.TotalStandartArea)); 
+                lblTotalCount.Text = string.Format("{0:n0}", gos.Count);
+                lblCountObjects.Text = string.Format("{0:n0}", gos.Count);
+                lblMaxArea.Text = string.Format("{0:n0}", gos.Max(x => x.SpotInf.TotalStandartArea));
                 isHousesFromLoadedFile = true;
             }
             catch (Exception ex)
