@@ -107,6 +107,9 @@ namespace AR_AreaZhuk
             this.textBoxMaxCountSectionsBySize = new System.Windows.Forms.TextBox();
             this.btnLoad = new System.Windows.Forms.Button();
             this.labelInsolationFile = new System.Windows.Forms.LinkLabel();
+            this.linkLabelShowPreviewScheme = new System.Windows.Forms.LinkLabel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -128,6 +131,7 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.SuspendLayout();
             this.panel5.SuspendLayout();
             this.pnlMenuGroup1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dg
@@ -843,12 +847,45 @@ namespace AR_AreaZhuk
             // 
             this.labelInsolationFile.AutoSize = true;
             this.labelInsolationFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelInsolationFile.Location = new System.Drawing.Point(431, 6);
+            this.labelInsolationFile.Location = new System.Drawing.Point(3, 0);
             this.labelInsolationFile.Name = "labelInsolationFile";
             this.labelInsolationFile.Size = new System.Drawing.Size(12, 16);
             this.labelInsolationFile.TabIndex = 33;
             this.labelInsolationFile.TabStop = true;
             this.labelInsolationFile.Text = "-";
+            // 
+            // linkLabelShowPreviewScheme
+            // 
+            this.linkLabelShowPreviewScheme.AutoSize = true;
+            this.linkLabelShowPreviewScheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.linkLabelShowPreviewScheme.Location = new System.Drawing.Point(21, 0);
+            this.linkLabelShowPreviewScheme.Name = "linkLabelShowPreviewScheme";
+            this.linkLabelShowPreviewScheme.Size = new System.Drawing.Size(48, 16);
+            this.linkLabelShowPreviewScheme.TabIndex = 33;
+            this.linkLabelShowPreviewScheme.TabStop = true;
+            this.linkLabelShowPreviewScheme.Text = "Схема";
+            this.linkLabelShowPreviewScheme.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelShowPreviewScheme_LinkClicked);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(422, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 13);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Инсоляция:";
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.Controls.Add(this.labelInsolationFile);
+            this.flowLayoutPanel1.Controls.Add(this.linkLabelShowPreviewScheme);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(494, 5);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 24);
+            this.flowLayoutPanel1.TabIndex = 34;
             // 
             // MainForm
             // 
@@ -856,7 +893,8 @@ namespace AR_AreaZhuk
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1158, 856);
-            this.Controls.Add(this.labelInsolationFile);
+            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.textBoxMaxCountSectionsBySize);
             this.Controls.Add(this.textBoxMaxCountHousesBySpot);
             this.Controls.Add(this.lblTime);
@@ -906,6 +944,8 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.pnlMenuGroup1.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -974,6 +1014,9 @@ namespace AR_AreaZhuk
         private TextBox textBoxMaxCountSectionsBySize;
         private Button btnLoad;
         private LinkLabel labelInsolationFile;
+        private LinkLabel linkLabelShowPreviewScheme;
+        private Label label2;
+        private FlowLayoutPanel flowLayoutPanel1;
     }
 }
 

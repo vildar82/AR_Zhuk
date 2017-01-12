@@ -15,6 +15,8 @@ using AR_Zhuk_Schema.DB;
 using AR_Zhuk_Scheme_ConsoleTest.Scheme;
 using BeetlyVisualisation;
 using OfficeOpenXml;
+using AR_Zhuk_Schema;
+using System.Drawing;
 
 namespace AR_Zhuk_Scheme_ConsoleTest
 {
@@ -34,7 +36,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest
             //StatisticsSectionsByFlatsCount();
             //StatisticCoefficientK1K2();            
             //GenerateImagesBankSection();
-            //return;
+            TestPreviewScheme();
+            Console.ReadKey();
+            return;
 
             TextWriterTraceListener writer = new TextWriterTraceListener(Console.Out);
             Debug.Listeners.Add(writer);
@@ -44,6 +48,20 @@ namespace AR_Zhuk_Scheme_ConsoleTest
 
             Console.WriteLine("Press any key...");
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Тест - предпросмотр схемы инсоляции
+        /// </summary>
+        private static void TestPreviewScheme()
+        {
+            var opt = TestProjectScheme.GetSpotInformation();
+            opt.PathInsolation = @"c:\temp\Жуки_Картинка\Test.xlsx";
+            var projectShema = new ProjectScheme(opt);
+            projectShema.ReadScheme();
+            Image imPreview = projectShema.GetPreview();
+            imPreview.Save(@"c:\temp\Жуки_Картинка\Test.png");
+            ProjectScheme.ShowPreview(imPreview);      
         }
 
         private static void TestCountStepInSection ()

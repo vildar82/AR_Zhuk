@@ -40,12 +40,14 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DB\DbFlat.cs" />
@@ -53,7 +55,6 @@
     <Compile Include="DB\IDBService.cs" />
     <Compile Include="DB\PIK1.cs">
       <DependentUpon>PIK1.xsd</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="DB\PIK1.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -88,6 +89,13 @@
     <Compile Include="Scheme\ISchemeParser.cs" />
     <Compile Include="Scheme\ParserExcel.cs" />
     <Compile Include="ProjectShceme.cs" />
+    <Compile Include="Scheme\Preview\SchemePreview.cs" />
+    <Compile Include="Scheme\Preview\UI\FormPreviewSchema.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Scheme\Preview\UI\FormPreviewSchema.Designer.cs">
+      <DependentUpon>FormPreviewSchema.cs</DependentUpon>
+    </Compile>
     <Compile Include="Scheme\Segment.cs" />
     <Compile Include="Scheme\SegmentEnd.cs" />
     <Compile Include="Scheme\SpatialIndex\Node.cs" />
@@ -118,6 +126,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Scheme\Preview\UI\FormPreviewSchema.resx">
+      <DependentUpon>FormPreviewSchema.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

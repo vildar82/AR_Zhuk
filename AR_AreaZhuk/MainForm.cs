@@ -31,7 +31,7 @@ namespace AR_AreaZhuk
         public static ProjectInfo projectInfo;
         public static List<List<HouseInfo>> houses = new List<List<HouseInfo>>();
         public static List<GeneralObject> ob = new List<GeneralObject>();
-        double maxArea = 0;
+        double maxArea = 0;        
         public MainForm()
         {
             InitializeComponent();
@@ -39,10 +39,10 @@ namespace AR_AreaZhuk
             btnMenuGroup2.Image = Properties.Resources.up;
             btnMenuGroup3.Image = Properties.Resources.up;
 
-            C_Flats_PIK1_AreasTableAdapter pikFlats = new C_Flats_PIK1_AreasTableAdapter();
+            var pikFlats = new C_Flats_PIK1_AreasTableAdapter();
             flatsAreas = pikFlats.GetData();
             dictFlatsAreas = flatsAreas.ToDictionary(k => k.Short_Type, v => v);
-            C_Flats_PIK1TableAdapter flatsTableAdapter = new C_Flats_PIK1TableAdapter();
+            var flatsTableAdapter = new C_Flats_PIK1TableAdapter();
             dbFlats = flatsTableAdapter.GetData();
         }
 
@@ -66,6 +66,11 @@ namespace AR_AreaZhuk
 
             // Загрузка projectInfo - из конфига, или дефолт
             projectInfo = LoadSpotInfo();
+            if (!File.Exists(projectInfo.PathInsolation))
+            {
+                projectInfo.PathInsolation = null;
+                linkLabelShowPreviewScheme.Visible = false;
+            }
             // Заполнение контролов настройками spotInfo
             FillSpotInfoControls(projectInfo);
             // ??                        
@@ -857,6 +862,7 @@ namespace AR_AreaZhuk
                 path = openFileDialog.FileName;
             }
             SetLinkFileInsolation(path);
+            linkLabelShowPreviewScheme.Visible = true;
         }
 
         private void SetLinkFileInsolation(string path)
@@ -1125,6 +1131,25 @@ namespace AR_AreaZhuk
             if (typicalSect.Length > 1)
                 return typicalSect.Remove(typicalSect.Length - 1, 1);
             return "0";
+        }
+
+        private void linkLabelShowPreviewScheme_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(projectInfo?.PathInsolation))
+                    return;
+                projectInfo = GetProjectInfoFromControls();
+                var projectShema = new ProjectScheme(projectInfo);
+                projectShema.ReadScheme();
+                var imagePreviewScheme = projectShema.GetPreview();
+                ProjectScheme.ShowPreview(imagePreviewScheme);
+            }
+            catch(Exception ex)
+            {
+                AR_Zhuk_DataModel.Messages.Informer.AddMessage(ex.Message);
+                AR_Zhuk_DataModel.Messages.Informer.Show();
+            }
         }
     }
 }

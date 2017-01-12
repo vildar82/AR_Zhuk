@@ -16,18 +16,9 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
         {
             CreateHouseImage testCreateHouse = new CreateHouseImage();
 
-            // Исходнве данные
-            string insolationFile = @"c:\work\test\АР\ЖУКИ\Саларьево 3 вар 2-Задание по инсоляции ПИК1.xlsx";                                
-            List<SpotOption> options = new List<SpotOption>() {
-                 new SpotOption("P1", new List<bool> { false, false, false, false,  true}),
-                 new SpotOption("P2", new List<bool> { true, false, false, false, false}),
-                 new SpotOption("P3", new List<bool> { true, false, false, false, false}),
-                 new SpotOption("P4", new List<bool> { true, false, false, false, false})
-            };
+            // Исходнве данные            
             ProjectInfo sp = GetSpotInformation();
-            sp.CountFloorsMain = 15;
-            sp.CountFloorsDominant = 25;
-            sp.PathInsolation = insolationFile;
+            
 
             // схема проекта
             ProjectScheme projectSpot = new ProjectScheme(sp);
@@ -60,6 +51,15 @@ namespace AR_Zhuk_Scheme_ConsoleTest.Scheme
             //spotInfo.requirments.Add(new Requirment("Двухкомн.", 68, 71, 12, 0, 3, 0, 0, 3, "2"));
             spotInfo.requirments.Add(new Requirment("Трехкомн.", 60, 100, 16, 0, 0, 0, 0, 3, "3"));
             //spotInfo.requirments.Add(new Requirment("Четырехкомн.", 80, 120, 3, 0, 0, 0, 0, 3, "4"));
+            spotInfo.CountFloorsMain = 15;
+            spotInfo.CountFloorsDominant = 25;            
+            spotInfo.PathInsolation = @"c:\work\test\АР\ЖУКИ\Саларьево 3 вар 2-Задание по инсоляции ПИК1.xlsx";
+            spotInfo.SpotOptions = new List<SpotOption>() {
+                 new SpotOption("P1", new List<bool> { false, false, false, false,  true}),
+                 new SpotOption("P2", new List<bool> { true, false, false, false, false}),
+                 new SpotOption("P3", new List<bool> { true, false, false, false, false}),
+                 new SpotOption("P4", new List<bool> { true, false, false, false, false})
+            };            
             return spotInfo;
         }
     }

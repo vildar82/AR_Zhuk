@@ -84,6 +84,20 @@ namespace AR_Zhuk_Schema
         }
 
         /// <summary>
+        /// Картинка схемы
+        /// </summary>        
+        public System.Drawing.Image GetPreview()
+        {            
+            var preview = new Scheme.Preview.SchemePreview(this);
+            return preview.CreatePreview();            
+        }
+
+        public static void ShowPreview (System.Drawing.Image image)
+        {
+            Scheme.Preview.SchemePreview.Show(image);
+        }
+
+        /// <summary>
         /// Проверка домов: не более 4 штук, имена должны быть уникальными P1 и т.д.
         /// </summary>        
         private void CheckHouses(List<HouseSpot> houseSpots)
