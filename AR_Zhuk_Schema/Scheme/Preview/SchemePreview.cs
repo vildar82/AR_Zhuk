@@ -15,13 +15,14 @@ namespace AR_Zhuk_Schema.Scheme.Preview
     /// </summary>
     public class SchemePreview
     {
+        static UI.FormPreviewSchema formPreview;        
         private ProjectScheme projectScheme;
         private Graphics g;
         private int pixelInCell = 32;
         private int legendHeight = 100;
         private int widthImage;
         private int heightImage;
-        private int yLegend;
+        private int yLegend;        
 
         public SchemePreview(ProjectScheme projectScheme)
         {
@@ -30,7 +31,14 @@ namespace AR_Zhuk_Schema.Scheme.Preview
 
         public static void Show(Image image)
         {
-            var formPreview = new UI.FormPreviewSchema(image);
+            if (formPreview == null || formPreview.IsDisposed)
+            {
+                formPreview = new UI.FormPreviewSchema(image);                
+            }
+            else
+            {                
+                formPreview.SetImage(image); 
+            }            
             formPreview.Show();
         }             
 

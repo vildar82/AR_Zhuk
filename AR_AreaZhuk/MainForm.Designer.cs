@@ -331,6 +331,7 @@ namespace AR_AreaZhuk
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.linkLabelShowPreviewScheme);
             this.groupBox1.Controls.Add(this.tabControl1);
             this.groupBox1.Location = new System.Drawing.Point(6, 82);
             this.groupBox1.Name = "groupBox1";
@@ -858,7 +859,7 @@ namespace AR_AreaZhuk
             // 
             this.linkLabelShowPreviewScheme.AutoSize = true;
             this.linkLabelShowPreviewScheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.linkLabelShowPreviewScheme.Location = new System.Drawing.Point(21, 0);
+            this.linkLabelShowPreviewScheme.Location = new System.Drawing.Point(290, 16);
             this.linkLabelShowPreviewScheme.Name = "linkLabelShowPreviewScheme";
             this.linkLabelShowPreviewScheme.Size = new System.Drawing.Size(48, 16);
             this.linkLabelShowPreviewScheme.TabIndex = 33;
@@ -881,7 +882,6 @@ namespace AR_AreaZhuk
             | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.Controls.Add(this.labelInsolationFile);
-            this.flowLayoutPanel1.Controls.Add(this.linkLabelShowPreviewScheme);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(494, 5);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 24);
@@ -927,6 +927,7 @@ namespace AR_AreaZhuk
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);

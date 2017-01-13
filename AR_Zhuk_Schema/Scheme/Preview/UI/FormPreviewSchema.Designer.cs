@@ -51,6 +51,9 @@
             this.MinimumSize = new System.Drawing.Size(50, 50);
             this.Name = "FormPreviewSchema";
             this.Text = "Схема инсоляции";
+            this.TopMost = true;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormPreviewSchema_FormClosed);
+            this.Load += new System.EventHandler(this.FormPreviewSchema_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
