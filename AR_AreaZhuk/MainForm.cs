@@ -433,7 +433,7 @@ namespace AR_AreaZhuk
 
                             if (percentage - rr.Percentage > rr.OffSet)
                             {
-                                isOverFlow = true;
+                               isOverFlow = true;
                                 isValidPercentage = false;
                                 break;
                             }
