@@ -22,7 +22,7 @@ namespace AR_Zhuk_Schema.Scheme.Preview
         private int legendHeight = 100;
         private int widthImage;
         private int heightImage;
-        private int yLegend;        
+        private int yLegendStart;        
 
         public SchemePreview(ProjectScheme projectScheme)
         {
@@ -49,11 +49,12 @@ namespace AR_Zhuk_Schema.Scheme.Preview
         {
             var imScheme = GetEmptyImage();
             g = Graphics.FromImage(imScheme);
+            g.TextRenderingHint = TextRenderingHint.AntiAlias;
 
             // Отрисовка всех ячеек инсоляции
             VisualAllCells();
 
-            // Стрелки домов
+            // Стрелки и подписи домов
             foreach (var spot in projectScheme.HouseSpots)
             {
                 VisualSpot(spot);
@@ -63,15 +64,13 @@ namespace AR_Zhuk_Schema.Scheme.Preview
             VisualLegend();
 
             return imScheme;
-        }
-
-        
+        }        
 
         private Image GetEmptyImage()
         {
             widthImage = GetPixel(ProjectScheme.ProjectInfo.Size.Col);
-            yLegend = GetPixel(ProjectScheme.ProjectInfo.Size.Row);
-            heightImage = yLegend + legendHeight;
+            yLegendStart = GetPixel(ProjectScheme.ProjectInfo.Size.Row);
+            heightImage = yLegendStart + legendHeight;
             var im = new Bitmap(widthImage, heightImage);
             return im;
         }        
@@ -105,7 +104,9 @@ namespace AR_Zhuk_Schema.Scheme.Preview
         {            
             foreach (var cell in ProjectScheme.ProjectInfo.InsModulesAll)
             {
-                g.FillRectangle(GetBrush(cell), GetRectangle(cell));                
+                var r = GetRectangle(cell);                
+                g.FillRectangle(GetBrush(cell), r);
+                g.DrawRectangle(Pens.Black, r);
             }            
         }        
 
@@ -202,10 +203,7 @@ namespace AR_Zhuk_Schema.Scheme.Preview
                 using (var font = new Font(fontFamily, fontSize, FontStyle.Regular, GraphicsUnit.Pixel))
                 {
                     var solidBrush = Brushes.Black;
-                    
-
-                    var pName = Point.Add(p2, GetSize(dir, 2));
-                    g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                    var pName = Point.Add(p2, GetSize(dir, 2));                    
                     g.DrawString(name, font, solidBrush, pName, format);
                 }
             }
@@ -225,8 +223,8 @@ namespace AR_Zhuk_Schema.Scheme.Preview
 
         private void VisualLegend()
         {
-            var p = new Point(10, yLegend+50);
-            DrawArrow(p, Cell.Right, "Начало нумерации секций в пятне дома.");
+            var p = new Point(10, yLegendStart+ (legendHeight/2));
+            DrawArrow(p, Cell.Right, "Направление нумерации секций в пятне дома.");
         }
     }
 }
