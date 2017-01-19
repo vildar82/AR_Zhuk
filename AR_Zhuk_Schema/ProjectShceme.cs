@@ -41,9 +41,12 @@ namespace AR_Zhuk_Schema
         public void ReadScheme ()
         {
             // Чтение матрицы ячеек первого листа в Excel файле
-            ISchemeParser parserExcel = new ParserExcel(this);
+            var parserExcel = new ParserExcel(this);
             parserExcel.Parse(ProjectInfo.PathInsolation);
             HouseSpots = parserExcel.HouseSpots;
+
+            // Проверка домов
+            CheckHouses(HouseSpots);
 
             // Размер застройки
             var bounds = tree.getBounds();
@@ -78,7 +81,42 @@ namespace AR_Zhuk_Schema
 
             // Инсоляция - все ячейки            
             ProjectInfo.InsModulesAll = insModulesAll;                        
-        }        
+        }
+
+        /// <summary>
+        /// Картинка схемы
+        /// </summary>        
+        public System.Drawing.Image GetPreview()
+        {            
+            var preview = new Scheme.Preview.SchemePreview(this);
+            return preview.CreatePreview();            
+        }
+
+        public static void ShowPreview (System.Drawing.Image image)
+        {
+            Scheme.Preview.SchemePreview.Show(image);
+        }
+
+        /// <summary>
+        /// Проверка домов: не более 4 штук, имена должны быть уникальными P1 и т.д.
+        /// </summary>        
+        private void CheckHouses(List<HouseSpot> houseSpots)
+        {
+            string err = string.Empty;
+            if (houseSpots.Count>4)
+            {
+                err += $"Определено {houseSpots.Count} пятен. Допускается максимум 4 пятна для расчета. Поправьте файл инсоляции.";
+            }
+            var sameNames = houseSpots.GroupBy(g => g.SpotName).Where(w => w.Skip(1).Any()).Select(s => new { name = s.Key, count = s.Count() });
+            foreach (var item in sameNames)
+            {
+                err += $"\nНесколько пятен с одинаковым именем: {item.name} - {item.count}шт. Поправьте файл инсоляции.";
+            }
+            if (!string.IsNullOrEmpty(err))
+            {
+                throw new Exception(err);
+            }
+        }
 
         /// <summary>
         /// Получение всех вариантов домов для всех пятен домов
