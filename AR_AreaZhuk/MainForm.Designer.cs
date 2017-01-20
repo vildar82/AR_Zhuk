@@ -64,6 +64,7 @@ namespace AR_AreaZhuk
             this.chkDominantOffset = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.linkLabelShowPreviewScheme = new System.Windows.Forms.LinkLabel();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.chkListP1 = new System.Windows.Forms.CheckedListBox();
@@ -107,9 +108,8 @@ namespace AR_AreaZhuk
             this.textBoxMaxCountSectionsBySize = new System.Windows.Forms.TextBox();
             this.btnLoad = new System.Windows.Forms.Button();
             this.labelInsolationFile = new System.Windows.Forms.LinkLabel();
-            this.linkLabelShowPreviewScheme = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.cmbSeria = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg2)).BeginInit();
@@ -131,7 +131,6 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.SuspendLayout();
             this.panel5.SuspendLayout();
             this.pnlMenuGroup1.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dg
@@ -226,7 +225,7 @@ namespace AR_AreaZhuk
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(875, 787);
+            this.label3.Location = new System.Drawing.Point(875, 791);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(68, 26);
             this.label3.TabIndex = 4;
@@ -239,7 +238,7 @@ namespace AR_AreaZhuk
             this.btnSave.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnSave.FlatAppearance.BorderSize = 0;
             this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSave.Location = new System.Drawing.Point(561, 814);
+            this.btnSave.Location = new System.Drawing.Point(561, 818);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(26, 23);
             this.btnSave.TabIndex = 9;
@@ -253,7 +252,7 @@ namespace AR_AreaZhuk
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.dg2);
-            this.groupBox2.Location = new System.Drawing.Point(416, 25);
+            this.groupBox2.Location = new System.Drawing.Point(416, 29);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(738, 757);
             this.groupBox2.TabIndex = 11;
@@ -268,7 +267,7 @@ namespace AR_AreaZhuk
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dg2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dg2.FilterAndSortEnabled = true;
-            this.dg2.Location = new System.Drawing.Point(6, 19);
+            this.dg2.Location = new System.Drawing.Point(9, 19);
             this.dg2.MultiSelect = false;
             this.dg2.Name = "dg2";
             this.dg2.ReadOnly = true;
@@ -285,7 +284,7 @@ namespace AR_AreaZhuk
             this.btnStartScan.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnStartScan.Enabled = false;
             this.btnStartScan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStartScan.Location = new System.Drawing.Point(422, 782);
+            this.btnStartScan.Location = new System.Drawing.Point(422, 786);
             this.btnStartScan.Name = "btnStartScan";
             this.btnStartScan.Size = new System.Drawing.Size(75, 23);
             this.btnStartScan.TabIndex = 12;
@@ -298,7 +297,7 @@ namespace AR_AreaZhuk
             this.lblCountObjects.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblCountObjects.AutoSize = true;
             this.lblCountObjects.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lblCountObjects.Location = new System.Drawing.Point(944, 797);
+            this.lblCountObjects.Location = new System.Drawing.Point(944, 801);
             this.lblCountObjects.Name = "lblCountObjects";
             this.lblCountObjects.Size = new System.Drawing.Size(16, 16);
             this.lblCountObjects.TabIndex = 14;
@@ -339,6 +338,18 @@ namespace AR_AreaZhuk
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Пятна объекта";
+            // 
+            // linkLabelShowPreviewScheme
+            // 
+            this.linkLabelShowPreviewScheme.AutoSize = true;
+            this.linkLabelShowPreviewScheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.linkLabelShowPreviewScheme.Location = new System.Drawing.Point(290, 16);
+            this.linkLabelShowPreviewScheme.Name = "linkLabelShowPreviewScheme";
+            this.linkLabelShowPreviewScheme.Size = new System.Drawing.Size(48, 16);
+            this.linkLabelShowPreviewScheme.TabIndex = 33;
+            this.linkLabelShowPreviewScheme.TabStop = true;
+            this.linkLabelShowPreviewScheme.Text = "Схема";
+            this.linkLabelShowPreviewScheme.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelShowPreviewScheme_LinkClicked);
             // 
             // tabControl1
             // 
@@ -700,7 +711,7 @@ namespace AR_AreaZhuk
             // 
             this.GetFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.GetFile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.GetFile.Location = new System.Drawing.Point(529, 783);
+            this.GetFile.Location = new System.Drawing.Point(529, 787);
             this.GetFile.Name = "GetFile";
             this.GetFile.Size = new System.Drawing.Size(106, 23);
             this.GetFile.TabIndex = 22;
@@ -712,7 +723,7 @@ namespace AR_AreaZhuk
             // 
             this.UpdateDbFlats.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.UpdateDbFlats.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.UpdateDbFlats.Location = new System.Drawing.Point(1015, 810);
+            this.UpdateDbFlats.Location = new System.Drawing.Point(1015, 814);
             this.UpdateDbFlats.Name = "UpdateDbFlats";
             this.UpdateDbFlats.Size = new System.Drawing.Size(133, 23);
             this.UpdateDbFlats.TabIndex = 23;
@@ -725,7 +736,7 @@ namespace AR_AreaZhuk
             // 
             this.chkUpdateSections.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkUpdateSections.AutoSize = true;
-            this.chkUpdateSections.Location = new System.Drawing.Point(1015, 836);
+            this.chkUpdateSections.Location = new System.Drawing.Point(1015, 840);
             this.chkUpdateSections.Name = "chkUpdateSections";
             this.chkUpdateSections.Size = new System.Drawing.Size(141, 17);
             this.chkUpdateSections.TabIndex = 24;
@@ -737,7 +748,7 @@ namespace AR_AreaZhuk
             // 
             this.btnStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnStop.Location = new System.Drawing.Point(422, 814);
+            this.btnStop.Location = new System.Drawing.Point(422, 818);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(75, 23);
             this.btnStop.TabIndex = 25;
@@ -792,7 +803,7 @@ namespace AR_AreaZhuk
             // 
             this.lblTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(1088, 786);
+            this.lblTime.Location = new System.Drawing.Point(1088, 790);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(40, 13);
             this.lblTime.TabIndex = 30;
@@ -803,7 +814,7 @@ namespace AR_AreaZhuk
             // 
             this.labelCountSectionsTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelCountSectionsTotal.AutoSize = true;
-            this.labelCountSectionsTotal.Location = new System.Drawing.Point(875, 836);
+            this.labelCountSectionsTotal.Location = new System.Drawing.Point(875, 840);
             this.labelCountSectionsTotal.Name = "labelCountSectionsTotal";
             this.labelCountSectionsTotal.Size = new System.Drawing.Size(80, 13);
             this.labelCountSectionsTotal.TabIndex = 4;
@@ -836,7 +847,7 @@ namespace AR_AreaZhuk
             this.btnLoad.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.btnLoad.FlatAppearance.BorderSize = 0;
             this.btnLoad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLoad.Location = new System.Drawing.Point(529, 814);
+            this.btnLoad.Location = new System.Drawing.Point(529, 818);
             this.btnLoad.Name = "btnLoad";
             this.btnLoad.Size = new System.Drawing.Size(26, 23);
             this.btnLoad.TabIndex = 9;
@@ -848,44 +859,34 @@ namespace AR_AreaZhuk
             // 
             this.labelInsolationFile.AutoSize = true;
             this.labelInsolationFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.labelInsolationFile.Location = new System.Drawing.Point(3, 0);
+            this.labelInsolationFile.Location = new System.Drawing.Point(624, 7);
             this.labelInsolationFile.Name = "labelInsolationFile";
             this.labelInsolationFile.Size = new System.Drawing.Size(12, 16);
             this.labelInsolationFile.TabIndex = 33;
             this.labelInsolationFile.TabStop = true;
             this.labelInsolationFile.Text = "-";
             // 
-            // linkLabelShowPreviewScheme
-            // 
-            this.linkLabelShowPreviewScheme.AutoSize = true;
-            this.linkLabelShowPreviewScheme.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.linkLabelShowPreviewScheme.Location = new System.Drawing.Point(290, 16);
-            this.linkLabelShowPreviewScheme.Name = "linkLabelShowPreviewScheme";
-            this.linkLabelShowPreviewScheme.Size = new System.Drawing.Size(48, 16);
-            this.linkLabelShowPreviewScheme.TabIndex = 33;
-            this.linkLabelShowPreviewScheme.TabStop = true;
-            this.linkLabelShowPreviewScheme.Text = "Схема";
-            this.linkLabelShowPreviewScheme.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelShowPreviewScheme_LinkClicked);
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(422, 6);
+            this.label2.Location = new System.Drawing.Point(552, 9);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "Инсоляция:";
             // 
-            // flowLayoutPanel1
+            // cmbSeria
             // 
-            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.Controls.Add(this.labelInsolationFile);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(494, 5);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(652, 24);
-            this.flowLayoutPanel1.TabIndex = 34;
+            this.cmbSeria.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbSeria.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cmbSeria.FormattingEnabled = true;
+            this.cmbSeria.Items.AddRange(new object[] {
+            "Серия ПИК1",
+            "Серия ПИК1 У"});
+            this.cmbSeria.Location = new System.Drawing.Point(425, 3);
+            this.cmbSeria.Name = "cmbSeria";
+            this.cmbSeria.Size = new System.Drawing.Size(121, 23);
+            this.cmbSeria.TabIndex = 1;
             // 
             // MainForm
             // 
@@ -893,7 +894,8 @@ namespace AR_AreaZhuk
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1158, 856);
-            this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.labelInsolationFile);
+            this.Controls.Add(this.cmbSeria);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.textBoxMaxCountSectionsBySize);
             this.Controls.Add(this.textBoxMaxCountHousesBySpot);
@@ -945,8 +947,6 @@ namespace AR_AreaZhuk
             this.pnlMenuGroup2.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
             this.pnlMenuGroup1.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1017,7 +1017,7 @@ namespace AR_AreaZhuk
         private LinkLabel labelInsolationFile;
         private LinkLabel linkLabelShowPreviewScheme;
         private Label label2;
-        private FlowLayoutPanel flowLayoutPanel1;
+        private ComboBox cmbSeria;
     }
 }
 

@@ -355,7 +355,7 @@ namespace AR_AreaZhuk
             string ExcelDataPath = @"\\dsk2.picompany.ru\project\CAD_Settings\Revit_server\13. Settings\02_RoomManager\БД_Параметрические данные квартир ПИК1.xlsx";
 
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, sourceImgFlats, 72);
-            var img = imgComb.generateGeneralObject();
+            var img = imgComb.generateGeneralObject("",true);
             img.Save(imagePath + Guid.NewGuid() + ".png", ImageFormat.Png);
 
             // Лог дома

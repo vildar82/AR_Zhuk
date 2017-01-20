@@ -87,7 +87,7 @@ namespace BeetlyVisualisation
         }
 
 
-        public Bitmap Generate()
+        public Bitmap Generate(string seria)
         {
             Bitmap table = drawResultTable();
             Bitmap legend = drawLegend();
@@ -227,7 +227,7 @@ namespace BeetlyVisualisation
                 DrawGrid(canvas);
 
                 // Наименование расчета - по имени файла инсоляции                                
-                string title = Path.GetFileNameWithoutExtension(Spotinfo.PathInsolation) + ", " + DateTime.Now;
+                string title = seria+". "+Path.GetFileNameWithoutExtension(Spotinfo.PathInsolation) + ", " + DateTime.Now;
                 canvas.DrawString(title, new Font("Tahoma", 40), Brushes.Black, (GOWidth + 3) * moduleWidth, 0);
 
                 placeResultTable(canvas, table, (GOWidth + 3) * moduleWidth, moduleWidth*2);

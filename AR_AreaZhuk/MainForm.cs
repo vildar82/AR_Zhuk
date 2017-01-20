@@ -19,6 +19,7 @@ namespace AR_AreaZhuk
 {
     public partial class MainForm : Form
     {
+        public string Seria { get { return cmbSeria.Text; } }
         private bool isHousesFromLoadedFile = false;
         public static Thread th;
         private static bool isEvent = false;
@@ -31,7 +32,7 @@ namespace AR_AreaZhuk
         public static ProjectInfo projectInfo;
         public static List<List<HouseInfo>> houses = new List<List<HouseInfo>>();
         public static List<GeneralObject> ob = new List<GeneralObject>();
-        double maxArea = 0;        
+        double maxArea = 0;
         public MainForm()
         {
             InitializeComponent();
@@ -75,6 +76,7 @@ namespace AR_AreaZhuk
             FillSpotInfoControls(projectInfo);
             // ??                        
             isEvent = true;
+            cmbSeria.SelectedIndex = 0;
         }
 
         private static void Export()
@@ -276,6 +278,11 @@ namespace AR_AreaZhuk
 
 
             FormManager.DataReqValidator(dg);
+            GetRoomUserPercentsge();
+        }
+
+        private void GetRoomUserPercentsge()
+        {
             int per = 0;
 
             for (int i = 0; i < dg.RowCount - 1; i++)
@@ -300,8 +307,9 @@ namespace AR_AreaZhuk
                     subZone = "4";
                 // Вильдар. 23.08.2016. Площадь квартиры должна быть меньше максимальной требуемой площади. Убрал <=, оставил <.
                 var flats =
-                dbFlats.Where(x => x.SubZone.Equals(subZone)).ToList().
-                Where(x => x.AreaTotalStrong >= Convert.ToInt16(deep[0]) & x.AreaTotalStrong < Convert.ToInt16(deep[1])).ToList();
+                    dbFlats.Where(x => x.SubZone.Equals(subZone)).ToList().
+                        Where(x => x.AreaTotalStrong >= Convert.ToInt16(deep[0]) & x.AreaTotalStrong < Convert.ToInt16(deep[1]))
+                        .ToList();
                 dg[4, i].Value = flats.Count;
             }
             dg[2, dg.RowCount - 1].Value = per;
@@ -315,6 +323,11 @@ namespace AR_AreaZhuk
 
         private void btnStartScan_Click(object sender, EventArgs e)
         {
+            if (dg[2, dg.RowCount - 1].Value.ToString() != "100")
+            {
+                MessageBox.Show("Сумма указанных значений не равна 100!", "Ошибка!!!");
+                return;
+            }
             isStop = false;
             maxArea = 0;
             ob = new List<GeneralObject>();
@@ -541,10 +554,15 @@ namespace AR_AreaZhuk
                     sections.Add(sec);
                     if (sec.Flats.Any(x => x.SubZone.Equals("3") || x.SubZone.Equals("4")))
                         countContainsLargeFlatSections++;
+                    string currentSeria = "";
+                    if (Seria.Contains("У") & sec.Floors > 18)
+                        currentSeria = "PIK1U_";
                     foreach (var flat in sec.Flats)
                     {
-                        var currentFlatAreas = dictFlatsAreas[flat.ShortType];
-                        var areas = Calculate.GetAreaFlat(sec.Floors, flat, currentFlatAreas);
+                        PIK1.C_Flats_PIK1_AreasRow curFlatArea;
+                        if (!(currentSeria != "" && dictFlatsAreas.TryGetValue(currentSeria + flat.ShortType, out curFlatArea)))
+                            curFlatArea = dictFlatsAreas[flat.ShortType];
+                        var areas = Calculate.GetAreaFlat(sec.Floors, flat, curFlatArea);
                         totalArea += areas[0];
                         liveArea += areas[1];
                         levelArea += areas[2];
@@ -807,7 +825,7 @@ namespace AR_AreaZhuk
             BeetlyVisualisation.ImageCombiner imgComb = new BeetlyVisualisation.ImageCombiner(go, ExcelDataPath, imagePath, 72);
             //Serializer ser = new Serializer();
             //ser.SerializeList(go, Guid.NewGuid().ToString());//Создание xml
-            go.Image = imgComb.generateGeneralObject();
+            go.Image = imgComb.generateGeneralObject(Seria,true);
             //}
             pb.Image = go.Image;
         }
@@ -903,6 +921,7 @@ namespace AR_AreaZhuk
             if (dg.SelectedCells[0].RowIndex == dg.RowCount - 1)
                 return;
             dg.Rows.RemoveAt(dg.SelectedCells[0].RowIndex);
+            GetRoomUserPercentsge();
         }
 
         private void dg_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -1143,9 +1162,11 @@ namespace AR_AreaZhuk
                 var projectShema = new ProjectScheme(projectInfo);
                 projectShema.ReadScheme();
                 var imagePreviewScheme = projectShema.GetPreview();
+                //FormPreviewImage fm = new FormPreviewImage(imagePreviewScheme);
+                //fm.Show();
                 ProjectScheme.ShowPreview(imagePreviewScheme);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AR_Zhuk_DataModel.Messages.Informer.AddMessage(ex.Message);
                 AR_Zhuk_DataModel.Messages.Informer.Show();

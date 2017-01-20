@@ -14,6 +14,7 @@ namespace BeetlyVisualisation
 {
     public class ImageCombiner
     {
+        public string Seria { get; set; }
         int SectionIndex = 1;
 
         /// <summary>
@@ -164,8 +165,9 @@ namespace BeetlyVisualisation
         /// Генерация изображения
         /// </summary>
         /// <returns>Bitmap</returns>
-        public Bitmap generateGeneralObject ()
+        public Bitmap generateGeneralObject (string seria,bool isSeria)
         {
+            Seria = seria;
             Bitmap bmpImageGO = _generateGeneralObject();
             return bmpImageGO;
         }
@@ -190,7 +192,7 @@ namespace BeetlyVisualisation
                 imgGO.ImgHouses.Add(imgH);
             }
 
-            Bitmap bmpImageGO = imgGO.Generate();
+            Bitmap bmpImageGO = imgGO.Generate(Seria);
             return bmpImageGO;
         }
 
