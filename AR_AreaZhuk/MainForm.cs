@@ -1158,7 +1158,7 @@ namespace AR_AreaZhuk
             {
                 if (string.IsNullOrEmpty(projectInfo?.PathInsolation))
                     return;
-                projectInfo = GetProjectInfoFromControls();
+               // projectInfo = GetProjectInfoFromControls();
                 var projectShema = new ProjectScheme(projectInfo);
                 projectShema.ReadScheme();
                 var imagePreviewScheme = projectShema.GetPreview();
